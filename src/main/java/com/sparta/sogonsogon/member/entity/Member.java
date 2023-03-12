@@ -1,10 +1,10 @@
 package com.sparta.sogonsogon.member.entity;
 
+import com.sparta.sogonsogon.radio.entity.Radio;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
@@ -42,5 +42,8 @@ public class Member extends TimeStamped{
     @Enumerated(value = EnumType.STRING)
     private MemberRoleEnum role = MemberRoleEnum.USER;
 
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "radio_Id")
+//    private Radio radio;
 
 }
