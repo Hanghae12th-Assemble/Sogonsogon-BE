@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.radio.dto;
 
-import com.sparta.sogonsogon.radio.entity.Timestamped;
+import com.sparta.sogonsogon.member.entity.TimeStamped;
+import com.sparta.sogonsogon.radio.entity.Radio;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class RadioResponseDto extends Timestamped {
+public class RadioResponseDto extends TimeStamped {
     private Long id;
 
     private String title; // 라디오 제목
@@ -17,10 +18,19 @@ public class RadioResponseDto extends Timestamped {
 
     private String backgroundImageUrl; //배경화면
 
-    private LocalDateTime start_Time;  // 방송시작시간
+    private LocalDateTime startTime;  // 방송시작시간
 
-    private LocalDateTime end_Time;  // 방송종료 시간
+    private LocalDateTime endTime;  // 방송종료 시간
 
-    private LocalDateTime created_At; // 생성시간
+    private LocalDateTime createdAt; // 생성시간
 
+    public RadioResponseDto(Radio radio) {
+        this.id = radio.getId();
+        this.title = radio.getTitle();
+        this.introduction = radio.getIntroduction();
+        this.backgroundImageUrl = radio.getBackgroundImageUrl();
+//        this.startTime = radio.getStartTime();
+//        this.endTime = radio.getEndTime();
+        this.createdAt = radio.getCreatedAt();
+    }
 }

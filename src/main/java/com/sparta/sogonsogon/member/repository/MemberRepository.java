@@ -10,5 +10,4 @@ public interface MemberRepository extends JpaRepository<Member , Long> {
 
     Optional<Member> findByMembername(String membername);
 
-    <T> BindResult<T> findByUsername(String username);
 }
