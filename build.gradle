@@ -45,7 +45,7 @@ dependencies {
     // Spring Cloud Starter AWS
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-    // feat : chatting, web-socket
+    // feat : chatting
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
