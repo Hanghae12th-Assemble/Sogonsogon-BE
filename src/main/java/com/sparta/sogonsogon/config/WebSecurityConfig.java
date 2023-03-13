@@ -58,15 +58,19 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         //회원가입, 로그인,조회까지는 security 인증 없이도 가능함
         http.authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers("/docs").permitAll()
+
+            // 채팅기능 테스트를 위해 jwt 비활성화
+//                .antMatchers("/docs").permitAll() // 이 코드 살리고 아래 코드 죽이면 활성화됨
+                .antMatchers("/**").permitAll()
 //                .antMatchers("/api/user/signup").permitAll()
 //                .antMatchers("/api/user/login").permitAll()
                 // .antMatchers(HttpMethod.GET, "/api/studies/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().authenticated();
 
+            // 채팅기능 테스트를 위해 jwt 비활성화
                 // JWT 인증/인가를 사용하기 위한 설정
-                .and()
-                .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+//                .and()
+//                .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         //Controller 단 전에 시큐리티에서 검사하므로 따로 Exceptionhandler가 필요하다
         http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
