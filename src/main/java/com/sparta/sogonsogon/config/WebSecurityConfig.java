@@ -17,7 +17,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -81,5 +84,16 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .exposedHeaders("Content-Type","Authorization")
                 .allowCredentials(false) // 쿠키 요청을 허용한다(다른 도메인 서버에 인증하는 경우에만 사용해야하며, true 설정시 보안상 이슈가 발생할 수 있다)
                 .maxAge((long)3600 * 24 * 365); // preflight 요청에 대한 응답을 브라우저에서 캐싱하는 시간;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.addAllowedOrigin("http://3.37.146.173:8080");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
