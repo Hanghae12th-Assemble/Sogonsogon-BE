@@ -9,6 +9,9 @@ import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,11 +42,11 @@ public class MemberService {
 
         Optional<Member> foundMembername = memberRepository.findByMembername(membername);
         if(foundMembername.isPresent()){
-            throw new IllegalAccessException("중복된 아이디가 존재합니다.");
+            throw new DuplicateKeyException("중복된 아이디가 존재합니다."); // HTTP 409 Conflict
         }
         Optional<Member> foundEmail = memberRepository.findByEmail(email);
         if(foundEmail.isPresent()){
-            throw new IllegalAccessException("중복된 이메일이 존재합니다.");
+            throw new DuplicateKeyException("중복된 이메일이 존재합니다.");
         }
 
         Member member = new Member(requestDto, password);
@@ -57,11 +60,11 @@ public class MemberService {
         String password = requestDto.getPassword();
 
         Member member = memberRepository.findByEmail(email).orElseThrow(
-                ()-> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다.")
+                ()-> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다.") // HTTP 404 Not Found
         );
 
         if (!passwordEncoder.matches(password, member.getPassword())){
-            throw new IllegalAccessException("비밀번호가 틀렸습니다. 다시 입력해주세요");
+            throw new BadCredentialsException("비밀번호가 틀렸습니다. 다시 입력해주세요"); // HTTP 401 Unauthorized
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getMembername(), member.getRole()));
