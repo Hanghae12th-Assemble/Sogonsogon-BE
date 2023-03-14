@@ -19,7 +19,7 @@ import java.util.Collections;
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-    private static final StatusResponseDto dto = StatusResponseDto.fail(HttpStatus.FORBIDDEN,new ErrorResponseDTO(new ArrayList<>(Collections.singleton("권한이 없습니다."))));
+    private static final StatusResponseDto dto = StatusResponseDto.fail(HttpStatus.FORBIDDEN,new ErrorResponseDTO("권한이 없습니다."));
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {

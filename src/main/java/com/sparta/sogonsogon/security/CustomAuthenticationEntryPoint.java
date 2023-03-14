@@ -20,7 +20,7 @@ import java.util.List;
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private static final StatusResponseDto dto = StatusResponseDto.fail( HttpStatus.UNAUTHORIZED,new ErrorResponseDTO(new ArrayList<>(Collections.singleton("토큰이 유효하지 않습니다."))));
+    private static final StatusResponseDto dto = StatusResponseDto.fail( HttpStatus.UNAUTHORIZED,new ErrorResponseDTO("토큰이 유효하지 않습니다."));
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
