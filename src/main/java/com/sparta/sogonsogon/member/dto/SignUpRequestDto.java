@@ -13,7 +13,7 @@ public class SignUpRequestDto {
     private String membername;
 
     // 알파벳 소문자와 대문자 최소 1개 이상, 숫자 1개 이상, 특수문자 1개 이상이 들어가야하는 정규식
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[~!@#$%^&*()_+]).+$", message = "알파벳 소문자와 대문자, 특수문자가 포함되어야 합니다.")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[~!@#$%^&*()_+]).+$", message = "알파벳 소문자와 대문자, 숫자, 특수문자가 포함되어야 합니다.")
     @Size(min = 8, max = 15, message = "비밀번호 길이는 8자 이상, 15자 이하입니다.")
     private String password;
     @Email
