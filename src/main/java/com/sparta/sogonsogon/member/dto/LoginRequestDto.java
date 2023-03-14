@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class LoginRequestDto {
     @Email
-    @NotNull(message = "이메일을 입력해주세요.")
+    @NotNull(message = "이메일을 입력해주세요.") // BAD_REQUEST
     private String email;
     @NotNull(message = "비밀번호 길이는 8자 이상, 15자 이하입니다.")
     private String password;
