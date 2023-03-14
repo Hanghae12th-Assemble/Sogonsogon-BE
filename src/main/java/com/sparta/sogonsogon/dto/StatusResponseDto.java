@@ -36,7 +36,7 @@ public class StatusResponseDto<T> {
         return new StatusResponseDto<>(httpStatus, MessageType.SUCCESS, data);
     }
 
-    public static <T> StatusResponseDto<T> fail(HttpStatus httpStatus, T data){
-        return new StatusResponseDto<>(httpStatus, MessageType.EXCEPTION, data);
+    public static StatusResponseDto<ErrorResponseDTO> fail(HttpStatus httpStatus, ErrorResponseDTO errorResponseDTO){
+        return new StatusResponseDto<>(httpStatus, MessageType.EXCEPTION, errorResponseDTO);
     }
 }
