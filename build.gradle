@@ -41,14 +41,28 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.0.32'
+// h2
+    implementation 'com.h2database:h2'
 
-    // Spring Cloud Starter AWS
+// Spring Cloud Starter AWS
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-    // feat : chatting
+// feat : chatting
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+
+
+
+
+
+
+
+
+
+
+
