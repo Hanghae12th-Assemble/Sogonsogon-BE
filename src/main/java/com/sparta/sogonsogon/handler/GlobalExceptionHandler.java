@@ -4,6 +4,7 @@ import com.sparta.sogonsogon.dto.ErrorResponseDTO;
 import com.sparta.sogonsogon.dto.StatusResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class) // 이 에러가 발생했을 때
-    public StatusResponseDto<ErrorResponseDTO> loginErrorHandle(MethodArgumentNotValidException ex) {
+    public StatusResponseDto<ErrorResponseDTO> signupInputErrorHandle(MethodArgumentNotValidException ex) {
         // 해당하는 핸들러가 작동한다.
         List<String> errors = ex.getBindingResult()
             .getFieldErrors()
@@ -35,6 +36,13 @@ public class GlobalExceptionHandler {
         // 에러를 리스트에 담아 ErrorResponseDto를 생성한다.
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(errors);
         return StatusResponseDto.fail(HttpStatus.BAD_REQUEST, errorResponseDTO);
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    public StatusResponseDto<ErrorResponseDTO> signupDuplicateErrorHandle(DuplicateKeyException ex) {
+        String errors = ex.getMessage();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(errors);
+        return StatusResponseDto.fail(HttpStatus.CONFLICT, errorResponseDTO);
     }
 
 //
