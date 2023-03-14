@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.member.service;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
+import com.sparta.sogonsogon.follow.repository.FollowRepository;
 import com.sparta.sogonsogon.jwt.JwtUtil;
 import com.sparta.sogonsogon.member.dto.LoginRequestDto;
 import com.sparta.sogonsogon.member.dto.MemberResponseDto;
@@ -25,7 +26,7 @@ public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
-//    private final FollowRepository followRepository;
+    private final FollowRepository followRepository;
     private final JwtUtil jwtUtil;
 //    private final S3UploadService s3UploadService;
 
