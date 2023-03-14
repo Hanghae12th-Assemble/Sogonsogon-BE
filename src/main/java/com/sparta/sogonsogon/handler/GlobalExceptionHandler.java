@@ -45,6 +45,13 @@ public class GlobalExceptionHandler {
         return StatusResponseDto.fail(HttpStatus.CONFLICT, errorResponseDTO);
     }
 
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public StatusResponseDto<ErrorResponseDTO> loginUsernameNotFoundErrorHandle(UsernameNotFoundException ex) {
+        String error = ex.getMessage();
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(error);
+        return StatusResponseDto.fail(HttpStatus.NOT_FOUND, errorResponseDTO);
+    }
+
 //
 //    @ExceptionHandler({
 //        MethodArgumentNotValidException.class
