@@ -1,29 +1,41 @@
 package com.sparta.sogonsogon.handler;
 
+import com.sparta.sogonsogon.dto.ErrorResponseDTO;
 import com.sparta.sogonsogon.dto.StatusResponseDto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.lang.model.type.ErrorType;
 import javax.naming.AuthenticationException;
 import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolationException;
 import java.nio.file.AccessDeniedException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({Exception.class,
-    })
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public StatusResponseDto<?> handlerException(Exception ex){
-        log.error("EX",ex);
-        return StatusResponseDto.fail(500, ex.getStackTrace());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public StatusResponseDto<ErrorResponseDTO> loginErrorHandle(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .map(error -> error.getField() + " : " + error.getDefaultMessage())
+            .collect(Collectors.toList());
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(errors);
+        return StatusResponseDto.fail(HttpStatus.BAD_REQUEST, errorResponseDTO);
     }
+
 //
 //    @ExceptionHandler({
 //        MethodArgumentNotValidException.class
@@ -32,17 +44,17 @@ public class GlobalExceptionHandler {
 //        exception.getBindingResult()
 //    }
 
-    @ExceptionHandler({IllegalAccessException.class,
-            NullPointerException.class,
-            UsernameNotFoundException.class,
-            AuthenticationException.class,
-            EntityNotFoundException.class,
-            AccessDeniedException.class,
-            IllegalArgumentException.class
-    })
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public StatusResponseDto<?> handle(Exception ex){
-        return StatusResponseDto.fail(400, ex.getMessage());
-    }
+//    @ExceptionHandler({IllegalAccessException.class,
+//        NullPointerException.class,
+//        UsernameNotFoundException.class,
+//        AuthenticationException.class,
+//        EntityNotFoundException.class,
+//        AccessDeniedException.class,
+//        IllegalArgumentException.class
+//    })
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public StatusResponseDto<?> handle(Exception ex) {
+//        return StatusResponseDto.fail(400, ex.getMessage());
+//    }
 
 }
