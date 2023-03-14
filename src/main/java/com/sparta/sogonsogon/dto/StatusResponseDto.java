@@ -1,29 +1,42 @@
 package com.sparta.sogonsogon.dto;
 
+import com.sun.net.httpserver.HttpsServer;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
-@Setter
 @Getter
+@NoArgsConstructor
 public class StatusResponseDto<T> {
 
+    enum MessageType {
+        EXCEPTION("fail"),
+        SUCCESS("success");
+
+        private String message;
+
+        MessageType(String message) {
+            this.message = message;
+        }
+    }
 
     private int statusCode;
-    private String message;
+    private MessageType message;
     private T data;
 
-    public StatusResponseDto(int statusCode, String message, T data){
-        this.statusCode = statusCode;
+    public StatusResponseDto(HttpStatus httpStatus, MessageType message, T data){
+        this.statusCode = httpStatus.value();
         this.message = message;
         this.data = data;
     }
 
-    public static <T> StatusResponseDto<T> success(T data){
-        return new StatusResponseDto<>(HttpStatus.OK.value(), "success", data);
+    public static <T> StatusResponseDto<T> success(HttpStatus httpStatus, T data){
+        return new StatusResponseDto<>(httpStatus, MessageType.SUCCESS, data);
     }
 
-    public static <T> StatusResponseDto<T> fail(int statusCode, T data){
-        return new StatusResponseDto<>(statusCode, "fail", data);
+    public static <T> StatusResponseDto<T> fail(HttpStatus httpStatus, T data){
+        return new StatusResponseDto<>(httpStatus, MessageType.EXCEPTION, data);
     }
 }

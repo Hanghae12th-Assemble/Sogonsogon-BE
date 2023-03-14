@@ -4,6 +4,7 @@ import com.sparta.sogonsogon.dto.StatusResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,6 +24,13 @@ public class GlobalExceptionHandler {
         log.error("EX",ex);
         return StatusResponseDto.fail(500, ex.getStackTrace());
     }
+//
+//    @ExceptionHandler({
+//        MethodArgumentNotValidException.class
+//    })
+//    public StatusResponseDto<?> tempHandler(MethodArgumentNotValidException exception) {
+//        exception.getBindingResult()
+//    }
 
     @ExceptionHandler({IllegalAccessException.class,
             NullPointerException.class,
