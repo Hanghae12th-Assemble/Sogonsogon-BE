@@ -24,14 +24,15 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class) // 이 에러가 발생했을 때
     public StatusResponseDto<ErrorResponseDTO> loginErrorHandle(MethodArgumentNotValidException ex) {
+        // 해당하는 핸들러가 작동한다.
         List<String> errors = ex.getBindingResult()
             .getFieldErrors()
             .stream()
             .map(error -> error.getField() + " : " + error.getDefaultMessage())
             .collect(Collectors.toList());
+        // 에러를 리스트에 담아 ErrorResponseDto를 생성한다.
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(errors);
         return StatusResponseDto.fail(HttpStatus.BAD_REQUEST, errorResponseDTO);
     }
