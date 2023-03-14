@@ -44,20 +44,9 @@ public class Member extends TimeStamped{
     @Enumerated(value = EnumType.STRING)
     private MemberRoleEnum role = MemberRoleEnum.USER;
 
-
-    public Member(String membername, String password, String nickname, String email){
-        this.membername = membername;
-        this.nickname = nickname;
-        this.email = email;
-        this.password = password;
-    }
-
-
 //    @OneToMany(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "radio_Id")
 //    private Radio radio;
-
-
 
     @OneToMany(mappedBy = "following")
     private List<Follow> followers = new ArrayList<>();
@@ -71,5 +60,11 @@ public class Member extends TimeStamped{
         this.email = email;
         this.password = password;
     }
+
+//    public update(String nickname, String profileImageUrl, String password, String ){
+//
+//    }
+
+
 
 }
