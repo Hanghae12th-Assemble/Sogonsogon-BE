@@ -24,11 +24,11 @@ public class RadioController {
     private final RadioService radioService;
     private final RadioRepository radioRepository;
 
-    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "라디오  생성", description ="라디오 생성" )
-    public StatusResponseDto<RadioResponseDto> createRadio(@Valid @ModelAttribute RadioRequestDto requestDto,
+    public StatusResponseDto<RadioResponseDto> createRadio(@RequestBody @Valid @ModelAttribute RadioRequestDto requestDto,
                                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return radioService.createRadio(requestDto,userDetails.getUser());
+        return radioService.createRadio(requestDto,userDetails);
     }
 
     @GetMapping("/")
