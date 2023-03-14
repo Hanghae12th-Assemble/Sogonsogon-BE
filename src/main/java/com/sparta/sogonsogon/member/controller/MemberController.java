@@ -6,7 +6,6 @@ import com.sparta.sogonsogon.member.dto.MemberResponseDto;
 import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
 import com.sparta.sogonsogon.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Parameter;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
