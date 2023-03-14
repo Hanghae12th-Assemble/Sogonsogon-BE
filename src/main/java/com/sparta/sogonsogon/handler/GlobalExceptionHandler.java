@@ -7,6 +7,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,16 +41,29 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateKeyException.class)
     public StatusResponseDto<ErrorResponseDTO> signupDuplicateErrorHandle(DuplicateKeyException ex) {
-        String errors = ex.getMessage();
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(errors);
-        return StatusResponseDto.fail(HttpStatus.CONFLICT, errorResponseDTO);
+        return StatusResponseDto.fail(HttpStatus.CONFLICT, getErrorResponseDTO(ex));
     }
+
+
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public StatusResponseDto<ErrorResponseDTO> loginUsernameNotFoundErrorHandle(UsernameNotFoundException ex) {
-        String error = ex.getMessage();
-        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(error);
-        return StatusResponseDto.fail(HttpStatus.NOT_FOUND, errorResponseDTO);
+//        String error = ex.getMessage();
+//        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(error);
+        return StatusResponseDto.fail(HttpStatus.NOT_FOUND, getErrorResponseDTO(ex));
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public StatusResponseDto<ErrorResponseDTO> loginBadPasswordErrorHandle(BadCredentialsException ex) {
+//        String error = ex.getMessage();
+//        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(error);
+        ;
+        return StatusResponseDto.fail(HttpStatus.UNAUTHORIZED, getErrorResponseDTO(ex));
+    }
+
+    private static ErrorResponseDTO getErrorResponseDTO(Exception ex) {
+        String errors = ex.getMessage();
+        return new ErrorResponseDTO(errors);
     }
 
 //
