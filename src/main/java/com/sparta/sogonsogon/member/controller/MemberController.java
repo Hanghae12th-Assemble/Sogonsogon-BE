@@ -7,6 +7,7 @@ import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
 import com.sparta.sogonsogon.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,14 +26,14 @@ public class MemberController {
 
     //회원 가입
     @PostMapping("/signup")
-    public StatusResponseDto<String> signup(@RequestBody @Valid SignUpRequestDto requestDto) throws IllegalAccessException {
-        return memberService.signup(requestDto);
+    public StatusResponseDto<MemberResponseDto> signup(@RequestBody @Valid SignUpRequestDto requestDto) throws IllegalAccessException {
+        return StatusResponseDto.success(HttpStatus.CREATED, memberService.signup(requestDto));
     }
 
     //로그인
     @PostMapping("/login")
     public StatusResponseDto<MemberResponseDto> login(@RequestBody LoginRequestDto requestDto, @Parameter(hidden = true) HttpServletResponse response) throws IllegalAccessException {
-        return memberService.login(requestDto, response);
+        return StatusResponseDto.success(HttpStatus.OK, memberService.login(requestDto, response));
     }
 
 

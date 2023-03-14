@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.member.entity;
 
 import com.sparta.sogonsogon.follow.entity.Follow;
+import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
 import com.sparta.sogonsogon.radio.entity.Radio;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,10 +55,10 @@ public class Member extends TimeStamped{
     @OneToMany(mappedBy = "follower")
     private List<Follow> following = new ArrayList<>();
 
-    public Member(String membername, String password, String nickname, String email){
-        this.membername = membername;
-        this.nickname = nickname;
-        this.email = email;
+    public Member(SignUpRequestDto requestDto, String password){
+        this.membername = requestDto.getMembername();
+        this.nickname = requestDto.getNickname();
+        this.email = requestDto.getEmail();
         this.password = password;
     }
 

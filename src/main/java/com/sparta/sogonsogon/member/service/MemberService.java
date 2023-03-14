@@ -32,10 +32,9 @@ public class MemberService {
 //    private final S3UploadService s3UploadService;
 
     @Transactional
-    public StatusResponseDto<String> signup(@Valid SignUpRequestDto requestDto) throws IllegalAccessException {
+    public MemberResponseDto signup(SignUpRequestDto requestDto) throws IllegalAccessException {
         String membername = requestDto.getMembername();
         String password = passwordEncoder.encode(requestDto.getPassword());
-        String nickname = requestDto.getNickname();
         String email = requestDto.getEmail();
 
         Optional<Member> foundMembername = memberRepository.findByMembername(membername);
@@ -47,13 +46,13 @@ public class MemberService {
             throw new IllegalAccessException("중복된 이메일이 존재합니다.");
         }
 
-        Member member = new Member(membername, password, nickname, email);
+        Member member = new Member(requestDto, password);
         memberRepository.save(member);
-        return StatusResponseDto.success("회원가입 성공!");
+        return new MemberResponseDto(member);
     }
 
     @Transactional(readOnly = true)
-    public StatusResponseDto<MemberResponseDto> login(LoginRequestDto requestDto, HttpServletResponse response) throws IllegalAccessException {
+    public MemberResponseDto login(LoginRequestDto requestDto, HttpServletResponse response) throws IllegalAccessException {
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
@@ -66,7 +65,7 @@ public class MemberService {
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getMembername(), member.getRole()));
-        return StatusResponseDto.success(new MemberResponseDto(member));
+        return new MemberResponseDto(member);
 
     }
 }
