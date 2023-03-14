@@ -9,6 +9,7 @@ import com.sparta.sogonsogon.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -28,19 +29,19 @@ public class RadioController {
     @Operation(summary = "라디오  생성", description ="라디오 생성" )
     public StatusResponseDto<RadioResponseDto> createRadio(@RequestBody @Valid @ModelAttribute RadioRequestDto requestDto,
                                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return radioService.createRadio(requestDto,userDetails);
+        return StatusResponseDto.success(HttpStatus.CREATED, radioService.createRadio(requestDto,userDetails));
     }
 
     @GetMapping("/")
     @Operation(summary = "전체 라디오 조회", description ="전체 라디오 조회" )
     public StatusResponseDto<List<RadioResponseDto>> getRadios(){
-        return radioService.findAllRadios();
+        return StatusResponseDto.success(HttpStatus.OK, radioService.findAllRadios());
     }
 
     @GetMapping("/{radidId}")
     @Operation(summary = "선택된 라디오 조회", description ="선택된 라디오 조회" )
     public StatusResponseDto<RadioResponseDto> getRadio(@PathVariable Long radidId){
-        return radioService.findRadio(radidId);
+        return StatusResponseDto.success(HttpStatus.OK, radioService.findRadio(radidId));
     }
 
     @PutMapping("/{radidId}")
@@ -48,7 +49,7 @@ public class RadioController {
     public StatusResponseDto<RadioResponseDto> updateRadio(@PathVariable Long radidId,
                                                            @Valid @ModelAttribute RadioRequestDto requestDto,
                                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return radioService.updateRadio(radidId,requestDto,userDetails.getUsername());
+        return StatusResponseDto.success(HttpStatus.OK, radioService.updateRadio(radidId,requestDto,userDetails));
     }
 
 

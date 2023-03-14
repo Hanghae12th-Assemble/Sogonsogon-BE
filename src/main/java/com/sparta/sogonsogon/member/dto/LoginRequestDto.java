@@ -8,8 +8,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class LoginRequestDto {
     @Email
-    @NotNull
+    @NotNull() // BAD_REQUEST
     private String email;
-    @NotNull
+    @NotNull()
     private String password;
 }

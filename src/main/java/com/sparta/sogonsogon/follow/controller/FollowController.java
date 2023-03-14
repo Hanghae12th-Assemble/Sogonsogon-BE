@@ -8,6 +8,7 @@ import com.sparta.sogonsogon.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class FollowController {
                                                              @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails)throws AccessDeniedException {
 
 //        followService.createFollow(followerUsername,requestDto,userDetails.getUsername());
-        return StatusResponseDto.success((FollowResponseDto) followService.createFollow(followerUsername,requestDto,userDetails.getUser()));
+        return StatusResponseDto.success(HttpStatus.OK ,(FollowResponseDto) followService.createFollow(followerUsername,requestDto,userDetails.getUser()));
     }
 
 
@@ -37,7 +38,7 @@ public class FollowController {
     public StatusResponseDto<String> unFollow(@PathVariable String followerUsername,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails)throws AccessDeniedException {
         followService.unfollow(followerUsername,userDetails.getUser());
-        return StatusResponseDto.success("팔로우 취소되었습니다.");
+        return StatusResponseDto.success(HttpStatus.OK, "팔로우 취소 되었습니다.");
     }
 
     @GetMapping("/{memberId}/following")

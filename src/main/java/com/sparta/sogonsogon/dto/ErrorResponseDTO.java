@@ -3,17 +3,21 @@ package com.sparta.sogonsogon.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.lang.model.type.ErrorType;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
 public class ErrorResponseDTO {
 
-    ErrorType errorType;
-    String errorMessage;
+    List<String> errorMessage;
 
-    public ErrorResponseDTO(ErrorType errorType, String errorMessage) {
-        this.errorType = errorType;
+    public ErrorResponseDTO(List<String> errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public ErrorResponseDTO(String errorMessage) {
+        this.errorMessage = Collections.singletonList(errorMessage);
     }
 }
