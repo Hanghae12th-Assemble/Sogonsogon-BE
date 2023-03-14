@@ -46,6 +46,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         return (web) -> web.ignoring()
                 //.requestMatchers(PathRequest.toH2Console())
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                .antMatchers("/h2-console/**")
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
     @Bean
@@ -58,10 +59,13 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         //회원가입, 로그인,조회까지는 security 인증 없이도 가능함
         http.authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .antMatchers("/docs").permitAll()
+                .antMatchers("/api/**").permitAll()
             // 채팅기능 테스트를 위해 jwt 비활성화
 //                .antMatchers("/docs").permitAll() // 이 코드 살리고 아래 코드 죽이면 활성화됨
                 .antMatchers("/**").permitAll()
 //                .antMatchers("/api/user/signup").permitAll()
+
 //                .antMatchers("/api/user/login").permitAll()
                 // .antMatchers(HttpMethod.GET, "/api/studies/**").permitAll()
                 .anyRequest().authenticated();

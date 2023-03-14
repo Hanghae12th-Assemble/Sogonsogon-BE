@@ -1,5 +1,6 @@
 package com.sparta.sogonsogon.member.entity;
 
+import com.sparta.sogonsogon.follow.entity.Follow;
 import com.sparta.sogonsogon.radio.entity.Radio;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.*;
 
 @Entity(name = "users")
 @Getter
@@ -50,9 +52,24 @@ public class Member extends TimeStamped{
         this.password = password;
     }
 
+
 //    @OneToMany(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "radio_Id")
 //    private Radio radio;
 
+
+
+    @OneToMany(mappedBy = "following")
+    private List<Follow> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "follower")
+    private List<Follow> following = new ArrayList<>();
+
+    public Member(String membername, String password, String nickname, String email){
+        this.membername = membername;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+    }
 
 }
