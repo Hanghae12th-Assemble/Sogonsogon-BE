@@ -6,7 +6,10 @@ import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
 import com.sparta.sogonsogon.radio.dto.RadioRequestDto;
 import com.sparta.sogonsogon.radio.dto.RadioResponseDto;
+import com.sparta.sogonsogon.radio.entity.EnterMember;
+import com.sparta.sogonsogon.radio.entity.EnterMemberResponseDto;
 import com.sparta.sogonsogon.radio.entity.Radio;
+import com.sparta.sogonsogon.radio.repository.EnterMemberRepository;
 import com.sparta.sogonsogon.radio.repository.RadioRepository;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
 import com.sparta.sogonsogon.util.S3Uploader;
@@ -29,6 +32,7 @@ public class RadioService {
     private final S3Uploader s3Uploader;
     private JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
+    private final EnterMemberRepository enterMemberRepository;
 
 
     // 라디오생성
@@ -126,5 +130,20 @@ public class RadioService {
             radioRepository.deleteById(radioId);
         }
         throw new IllegalArgumentException("다른 사용자가 생성된 라디오는 삭제할 수 없습니다.");
+    }
+
+    public EnterMemberResponseDto enterRadio(Long radioId, UserDetailsImpl userDetails) {
+
+        Radio radio = radioRepository.findById(radioId).orElseThrow(
+            () -> new IllegalArgumentException("해당하는 라디오가 없습니다.")
+        );
+
+        Member member = memberRepository.findById(userDetails.getUser().getId()).orElseThrow(
+            () -> new IllegalArgumentException("로그인 되지 않았습니다.")
+        );
+
+        EnterMember enterMember = new EnterMember(member, radio);
+        enterMemberRepository.save(enterMember);
+        return EnterMemberResponseDto.of(enterMember);
     }
 }
