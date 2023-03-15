@@ -63,14 +63,6 @@ public class RadioController {
         return StatusResponseDto.success(HttpStatus.OK, null);
     }
 
-    /*
-    TODOS
-    1. 방참여
-    2. 방퇴장
-    3. 특정방조회
-        3-1. 아이디로조회
-        3-2. 이름으로조회
-     */
     @PostMapping("/enter/{radioId}")
     @Operation(summary = "선택한 라디오 참여", description = "선택한 라디오 참여")
     public StatusResponseDto<EnterMemberResponseDto> enterRadio(@PathVariable Long radioId,
@@ -79,7 +71,7 @@ public class RadioController {
     }
 
     @DeleteMapping("/quit/{radioId}")
-    @Operation(summary = "입장한 유저 삭제", description = "입장한 유저 삭제")
+    @Operation(summary = "입장한 라디오에서 퇴장", description = "입장한 라디오에서 퇴장")
     public StatusResponseDto<EnterMemberResponseDto> quitRadio(@PathVariable Long radioId,
                                                                @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
         radioService.quitRadio(radioId, userDetails);
