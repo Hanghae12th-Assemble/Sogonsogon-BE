@@ -50,7 +50,7 @@ public class Member extends TimeStamped{
 //    private Radio radio;
 
     @OneToMany(mappedBy = "following")
-    private List<Follow> followers = new ArrayList<>();
+    private List<Follow> follower = new ArrayList<>();
 
     @OneToMany(mappedBy = "follower")
     private List<Follow> following = new ArrayList<>();

@@ -24,7 +24,7 @@ public class FollowController {
     @PostMapping("/{memberId}")
     @Operation(summary = "팔로우 토글", description = "팔로우 토글")
     public StatusResponseDto<FollowResponseDto> follow(@PathVariable Long memberId,
-                                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // 팔로우를 토글로 구현, 홀수번 팔로우, 짝수번 언팔로우
         return StatusResponseDto.success(HttpStatus.OK, followService.toggleFollow(memberId, userDetails));
     }
@@ -50,16 +50,14 @@ public class FollowController {
 //    }
 
     @GetMapping("/{memberId}/following")
-    @Operation(summary = "유저가 팔로우하는 모든 유저 가져오기", description ="팔로우하는 모든 유저 가져오기" )
-    public StatusResponseDto<List<FollowResponseDto>> getFollowingList(@PathVariable Long memberId,
-                                                                       @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return followService.getFollowingList(memberId, userDetails.getUsername());
+    @Operation(summary = "유저를 팔로잉하는 모든 사용자 가져오기", description ="유저를 팔로잉하는 모든 사용자 가져오기" )
+    public StatusResponseDto<List<FollowResponseDto>> getFollowings(@PathVariable Long memberId){
+        return StatusResponseDto.success(HttpStatus.OK,followService.getFollowings(memberId)) ;
     }
 
     @GetMapping("/{memberId}/follower")
-    @Operation(summary = "유저를 팔로우하는 모든 사용자 가져오기", description ="유저를 팔로우하는 모든 사용자 가져오기" )
-    public StatusResponseDto<List<FollowResponseDto>> getFollowersList(@PathVariable Long memberId,
-                                                                       @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return followService.getFollowersList(memberId);
+    @Operation(summary = "유저가 팔로워하는 모든 유저 가져오기", description ="유저가 팔로워하는 모든 유저 가져오기" )
+    public StatusResponseDto<List<FollowResponseDto>> getFollowers(@PathVariable Long memberId){
+        return StatusResponseDto.success(HttpStatus.OK,followService.getFollowers(memberId));
     }
 }

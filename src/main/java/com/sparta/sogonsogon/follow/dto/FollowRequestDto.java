@@ -12,9 +12,10 @@ import lombok.Setter;
 public class FollowRequestDto {
 
     private Member follower;
-
     private Member following;
-//    private Member user;
-//    private boolean isAccepted;
+
+
+
+
 
 }

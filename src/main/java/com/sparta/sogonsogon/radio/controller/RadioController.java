@@ -31,11 +31,11 @@ public class RadioController {
         return StatusResponseDto.success(HttpStatus.CREATED, radioService.createRadio(requestDto,userDetails));
     }
 
-//    @GetMapping("/")
-//    @Operation(summary = "전체 라디오 조회", description ="전체 라디오 조회" )
-//    public StatusResponseDto<List<RadioResponseDto>> getRadios(){
-//        return StatusResponseDto.success(HttpStatus.OK, radioService.findAllRadios());
-//    }
+    @GetMapping("/")
+    @Operation(summary = "전체 라디오 조회", description ="전체 라디오 조회" )
+    public StatusResponseDto<List<RadioResponseDto>> getRadios(){
+        return StatusResponseDto.success(HttpStatus.OK, radioService.findAllRadios());
+    }
 //
 //    @GetMapping("/{radioId}")
 //    @Operation(summary = "선택된 라디오 조회", description ="선택된 라디오 조회" )

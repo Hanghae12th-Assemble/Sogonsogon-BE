@@ -68,25 +68,25 @@ public class RadioService {
 
     }
 
-//
-//    // 라디오 전체 조회
-//    @Transactional
-//    public List<RadioResponseDto> findAllRadios() {
-//        List<Radio> list = radioRepository.findAll();
-//        List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
-//        for (Radio radio : list) {
-//            radioResponseDtos.add(new RadioResponseDto(radio));
-//        }
-//        return radioResponseDtos;
-//    }
-//
-//    // 선택된 라디오 조회
-//    @Transactional
-//    public RadioResponseDto findRadio(Long radioId) {
-//        Radio radio = radioRepository.findById(radioId).orElseThrow(
-//            () -> new IllegalArgumentException("조회된 라디오가 없습니다."));
-//        return new RadioResponseDto(radio);
-//    }
+
+    // 라디오 전체 조회
+    @Transactional
+    public List<RadioResponseDto> findAllRadios() {
+        List<Radio> list = radioRepository.findAll();
+        List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
+        for (Radio radio : list) {
+            radioResponseDtos.add(new RadioResponseDto(radio));
+        }
+        return radioResponseDtos;
+    }
+
+    // 선택된 라디오 조회
+    @Transactional
+    public RadioResponseDto findRadio(Long radioId) {
+        Radio radio = radioRepository.findById(radioId).orElseThrow(
+            () -> new IllegalArgumentException("조회된 라디오가 없습니다."));
+        return new RadioResponseDto(radio);
+    }
 //
 //    // 선택된 라디오 정보 조회
 //    @Transactional

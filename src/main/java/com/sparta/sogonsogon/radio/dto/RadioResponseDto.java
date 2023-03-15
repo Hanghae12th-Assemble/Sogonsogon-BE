@@ -1,5 +1,6 @@
 package com.sparta.sogonsogon.radio.dto;
 
+import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.entity.TimeStamped;
 import com.sparta.sogonsogon.radio.entity.Radio;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class RadioResponseDto extends TimeStamped {
     private String introduction; // 라디오 관련 간단한 설명
 
     private String backgroundImageUrl; //배경화면
+    private String memberId;
 
     private LocalDateTime startTime;  // 방송시작시간
 
@@ -32,5 +34,6 @@ public class RadioResponseDto extends TimeStamped {
 //        this.startTime = radio.getStartTime();
 //        this.endTime = radio.getEndTime();
         this.createdAt = radio.getCreatedAt();
+        this.memberId = String.valueOf(radio.getMember().getId());
     }
 }

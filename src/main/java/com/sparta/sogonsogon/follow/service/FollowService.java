@@ -90,19 +90,46 @@ public class FollowService {
 //    }
 
 
+    // 유저를 팔로잉하는 모든 사용자 가져오기
     @Transactional
-    public StatusResponseDto<List<FollowResponseDto>> getFollowingList(Long memberId, String username) {
+    public List<FollowResponseDto> getFollowings(Long memberId) {
 //
 //        List<FollowResponseDto> followingList = followRepository.findAllBy
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                ()-> new EntityNotFoundException("유저를 찾을 수 없습니다. ")
+        );
 
-        return null;
+        List<Follow> followings = followRepository.findByFollower(member);
+        List<FollowResponseDto> followingList = new ArrayList<>();
+        for(Follow follow : followings) {
+            FollowResponseDto responseDto = new FollowResponseDto();
+            responseDto.setId(follow.getId());
+            responseDto.setFollowername(follow.getFollower().getMembername());
+            responseDto.setFollowingname(follow.getFollowing().getMembername());
+            followingList.add(responseDto);
+        }
+        return followingList;
 
     }
 
+    //유저가 팔로워하는 모든 유저 가져오기
     @Transactional
-    public StatusResponseDto<List<FollowResponseDto>> getFollowersList(Long memberId) {
+    public List<FollowResponseDto> getFollowers(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저는 존재하지 않습니다.")
+        );
+        List<Follow> follows = followRepository.findByFollowingId(memberId);
 
-        return null;
+        List<FollowResponseDto> responseDtos = new ArrayList<>();
+        for(Follow follow : follows){
+            FollowResponseDto responseDto = new FollowResponseDto();
+            responseDto.setFollowername(follow.getFollower().getMembername());
+            responseDto.setFollowingname(follow.getFollowing().getMembername());
+//            responseDto.setFollowed(true);
+            responseDtos.add(responseDto);
+
+        }
+        return  responseDtos;
     }
 
 
