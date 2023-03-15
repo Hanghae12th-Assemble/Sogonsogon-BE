@@ -38,25 +38,25 @@ public class RadioController {
         return StatusResponseDto.success(HttpStatus.OK, radioService.findAllRadios());
     }
 
-    @GetMapping("/{radidId}")
+    @GetMapping("/{radioId}")
     @Operation(summary = "선택된 라디오 조회", description ="선택된 라디오 조회" )
-    public StatusResponseDto<RadioResponseDto> getRadio(@PathVariable Long radidId){
-        return StatusResponseDto.success(HttpStatus.OK, radioService.findRadio(radidId));
+    public StatusResponseDto<RadioResponseDto> getRadio(@PathVariable Long radioId){
+        return StatusResponseDto.success(HttpStatus.OK, radioService.findRadio(radioId));
     }
 
-    @PutMapping("/{radidId}")
+    @PutMapping("/{radioId}")
     @Operation(summary = "선택된 라디오 정보 수정", description ="선택된 라디오 정보 수정" )
-    public StatusResponseDto<RadioResponseDto> updateRadio(@PathVariable Long radidId,
+    public StatusResponseDto<RadioResponseDto> updateRadio(@PathVariable Long radioId,
                                                             @Valid @ModelAttribute RadioRequestDto requestDto,
                                                             @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return StatusResponseDto.success(HttpStatus.OK, radioService.updateRadio(radidId,requestDto,userDetails));
+        return StatusResponseDto.success(HttpStatus.OK, radioService.updateRadio(radioId,requestDto,userDetails));
     }
 
 
-    @DeleteMapping("/{radidId}")
+    @DeleteMapping("/{radioId}")
     @Operation(summary = "선택된 라디오 삭제", description ="선택된 라디오 삭제" )
-    public StatusResponseDto<RadioResponseDto> deleteRadio(@PathVariable Long radidId,
+    public StatusResponseDto<RadioResponseDto> deleteRadio(@PathVariable Long radioId,
                                                             @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return radioService.deleteRadio(radidId,userDetails.getUser());
+        return radioService.deleteRadio(radioId,userDetails.getUser());
     }
 }
