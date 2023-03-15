@@ -3,13 +3,22 @@ package com.sparta.sogonsogon.member.repository;
 import com.sparta.sogonsogon.member.entity.Member;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
+
+import static javax.swing.text.html.HTML.Tag.SELECT;
+import static org.hibernate.hql.internal.antlr.HqlTokenTypes.FROM;
 
 public interface MemberRepository extends JpaRepository<Member , Long> {
 
     Optional<Member> findByMembername(String membername);
     Optional<Member> findByEmail(String email);
 
+    @Query(
+            value = "SELECT u.nickname FROM Member u WHERE u.nickname LIKE '%nickname%'"
+    )
+    List<Member> findAllSearchByNickname(String nickname);
 
 }

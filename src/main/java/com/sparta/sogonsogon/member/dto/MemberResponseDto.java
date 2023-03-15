@@ -2,11 +2,10 @@ package com.sparta.sogonsogon.member.dto;
 
 import com.sparta.sogonsogon.member.entity.Member;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -29,5 +28,7 @@ public class MemberResponseDto {
         this.profileImageUrl = member.getProfileImageUrl();
         this.introduction = member.getMemberInfo();
     }
+
+
 
 }

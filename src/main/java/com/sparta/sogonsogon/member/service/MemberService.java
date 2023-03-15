@@ -3,10 +3,7 @@ package com.sparta.sogonsogon.member.service;
 import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.follow.repository.FollowRepository;
 import com.sparta.sogonsogon.jwt.JwtUtil;
-import com.sparta.sogonsogon.member.dto.LoginRequestDto;
-import com.sparta.sogonsogon.member.dto.MemberRequestDto;
-import com.sparta.sogonsogon.member.dto.MemberResponseDto;
-import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
+import com.sparta.sogonsogon.member.dto.*;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.entity.MemberRoleEnum;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
@@ -26,6 +23,8 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -92,5 +91,23 @@ public class MemberService {
         }else{
             throw new IllegalArgumentException("해당 유저만 회원 정보 수정이 가능합니다. ");
         }
+    }
+
+    // 고유 아이디로 유저 정보 조회
+    public StatusResponseDto<MemberResponseDto> getInfoByMembername(String membername) {
+        Member member = memberRepository.findByMembername(membername).orElseThrow(
+                ()-> new EntityNotFoundException("해당 유저를 찾을 수 없습니다.")
+        );
+        return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
+    }
+
+    //유저 닉네임으로 정보 조회
+    public StatusResponseDto<List<Member>> getListByNickname(String nickname) {
+        List<Member> memberlist = memberRepository.findAllSearchByNickname(nickname);
+//        List<MemberOneResponseDto> memberResponseDtos = new ArrayList<>();
+//        for (Member member : memberlist) {
+//            memberResponseDtos.add(MemberOneResponseDto.of(member));
+//        }
+        return StatusResponseDto.success(HttpStatus.OK, memberlist);
     }
 }

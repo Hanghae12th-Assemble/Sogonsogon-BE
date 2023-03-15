@@ -1,10 +1,8 @@
 package com.sparta.sogonsogon.member.controller;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
-import com.sparta.sogonsogon.member.dto.LoginRequestDto;
-import com.sparta.sogonsogon.member.dto.MemberRequestDto;
-import com.sparta.sogonsogon.member.dto.MemberResponseDto;
-import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
+import com.sparta.sogonsogon.member.dto.*;
+import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.service.MemberService;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,6 +51,15 @@ public class MemberController {
     }
 
     //해당 고유 아이디 조회
+    @GetMapping("/")
+    public StatusResponseDto<MemberResponseDto> findbyMembername(@RequestBody String membername){
+        return memberService.getInfoByMembername(membername);
+    }
 
+    //해당 유저 닉네임으로 조회
+    @GetMapping("/nickname")
+    public StatusResponseDto<List<Member>> findListByNickname(@RequestBody String nickname){
+        return memberService.getListByNickname(nickname);
+    }
 
 }
