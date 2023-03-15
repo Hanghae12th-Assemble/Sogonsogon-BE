@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class) // 이 에러가 발생했을 때
-    public StatusResponseDto<ErrorResponseDTO> signupInputErrorHandle(MethodArgumentNotValidException ex) {
+    public StatusResponseDto<ErrorResponseDTO> badRequestErrorHandler(MethodArgumentNotValidException ex) {
         // 해당하는 핸들러가 작동한다.
         List<String> errors = ex.getBindingResult()
             .getFieldErrors()
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicateKeyException.class)
-    public StatusResponseDto<ErrorResponseDTO> signupDuplicateErrorHandle(DuplicateKeyException ex) {
+    public StatusResponseDto<ErrorResponseDTO> conflictErrorHandler(DuplicateKeyException ex) {
         return StatusResponseDto.fail(HttpStatus.CONFLICT, getErrorResponseDTO(ex));
     }
 
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UsernameNotFoundException.class)
-    public StatusResponseDto<ErrorResponseDTO> loginUsernameNotFoundErrorHandle(UsernameNotFoundException ex) {
+    public StatusResponseDto<ErrorResponseDTO> notFoundErrorHandler(UsernameNotFoundException ex) {
 //        String error = ex.getMessage();
 //        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(error);
         return StatusResponseDto.fail(HttpStatus.NOT_FOUND, getErrorResponseDTO(ex));
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(BadCredentialsException.class)
-    public StatusResponseDto<ErrorResponseDTO> loginBadPasswordErrorHandle(BadCredentialsException ex) {
+    public StatusResponseDto<ErrorResponseDTO> unauthorizedErrorHandler(BadCredentialsException ex) {
 //        String error = ex.getMessage();
 //        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(error);
         ;
