@@ -146,4 +146,17 @@ public class RadioService {
         enterMemberRepository.save(enterMember);
         return EnterMemberResponseDto.of(enterMember);
     }
+
+    public void quitRadio(Long radioId, UserDetailsImpl userDetails) {
+        Radio radio = radioRepository.findById(radioId).orElseThrow(
+            () -> new IllegalArgumentException("해당하는 라디오가 없습니다.")
+        );
+
+        EnterMember enterMember = enterMemberRepository.findByRadioAndMember(radio, userDetails.getUser());
+        if (enterMember == null) {
+            throw new IllegalArgumentException("해당 방에 참여하지 않았습니다.");
+        } else {
+            enterMemberRepository.delete(enterMember);
+        }
+    }
 }

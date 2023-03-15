@@ -77,4 +77,12 @@ public class RadioController {
                                                                 @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return StatusResponseDto.success(HttpStatus.OK, radioService.enterRadio(radioId, userDetails));
     }
+
+    @DeleteMapping("/quit/{radioId}")
+    @Operation(summary = "입장한 유저 삭제", description = "입장한 유저 삭제")
+    public StatusResponseDto<EnterMemberResponseDto> quitRadio(@PathVariable Long radioId,
+                                                               @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        radioService.quitRadio(radioId, userDetails);
+        return StatusResponseDto.success(HttpStatus.OK, null);
+    }
 }
