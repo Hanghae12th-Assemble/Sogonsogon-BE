@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class) // 이 에러가 발생했을 때
     public StatusResponseDto<ErrorResponseDTO> signupInputErrorHandle(MethodArgumentNotValidException ex) {
         // 해당하는 핸들러가 작동한다.
@@ -39,6 +40,7 @@ public class GlobalExceptionHandler {
         return StatusResponseDto.fail(HttpStatus.BAD_REQUEST, errorResponseDTO);
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicateKeyException.class)
     public StatusResponseDto<ErrorResponseDTO> signupDuplicateErrorHandle(DuplicateKeyException ex) {
         return StatusResponseDto.fail(HttpStatus.CONFLICT, getErrorResponseDTO(ex));
@@ -46,6 +48,7 @@ public class GlobalExceptionHandler {
 
 
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UsernameNotFoundException.class)
     public StatusResponseDto<ErrorResponseDTO> loginUsernameNotFoundErrorHandle(UsernameNotFoundException ex) {
 //        String error = ex.getMessage();
@@ -53,6 +56,7 @@ public class GlobalExceptionHandler {
         return StatusResponseDto.fail(HttpStatus.NOT_FOUND, getErrorResponseDTO(ex));
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(BadCredentialsException.class)
     public StatusResponseDto<ErrorResponseDTO> loginBadPasswordErrorHandle(BadCredentialsException ex) {
 //        String error = ex.getMessage();
