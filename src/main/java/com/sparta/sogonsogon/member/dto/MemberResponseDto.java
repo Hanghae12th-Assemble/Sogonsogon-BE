@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class MemberResponseDto {
 
+    private Long id;
     private String membername;
     private String nickname;
     private String profileImageUrl;
@@ -21,6 +22,7 @@ public class MemberResponseDto {
 
 
     public MemberResponseDto(Member member){
+        this.id = member.getId();
         this.membername = member.getMembername();
         this.nickname = member.getNickname();
         this.email = member.getEmail();
