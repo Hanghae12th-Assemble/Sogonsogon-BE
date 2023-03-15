@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler // 이 에러가 발생했을 때
-    public StatusResponseDto<ErrorResponseDTO> badRequestErrorHandler(MethodArgumentNotValidException ex) {
+    public StatusResponseDto<ErrorResponseDTO> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
         // 해당하는 핸들러가 작동한다.
         List<String> errors = ex.getBindingResult()
             .getFieldErrors()
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler
-    public StatusResponseDto<ErrorResponseDTO> conflictErrorHandler(DuplicateKeyException ex) {
+    public StatusResponseDto<ErrorResponseDTO> duplicateKeyExceptionHandler(DuplicateKeyException ex) {
         return StatusResponseDto.fail(HttpStatus.CONFLICT, getErrorResponseDTO(ex));
     }
 
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
-    public StatusResponseDto<ErrorResponseDTO> notFoundErrorHandler(UsernameNotFoundException ex) {
+    public StatusResponseDto<ErrorResponseDTO> usernameNotFoundExceptionHandler(UsernameNotFoundException ex) {
 //        String error = ex.getMessage();
 //        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(error);
         return StatusResponseDto.fail(HttpStatus.NOT_FOUND, getErrorResponseDTO(ex));
@@ -58,11 +58,17 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler
-    public StatusResponseDto<ErrorResponseDTO> unauthorizedErrorHandler(BadCredentialsException ex) {
+    public StatusResponseDto<ErrorResponseDTO> badCredentialsExceptionHandler(BadCredentialsException ex) {
 //        String error = ex.getMessage();
 //        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(error);
         ;
         return StatusResponseDto.fail(HttpStatus.UNAUTHORIZED, getErrorResponseDTO(ex));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public StatusResponseDto<ErrorResponseDTO> illegalArgumentExceptionHander(IllegalArgumentException ex) {
+        return StatusResponseDto.fail(HttpStatus.BAD_REQUEST, getErrorResponseDTO(ex));
     }
 
     private static ErrorResponseDTO getErrorResponseDTO(Exception ex) {
