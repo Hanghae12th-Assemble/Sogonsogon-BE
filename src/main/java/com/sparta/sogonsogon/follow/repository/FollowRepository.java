@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
-    Optional<Object> findByFollowingAndFollower(Member following, Member follower);
+    Optional<Follow> findByFollowingAndFollower(Member following, Member follower);
 
 //    StatusResponseDto<List<FollowResponseDto>> findFollowersByFollowingId(Long memberId);
 }

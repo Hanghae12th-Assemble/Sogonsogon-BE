@@ -7,6 +7,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -77,30 +78,21 @@ public class GlobalExceptionHandler {
         return StatusResponseDto.fail(HttpStatus.NOT_FOUND, getErrorResponseDTO(ex));
     }
 
+    // TODO : tempExceptionHandler 수정하기
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({AuthenticationCredentialsNotFoundException.class,
+        IllegalAccessException.class,
+        NullPointerException.class,
+        AuthenticationException.class,
+        AccessDeniedException.class,})
+    public StatusResponseDto<ErrorResponseDTO> tempExceptionHandler(Exception ex) {
+        return StatusResponseDto.fail(HttpStatus.BAD_REQUEST, getErrorResponseDTO(ex));
+    }
+
     private static ErrorResponseDTO getErrorResponseDTO(Exception ex) {
         String errors = ex.getMessage();
         return new ErrorResponseDTO(errors);
     }
-
-//
-//    @ExceptionHandler({
-//        MethodArgumentNotValidException.class
-//    })
-//    public StatusResponseDto<?> tempHandler(MethodArgumentNotValidException exception) {
-//        exception.getBindingResult()
-//    }
-
-//    @ExceptionHandler({IllegalAccessException.class,
-//        NullPointerException.class,
-//        UsernameNotFoundException.class,
-//        AuthenticationException.class,
-//        EntityNotFoundException.class,
-//        AccessDeniedException.class,
-//        IllegalArgumentException.class
-//    })
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public StatusResponseDto<?> handle(Exception ex) {
-//        return StatusResponseDto.fail(400, ex.getMessage());
-//    }
 
 }

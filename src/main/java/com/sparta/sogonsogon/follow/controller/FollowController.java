@@ -21,25 +21,33 @@ import java.util.List;
 public class FollowController {
     private final FollowService followService;
 
-
-    @PostMapping("/{followerUsername}")
-    @Operation(summary = "팔로우 추가", description ="팔로우 추가" )
-    public StatusResponseDto<FollowResponseDto> createFollow(@PathVariable String followerUsername,
-                                                             @RequestBody FollowRequestDto requestDto,
-                                                             @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails)throws AccessDeniedException {
-
-//        followService.createFollow(followerUsername,requestDto,userDetails.getUsername());
-        return StatusResponseDto.success(HttpStatus.OK ,(FollowResponseDto) followService.createFollow(followerUsername,requestDto,userDetails.getUser()));
+    @PostMapping("/{memberId}")
+    @Operation(summary = "팔로우 토글", description = "팔로우 토글")
+    public StatusResponseDto<FollowResponseDto> follow(@PathVariable Long memberId,
+                                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        // 팔로우를 토글로 구현, 홀수번 팔로우, 짝수번 언팔로우
+        return StatusResponseDto.success(HttpStatus.OK, followService.toggleFollow(memberId, userDetails));
     }
 
 
-    @DeleteMapping("/{followerUsername}")
-    @Operation(summary = "팔로우 취소", description ="팔로우 쉬소" )
-    public StatusResponseDto<String> unFollow(@PathVariable String followerUsername,
-                                                  @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails)throws AccessDeniedException {
-        followService.unfollow(followerUsername,userDetails.getUser());
-        return StatusResponseDto.success(HttpStatus.OK, "팔로우 취소 되었습니다.");
-    }
+//    @PostMapping("/{followerUsername}")
+//    @Operation(summary = "팔로우 추가", description ="팔로우 추가" )
+//    public StatusResponseDto<FollowResponseDto> createFollow(@PathVariable String followerUsername,
+//                                                             @RequestBody FollowRequestDto requestDto,
+//                                                             @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails)throws AccessDeniedException {
+//
+////        followService.createFollow(followerUsername,requestDto,userDetails.getUsername());
+//        return StatusResponseDto.success(HttpStatus.OK ,(FollowResponseDto) followService.createFollow(followerUsername,requestDto,userDetails.getUser()));
+//    }
+//
+//
+//    @DeleteMapping("/{followerUsername}")
+//    @Operation(summary = "팔로우 취소", description ="팔로우 쉬소" )
+//    public StatusResponseDto<String> unFollow(@PathVariable String followerUsername,
+//                                                  @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails)throws AccessDeniedException {
+//        followService.unfollow(followerUsername,userDetails.getUser());
+//        return StatusResponseDto.success(HttpStatus.OK, "팔로우 취소 되었습니다.");
+//    }
 
     @GetMapping("/{memberId}/following")
     @Operation(summary = "유저가 팔로우하는 모든 유저 가져오기", description ="팔로우하는 모든 유저 가져오기" )

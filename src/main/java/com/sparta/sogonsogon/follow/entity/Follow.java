@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.follow.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sparta.sogonsogon.follow.dto.FollowRequestDto;
 import com.sparta.sogonsogon.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,11 @@ public class Follow {
     public Follow(Member follower, Member following) {
         this.follower = follower;
         this.following = following;
+    }
+
+    public Follow(FollowRequestDto followRequestDto) {
+        this.follower = followRequestDto.getFollower();
+        this.following = followRequestDto.getFollowing();
     }
 }
 
