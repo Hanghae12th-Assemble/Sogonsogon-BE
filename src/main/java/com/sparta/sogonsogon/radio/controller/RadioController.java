@@ -59,4 +59,12 @@ public class RadioController {
                                                             @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails){
         return radioService.deleteRadio(radioId,userDetails.getUser());
     }
+    /*
+    TODOS
+    1. 방참여
+    2. 방퇴장
+    3. 특정방조회
+        3-1. 아이디로조회
+        3-2. 이름으로조회
+     */
 }
