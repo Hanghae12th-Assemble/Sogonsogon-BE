@@ -10,6 +10,7 @@ import com.sparta.sogonsogon.member.repository.MemberRepository;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
 import com.sparta.sogonsogon.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Validated
 @RequiredArgsConstructor
@@ -39,6 +41,7 @@ public class MemberService {
     private final JwtUtil jwtUtil;
     private final S3Uploader s3Uploader;
 
+    //회원 가입
     @Transactional
     public MemberResponseDto signup(SignUpRequestDto requestDto) throws IllegalAccessException {
         String membername = requestDto.getMembername();
@@ -59,8 +62,9 @@ public class MemberService {
         return new MemberResponseDto(member);
     }
 
+    //로그인
     @Transactional(readOnly = true)
-    public MemberResponseDto login(LoginRequestDto requestDto, HttpServletResponse response) throws IllegalAccessException {
+    public MemberResponseDto login(LoginRequestDto requestDto, HttpServletResponse response)  {
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
@@ -78,6 +82,7 @@ public class MemberService {
     }
 
     // 회원 정보 수정
+    @Transactional
     public StatusResponseDto<MemberResponseDto> update(Long id, MemberRequestDto memberRequestDto, UserDetailsImpl userDetails) throws IOException {
         String profileImageUrl = s3Uploader.uploadFiles(memberRequestDto.getProfileImageUrl(), "profileImages");
 
@@ -86,7 +91,7 @@ public class MemberService {
         );
 
         if (member.getRole() == MemberRoleEnum.USER || member.getMembername().equals(userDetails.getUser().getMembername())){
-            member.update(memberRequestDto.getNickname(), memberRequestDto.getMemberInfo(), profileImageUrl, memberRequestDto.getPassword());
+            member.update(profileImageUrl, memberRequestDto);
             return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
         }else{
             throw new IllegalArgumentException("해당 유저만 회원 정보 수정이 가능합니다. ");
@@ -94,20 +99,27 @@ public class MemberService {
     }
 
     // 고유 아이디로 유저 정보 조회
-    public StatusResponseDto<MemberResponseDto> getInfoByMembername(String membername) {
-        Member member = memberRepository.findByMembername(membername).orElseThrow(
-                ()-> new EntityNotFoundException("해당 유저를 찾을 수 없습니다.")
-        );
-        return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
+    public StatusResponseDto<Optional<Member>> getInfoByMembername(String membername) {
+        Optional<Member> list = memberRepository.findMemberByMembernameContaining(membername);
+        if(list.isPresent()){
+            return StatusResponseDto.success(HttpStatus.OK, list);
+        }else {
+            throw new EntityNotFoundException("해당 유저를 찾을 수 없습니다.");
+        }
+
     }
 
     //유저 닉네임으로 정보 조회
-    public StatusResponseDto<List<Member>> getListByNickname(String nickname) {
-        List<Member> memberlist = memberRepository.findAllSearchByNickname(nickname);
-//        List<MemberOneResponseDto> memberResponseDtos = new ArrayList<>();
-//        for (Member member : memberlist) {
-//            memberResponseDtos.add(MemberOneResponseDto.of(member));
-//        }
-        return StatusResponseDto.success(HttpStatus.OK, memberlist);
+    @Transactional
+    public StatusResponseDto<List<MemberOneResponseDto>> getListByNickname(String nickname) {
+        log.info(nickname);
+        List<Member> memberlist = memberRepository.findMembersByNicknameContaining(nickname);
+        log.info(memberlist.toString());
+        List<MemberOneResponseDto> memberResponseDtos = new ArrayList<>();
+        for (Member member : memberlist) {
+            memberResponseDtos.add(MemberOneResponseDto.of(member));
+        }
+        log.info(memberResponseDtos.toString());
+        return StatusResponseDto.success(HttpStatus.OK, memberResponseDtos);
     }
 }

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class MemberController {
 
     //로그인
     @PostMapping("/login")
-    public StatusResponseDto<MemberResponseDto> login(@RequestBody LoginRequestDto requestDto, @Parameter(hidden = true) HttpServletResponse response) throws IllegalAccessException {
+    public StatusResponseDto<MemberResponseDto> login(@RequestBody LoginRequestDto requestDto, @Parameter(hidden = true) HttpServletResponse response) {
         return StatusResponseDto.success(HttpStatus.OK, memberService.login(requestDto, response));
     }
 
@@ -52,13 +53,13 @@ public class MemberController {
 
     //해당 고유 아이디 조회
     @GetMapping("/")
-    public StatusResponseDto<MemberResponseDto> findbyMembername(@RequestBody String membername){
+    public StatusResponseDto<Optional<Member>> findbyMembername(@RequestBody String membername){
         return memberService.getInfoByMembername(membername);
     }
 
     //해당 유저 닉네임으로 조회
     @GetMapping("/nickname")
-    public StatusResponseDto<List<Member>> findListByNickname(@RequestBody String nickname){
+    public StatusResponseDto<List<MemberOneResponseDto>> findListByNickname(@RequestBody String nickname){
         return memberService.getListByNickname(nickname);
     }
 
