@@ -47,8 +47,8 @@ public class RadioController {
     @PutMapping("/{radidId}")
     @Operation(summary = "선택된 라디오 정보 수정", description ="선택된 라디오 정보 수정" )
     public StatusResponseDto<RadioResponseDto> updateRadio(@PathVariable Long radidId,
-                                                           @Valid @ModelAttribute RadioRequestDto requestDto,
-                                                           @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+                                                            @Valid @ModelAttribute RadioRequestDto requestDto,
+                                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return StatusResponseDto.success(HttpStatus.OK, radioService.updateRadio(radidId,requestDto,userDetails));
     }
 
@@ -56,7 +56,7 @@ public class RadioController {
     @DeleteMapping("/{radidId}")
     @Operation(summary = "선택된 라디오 삭제", description ="선택된 라디오 삭제" )
     public StatusResponseDto<RadioResponseDto> deleteRadio(@PathVariable Long radidId,
-                                                           @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails){
         return radioService.deleteRadio(radidId,userDetails.getUser());
     }
 }

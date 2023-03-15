@@ -53,7 +53,7 @@ public class RadioService {
         }
 
         // 라디오 룸 배경이미지 추가
-        String imageUrl = s3Uploader.upload(requestDto.getBackgroundImageUrl());
+        String imageUrl = s3Uploader.uploadFiles(requestDto.getBackgroundImageUrl(), "radioImages");
 
         Radio radio = Radio.builder()
             .member(member)
@@ -104,7 +104,7 @@ public class RadioService {
         String newBGIamgeUrl = null;
         if (requestDto.getBackgroundImageUrl() != null) {
             // 새로운 이미지 생성
-            newBGIamgeUrl = s3Uploader.upload(requestDto.getBackgroundImageUrl());
+            newBGIamgeUrl = s3Uploader.uploadFiles(requestDto.getBackgroundImageUrl(), "radioImages");
         } else {
             //기존이미지 유지
             newBGIamgeUrl = radio.getBackgroundImageUrl();
