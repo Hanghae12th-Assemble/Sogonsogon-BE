@@ -71,6 +71,12 @@ public class GlobalExceptionHandler {
         return StatusResponseDto.fail(HttpStatus.BAD_REQUEST, getErrorResponseDTO(ex));
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler
+    public StatusResponseDto<ErrorResponseDTO> entityNotFoundException(EntityNotFoundException ex) {
+        return StatusResponseDto.fail(HttpStatus.NOT_FOUND, getErrorResponseDTO(ex));
+    }
+
     private static ErrorResponseDTO getErrorResponseDTO(Exception ex) {
         String errors = ex.getMessage();
         return new ErrorResponseDTO(errors);
