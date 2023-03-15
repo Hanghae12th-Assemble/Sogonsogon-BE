@@ -2,20 +2,22 @@ package com.sparta.sogonsogon.member.controller;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.member.dto.LoginRequestDto;
+import com.sparta.sogonsogon.member.dto.MemberRequestDto;
 import com.sparta.sogonsogon.member.dto.MemberResponseDto;
 import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
 import com.sparta.sogonsogon.member.service.MemberService;
+import com.sparta.sogonsogon.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,6 +37,21 @@ public class MemberController {
     public StatusResponseDto<MemberResponseDto> login(@RequestBody LoginRequestDto requestDto, @Parameter(hidden = true) HttpServletResponse response) throws IllegalAccessException {
         return StatusResponseDto.success(HttpStatus.OK, memberService.login(requestDto, response));
     }
+
+    //회원 정보 수정
+    @ResponseBody
+    @PutMapping("/update/{userId}")
+    public StatusResponseDto<MemberResponseDto> updateMemberInfo(@PathVariable Long userId,
+                                                                @RequestParam(value = "nickname") String nickname,
+                                                                @RequestParam(value = "password") String password,
+                                                                @RequestParam(value = "memberInfo") String memberInfo,
+                                                                @RequestParam(value = "profileImage")MultipartFile multipartFile,
+                                                                @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        MemberRequestDto memberRequestDto = new MemberRequestDto(nickname, password, memberInfo, multipartFile);
+        return memberService.update(userId, memberRequestDto, userDetails);
+    }
+
+    //해당 고유 아이디 조회
 
 
 }

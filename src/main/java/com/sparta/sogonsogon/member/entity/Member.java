@@ -62,9 +62,12 @@ public class Member extends TimeStamped{
         this.password = password;
     }
 
-//    public update(String nickname, String profileImageUrl, String password, String ){
-//
-//    }
+    public void update(String nickname, String profileImageUrl, String password, String memberInfo){
+        this.nickname = nickname;
+        this.password = password;
+        this.profileImageUrl = profileImageUrl;
+        this.memberInfo = memberInfo;
+    }
 
 
 
