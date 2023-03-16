@@ -56,9 +56,9 @@ public class Radio extends TimeStamped {
     }
 
 
-    public void updateRadio(RadioRequestDto requestDto, String newBGIamgeUrl) {
+    public void updateRadio(RadioRequestDto requestDto, String backgroundImageUrl) {
         this.title = requestDto.getTitle();
         this.introduction = requestDto.getIntroduction();
-        this.backgroundImageUrl = newBGIamgeUrl;
+        this.backgroundImageUrl = backgroundImageUrl;
     }
 }
