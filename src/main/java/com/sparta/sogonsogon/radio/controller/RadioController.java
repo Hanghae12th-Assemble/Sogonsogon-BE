@@ -77,4 +77,9 @@ public class RadioController {
         radioService.quitRadio(radioId, userDetails);
         return StatusResponseDto.success(HttpStatus.OK, null);
     }
+
+    @GetMapping("/find")
+    public StatusResponseDto<List<RadioResponseDto>> findBytitle(@RequestParam(value = "title") String title){
+        return radioService.findByTitle(title);
+    }
 }
