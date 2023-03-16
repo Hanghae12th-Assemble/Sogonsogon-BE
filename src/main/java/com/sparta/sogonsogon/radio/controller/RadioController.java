@@ -62,6 +62,8 @@ public class RadioController {
                                                  @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails){
         radioService.deleteRadio(radioId,userDetails.getUser());
         return StatusResponseDto.success(HttpStatus.OK,null);
+    }
+
 
     @PostMapping("/enter/{radioId}")
     @Operation(summary = "선택한 라디오 참여", description = "선택한 라디오 참여")
