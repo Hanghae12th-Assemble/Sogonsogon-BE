@@ -25,4 +25,6 @@ public interface MemberRepository extends JpaRepository<Member , Long> {
     List<Member> searchAllByNicknameLike(@Param(value = "nickname") String nickname);
 
     Optional<Member> findByMembername(String membername);
+
+    Optional<Member> findByMembernameContaining(String membername);
 }

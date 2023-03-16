@@ -100,7 +100,7 @@ public class MemberService {
 
     // 고유 아이디로 유저 정보 조회
     public StatusResponseDto<Optional<Member>> getInfoByMembername(String membername) {
-        Optional<Member> list = memberRepository.findMemberByMembernameContaining(membername);
+        Optional<Member> list = memberRepository.findByMembernameContaining(membername);
         if(list.isPresent()){
             return StatusResponseDto.success(HttpStatus.OK, list);
         }else {
