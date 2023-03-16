@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.member.entity;
 
 import com.sparta.sogonsogon.follow.entity.Follow;
+import com.sparta.sogonsogon.member.dto.MemberRequestDto;
 import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
 import com.sparta.sogonsogon.radio.entity.Radio;
 import lombok.AllArgsConstructor;
@@ -62,10 +63,11 @@ public class Member extends TimeStamped{
         this.password = password;
     }
 
-//    public update(String nickname, String profileImageUrl, String password, String ){
-//
-//    }
-
-
+    public void update(String profileImageUrl, MemberRequestDto requestDto){
+        this.nickname = requestDto.getNickname();
+        this.memberInfo = requestDto.getMemberInfo();
+        this.password = requestDto.getPassword();
+        this.profileImageUrl = profileImageUrl;
+    }
 
 }

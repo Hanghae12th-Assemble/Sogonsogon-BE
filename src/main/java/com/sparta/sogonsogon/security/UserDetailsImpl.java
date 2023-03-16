@@ -14,8 +14,8 @@ public class UserDetailsImpl implements UserDetails {
     private final Member member;
     private final String username;
 
-    public UserDetailsImpl(Member user, String username) {
-        this.member = user;
+    public UserDetailsImpl(Member member, String username) {
+        this.member = member;
         this.username = username;
     }
 

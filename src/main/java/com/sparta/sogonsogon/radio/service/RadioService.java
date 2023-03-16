@@ -6,12 +6,16 @@ import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
 import com.sparta.sogonsogon.radio.dto.RadioRequestDto;
 import com.sparta.sogonsogon.radio.dto.RadioResponseDto;
+import com.sparta.sogonsogon.radio.entity.EnterMember;
+import com.sparta.sogonsogon.radio.entity.EnterMemberResponseDto;
 import com.sparta.sogonsogon.radio.entity.Radio;
+import com.sparta.sogonsogon.radio.repository.EnterMemberRepository;
 import com.sparta.sogonsogon.radio.repository.RadioRepository;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
 import com.sparta.sogonsogon.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +34,7 @@ public class RadioService {
     private final S3Uploader s3Uploader;
     private JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
+    private final EnterMemberRepository enterMemberRepository;
 
 
     // 라디오생성
@@ -54,7 +59,7 @@ public class RadioService {
         }
 
         // 라디오 룸 배경이미지 추가
-        String imageUrl = s3Uploader.upload(requestDto.getBackgroundImageUrl());
+        String imageUrl = s3Uploader.uploadFiles(requestDto.getBackgroundImageUrl(), "radioImages");
 
         Radio radio = Radio.builder()
             .member(member)
@@ -87,6 +92,7 @@ public class RadioService {
             () -> new IllegalArgumentException("조회된 라디오가 없습니다."));
         return new RadioResponseDto(radio);
     }
+
 //
 //    // 선택된 라디오 정보 조회
 //    @Transactional
@@ -121,6 +127,7 @@ public class RadioService {
 //    }
 
 
+
     @Transactional
     public void deleteRadio(Long radioId, Member user) {
 
@@ -135,5 +142,42 @@ public class RadioService {
         radioRepository.deleteById(radioId);
 
 
+    }
+
+    public EnterMemberResponseDto enterRadio(Long radioId, UserDetailsImpl userDetails) {
+
+        Radio radio = radioRepository.findById(radioId).orElseThrow(
+            () -> new IllegalArgumentException("해당하는 라디오가 없습니다.")
+        );
+
+        Member member = memberRepository.findById(userDetails.getUser().getId()).orElseThrow(
+            () -> new IllegalArgumentException("로그인 되지 않았습니다.")
+        );
+
+        EnterMember enterMember = new EnterMember(member, radio);
+        enterMemberRepository.save(enterMember);
+        return EnterMemberResponseDto.of(enterMember);
+    }
+
+    public void quitRadio(Long radioId, UserDetailsImpl userDetails) {
+        Radio radio = radioRepository.findById(radioId).orElseThrow(
+            () -> new IllegalArgumentException("해당하는 라디오가 없습니다.")
+        );
+
+        EnterMember enterMember = enterMemberRepository.findByRadioAndMember(radio, userDetails.getUser());
+        if (enterMember == null) {
+            throw new IllegalArgumentException("해당 방에 참여하지 않았습니다.");
+        } else {
+            enterMemberRepository.delete(enterMember);
+        }
+    }
+
+    public StatusResponseDto<List<RadioResponseDto>> findByTitle(String title) {
+        List<Radio> list = radioRepository.findByTitleContaining(title);
+        List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
+        for (Radio radio : list){
+            radioResponseDtos.add(new RadioResponseDto(radio));
+        }
+        return StatusResponseDto.success(HttpStatus.OK, radioResponseDtos);
     }
 }
