@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -58,7 +57,7 @@ public class RadioController {
 
 
     @DeleteMapping("/{radioId}")
-    @Operation(summary = "선택된 라디오 삭제", description = "선택된 라디오 삭제")
+    @Operation(summary = "선택된 라디오 삭제", description ="선택된 라디오 삭제" )
     public StatusResponseDto<RadioResponseDto> deleteRadio(@PathVariable Long radioId,
                                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
         radioService.deleteRadio(radioId, userDetails.getUser());
@@ -80,8 +79,9 @@ public class RadioController {
         return StatusResponseDto.success(HttpStatus.OK, null);
     }
 
-    @GetMapping("/find")
-    public StatusResponseDto<List<RadioResponseDto>> findBytitle(@RequestParam(value = "title") String title) {
+    @PostMapping("/find")
+    @Operation(summary = "타이틀 조회", description = "해당 방송중 제목에 단어가 들어간 모든 방송 조회")
+    public StatusResponseDto<List<RadioResponseDto>> findBytitle(@RequestParam(value = "title") String title){
         return radioService.findByTitle(title);
     }
 
