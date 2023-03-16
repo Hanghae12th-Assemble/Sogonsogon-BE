@@ -113,7 +113,7 @@ public class MemberService {
     @Transactional
     public StatusResponseDto<List<MemberOneResponseDto>> getListByNickname(String nickname) {
         log.info(nickname);
-        List<Member> memberlist = memberRepository.findMembersByNicknameContaining(nickname);
+        List<Member> memberlist = memberRepository.searchAllByNicknameLike(nickname);
         log.info(memberlist.toString());
         List<MemberOneResponseDto> memberResponseDtos = new ArrayList<>();
         for (Member member : memberlist) {
