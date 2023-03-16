@@ -19,10 +19,12 @@ public interface MemberRepository extends JpaRepository<Member , Long> {
     Optional<Member> findMemberByMembernameContaining(String membername);
     Optional<Member> findByEmail(String email);
 
-//    @Query(
-//            value = "SELECT u FROM Member u WHERE u.nickname LIKE %:nickname%"
-//    )
-    List<Member> findMembersByNicknameContaining(String nickname);
+    @Query(
+            value = "SELECT u FROM users u WHERE u.nickname LIKE %:nickname%"
+    )
+    List<Member> searchAllByNicknameLike(@Param(value = "nickname") String nickname);
 
     Optional<Member> findByMembername(String membername);
+
+    Optional<Member> findByMembernameContaining(String membername);
 }

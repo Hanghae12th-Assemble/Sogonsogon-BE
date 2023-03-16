@@ -100,7 +100,7 @@ public class MemberService {
 
     // 고유 아이디로 유저 정보 조회
     public StatusResponseDto<Optional<Member>> getInfoByMembername(String membername) {
-        Optional<Member> list = memberRepository.findMemberByMembernameContaining(membername);
+        Optional<Member> list = memberRepository.findByMembernameContaining(membername);
         if(list.isPresent()){
             return StatusResponseDto.success(HttpStatus.OK, list);
         }else {
@@ -113,7 +113,7 @@ public class MemberService {
     @Transactional
     public StatusResponseDto<List<MemberOneResponseDto>> getListByNickname(String nickname) {
         log.info(nickname);
-        List<Member> memberlist = memberRepository.findMembersByNicknameContaining(nickname);
+        List<Member> memberlist = memberRepository.searchAllByNicknameLike(nickname);
         log.info(memberlist.toString());
         List<MemberOneResponseDto> memberResponseDtos = new ArrayList<>();
         for (Member member : memberlist) {

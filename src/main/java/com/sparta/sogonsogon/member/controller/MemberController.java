@@ -53,13 +53,13 @@ public class MemberController {
 
     //해당 고유 아이디 조회
     @GetMapping("/")
-    public StatusResponseDto<Optional<Member>> findbyMembername(@RequestBody String membername){
+    public StatusResponseDto<Optional<Member>> findbyMembername(@RequestParam(value = "membername") String membername){
         return memberService.getInfoByMembername(membername);
     }
 
     //해당 유저 닉네임으로 조회
     @GetMapping("/nickname")
-    public StatusResponseDto<List<MemberOneResponseDto>> findListByNickname(@RequestBody String nickname){
+    public StatusResponseDto<List<MemberOneResponseDto>> findListByNickname(@RequestParam(value = "nickname") String nickname){
         return memberService.getListByNickname(nickname);
     }
 

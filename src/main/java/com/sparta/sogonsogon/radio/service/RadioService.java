@@ -15,6 +15,7 @@ import com.sparta.sogonsogon.security.UserDetailsImpl;
 import com.sparta.sogonsogon.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -158,5 +159,14 @@ public class RadioService {
         } else {
             enterMemberRepository.delete(enterMember);
         }
+    }
+
+    public StatusResponseDto<List<RadioResponseDto>> findByTitle(String title) {
+        List<Radio> list = radioRepository.findByTitleContaining(title);
+        List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
+        for (Radio radio : list){
+            radioResponseDtos.add(new RadioResponseDto(radio));
+        }
+        return StatusResponseDto.success(HttpStatus.OK, radioResponseDtos);
     }
 }
