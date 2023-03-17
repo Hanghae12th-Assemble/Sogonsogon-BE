@@ -17,6 +17,8 @@ public class MemberOneResponseDto {
     private String introduction;
     private String email;
     private Boolean isFollowCheck;
+    private int followers;
+    private int followings;
 
     public static MemberOneResponseDto of(Member member){
         boolean check = false;
@@ -33,6 +35,8 @@ public class MemberOneResponseDto {
                 .profileImageUrl(member.getProfileImageUrl())
                 .introduction(member.getMemberInfo())
                 .isFollowCheck(check)
+                .followers(member.getFollower().size())
+                .followings(member.getFollowing().size())
                 .build();
     }
 }
