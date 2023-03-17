@@ -66,7 +66,6 @@ public class Member extends TimeStamped{
     public void update(String profileImageUrl, MemberRequestDto requestDto){
         this.nickname = requestDto.getNickname();
         this.memberInfo = requestDto.getMemberInfo();
-        this.password = requestDto.getPassword();
         this.profileImageUrl = profileImageUrl;
     }
 

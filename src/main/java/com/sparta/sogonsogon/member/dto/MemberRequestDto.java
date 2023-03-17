@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 public class MemberRequestDto {
 
     private String nickname;
-    private String password;
     private String memberInfo;
     private MultipartFile profileImageUrl;
 
