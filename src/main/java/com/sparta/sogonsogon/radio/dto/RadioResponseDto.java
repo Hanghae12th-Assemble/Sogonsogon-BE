@@ -18,7 +18,11 @@ public class RadioResponseDto extends TimeStamped {
     private String introduction; // 라디오 관련 간단한 설명
 
     private String backgroundImageUrl; //배경화면
-    private String memberId;
+    private Long memberId;
+    private String nickname;
+
+    private String membername;
+
 
     private LocalDateTime startTime;  // 방송시작시간
 
@@ -31,9 +35,11 @@ public class RadioResponseDto extends TimeStamped {
         this.title = radio.getTitle();
         this.introduction = radio.getIntroduction();
         this.backgroundImageUrl = radio.getBackgroundImageUrl();
+        this.nickname = radio.getMember().getNickname();
+        this.membername = radio.getMember().getMembername();
 //        this.startTime = radio.getStartTime();
 //        this.endTime = radio.getEndTime();
         this.createdAt = radio.getCreatedAt();
-        this.memberId = String.valueOf(radio.getMember().getId());
+        this.memberId = radio.getMember().getId();
     }
 }
