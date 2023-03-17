@@ -3,6 +3,7 @@ package com.sparta.sogonsogon.member.entity;
 import com.sparta.sogonsogon.follow.entity.Follow;
 import com.sparta.sogonsogon.member.dto.MemberRequestDto;
 import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
+import com.sparta.sogonsogon.noti.entity.Notification;
 import com.sparta.sogonsogon.radio.entity.Radio;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,9 +47,13 @@ public class Member extends TimeStamped{
     @Enumerated(value = EnumType.STRING)
     private MemberRoleEnum role = MemberRoleEnum.USER;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "radio_Id")
-//    private Radio radio;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "radio_Id")
+    private List<Radio> radio = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "notification_Id")
+    private List<Notification> notification = new ArrayList<>();
 
     @OneToMany(mappedBy = "following")
     private List<Follow> follower = new ArrayList<>();
