@@ -59,8 +59,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         //회원가입, 로그인,조회까지는 security 인증 없이도 가능함
         http.authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers("/docs").permitAll()
-                .antMatchers("/api/**").permitAll()
+//                .antMatchers("/docs").permitAll()
+//                .antMatchers("/api/**").permitAll()
                 .antMatchers("/api/member/signup").permitAll()
                 .antMatchers("/api/member/login").permitAll()
                 // .antMatchers(HttpMethod.GET, "/api/studies/**").permitAll()
