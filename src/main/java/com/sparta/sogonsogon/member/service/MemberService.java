@@ -121,4 +121,11 @@ public class MemberService {
         log.info(memberResponseDtos.toString());
         return StatusResponseDto.success(HttpStatus.OK, memberResponseDtos);
     }
+
+    public StatusResponseDto<MemberResponseDto> detailsMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                ()-> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다. ")
+        );
+        return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
+    }
 }

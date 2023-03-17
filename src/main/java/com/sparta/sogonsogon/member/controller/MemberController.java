@@ -68,4 +68,11 @@ public class MemberController {
         return memberService.getListByNickname(nickname);
     }
 
+    //상세 사용자 조회
+    @GetMapping("/{memberId}")
+    @Operation(summary = "상세 회원 조회", description = "id 로 조회 하여 해당 회원의 정보를 가져옴")
+    public StatusResponseDto<MemberResponseDto> detailsMember(@PathVariable Long memberId){
+        return memberService.detailsMember(memberId);
+    }
+
 }

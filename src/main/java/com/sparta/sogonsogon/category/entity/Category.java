@@ -23,7 +23,7 @@ public class Category extends BaseTimeEntity{
     @Column(nullable = false,unique = true)
     private String slug; // 카테고리 URL 경로를 위한 슬러그
 
-//    @OneToMany(mappedBy = "category")
+//    @OneToOne(mappedBy = "category")
 //    private List<Radio> radios
 
     @Builder
