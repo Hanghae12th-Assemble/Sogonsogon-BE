@@ -18,7 +18,7 @@ public class Notification {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = true)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     private boolean isRead;
