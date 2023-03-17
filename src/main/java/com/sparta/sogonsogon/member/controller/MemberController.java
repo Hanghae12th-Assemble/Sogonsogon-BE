@@ -47,23 +47,22 @@ public class MemberController {
     @Operation(summary = "회원 정보 수정", description = "프로필에서 보이는 회원 정보 수정")
     public StatusResponseDto<MemberResponseDto> updateMemberInfo(@PathVariable Long userId,
                                                                 @RequestParam(value = "nickname") String nickname,
-                                                                @RequestParam(value = "password") String password,
                                                                 @RequestParam(value = "memberInfo") String memberInfo,
                                                                 @RequestParam(value = "profileImage")MultipartFile multipartFile,
                                                                 @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        MemberRequestDto memberRequestDto = new MemberRequestDto(nickname, password, memberInfo, multipartFile);
+        MemberRequestDto memberRequestDto = new MemberRequestDto(nickname, memberInfo, multipartFile);
         return memberService.update(userId, memberRequestDto, userDetails);
     }
 
     //해당 고유 아이디 조회
-    @PostMapping("/")
+    @GetMapping("/")
     @Operation(summary = "고유 아이디 조회", description = "고유 아이디로 사용자 조회")
-    public StatusResponseDto<Optional<Member>> findbyMembername(@RequestParam(value = "membername") String membername){
+    public StatusResponseDto<List<MemberResponseDto>> findbyMembername(@RequestParam(value = "membername") String membername){
         return memberService.getInfoByMembername(membername);
     }
 
     //해당 유저 닉네임으로 조회
-    @PostMapping("/nickname")
+    @GetMapping("/nickname")
     @Operation(summary = "닉네임 조회", description = "단어로 해당 닉네임에 포함되는 모든 사용자 조회")
     public StatusResponseDto<List<MemberOneResponseDto>> findListByNickname(@RequestParam(value = "nickname") String nickname){
         return memberService.getListByNickname(nickname);

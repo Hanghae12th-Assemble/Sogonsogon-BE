@@ -99,14 +99,13 @@ public class MemberService {
     }
 
     // 고유 아이디로 유저 정보 조회
-    public StatusResponseDto<Optional<Member>> getInfoByMembername(String membername) {
-        Optional<Member> list = memberRepository.findByMembernameContaining(membername);
-        if(list.isPresent()){
-            return StatusResponseDto.success(HttpStatus.OK, list);
-        }else {
-            throw new EntityNotFoundException("해당 유저를 찾을 수 없습니다.");
-        }
-
+    public StatusResponseDto<List<MemberResponseDto>> getInfoByMembername(String membername) {
+        List<Member> list = memberRepository.findAllByMembernameContaining(membername);
+        List<MemberResponseDto> memberResponseDto = new ArrayList<>();
+            for (Member member: list) {
+                memberResponseDto.add(new MemberResponseDto(member));
+            }
+            return StatusResponseDto.success(HttpStatus.OK, memberResponseDto);
     }
 
     //유저 닉네임으로 정보 조회
