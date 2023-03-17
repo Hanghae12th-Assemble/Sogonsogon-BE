@@ -31,6 +31,7 @@ public class Radio extends TimeStamped {
 
     @Column
     private String backgroundImageUrl; //배경화면
+
     @CreatedDate
     private LocalDateTime createdAt; // 방 생성시간
 

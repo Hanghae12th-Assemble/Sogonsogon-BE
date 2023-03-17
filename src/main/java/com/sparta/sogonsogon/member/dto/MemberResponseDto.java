@@ -19,6 +19,8 @@ public class MemberResponseDto {
     private String introduction;
     private String email;
     private Boolean isFollowCheck;
+    private int followers;
+    private int followings;
 
 
     public MemberResponseDto(Member member){
@@ -33,6 +35,9 @@ public class MemberResponseDto {
         }else {
             this.isFollowCheck = true;
         }
+        this.followers = member.getFollower().size();
+        this.followings = member.getFollowing().size();
+
     }
 
 
