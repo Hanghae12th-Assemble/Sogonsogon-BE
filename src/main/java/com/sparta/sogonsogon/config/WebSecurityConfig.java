@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -63,7 +64,11 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 //                .antMatchers("/api/**").permitAll()
                 .antMatchers("/api/member/signup").permitAll()
                 .antMatchers("/api/member/login").permitAll()
-                // .antMatchers(HttpMethod.GET, "/api/studies/**").permitAll()
+            // 멤버조회
+            .antMatchers("/api/member/**").permitAll()
+            // 라디오조회
+            .antMatchers("/api/radios/find").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/radios").permitAll()
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and()
