@@ -79,7 +79,7 @@ public class RadioController {
         return StatusResponseDto.success(HttpStatus.OK, null);
     }
 
-    @PostMapping("/find")
+    @GetMapping("/find")
     @Operation(summary = "타이틀 조회", description = "해당 방송중 제목에 단어가 들어간 모든 방송 조회")
     public StatusResponseDto<List<RadioResponseDto>> findBytitle(@RequestParam(value = "title") String title){
         return radioService.findByTitle(title);
