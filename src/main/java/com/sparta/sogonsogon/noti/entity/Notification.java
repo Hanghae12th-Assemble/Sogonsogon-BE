@@ -21,7 +21,7 @@ public class Notification {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    private boolean isRead;
+    private Boolean isRead;
 
     private String message;
 }
