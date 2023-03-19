@@ -1,5 +1,6 @@
 package com.sparta.sogonsogon.dto;
 
+import com.sparta.sogonsogon.enums.ErrorType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,13 +12,13 @@ import java.util.List;
 @Setter
 public class ErrorResponseDTO {
 
-    List<String> errorMessage;
+    ErrorType errorType;
 
-    public ErrorResponseDTO(List<String> errorMessage) {
+    String errorMessage;
+
+    public ErrorResponseDTO(ErrorType errorType, String errorMessage) {
+        this.errorType = errorType;
         this.errorMessage = errorMessage;
     }
 
-    public ErrorResponseDTO(String errorMessage) {
-        this.errorMessage = Collections.singletonList(errorMessage);
-    }
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 public class RadioRequestDto {
 
 
+    @NotBlank
     private String title; // 라디오 제목
 
     private String introduction; // 라디오 관련 간단한 설명

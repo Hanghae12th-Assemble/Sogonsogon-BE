@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.member.service;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
+import com.sparta.sogonsogon.enums.ErrorMessage;
 import com.sparta.sogonsogon.follow.repository.FollowRepository;
 import com.sparta.sogonsogon.jwt.JwtUtil;
 import com.sparta.sogonsogon.member.dto.*;
@@ -50,11 +51,11 @@ public class MemberService {
 
         Optional<Member> foundMembername = memberRepository.findByMembername(membername);
         if(foundMembername.isPresent()){
-            throw new DuplicateKeyException("중복된 아이디가 존재합니다."); // HTTP 409 Conflict
+            throw new DuplicateKeyException(ErrorMessage.DUPLICATE_USERNAME.getMessage()); // HTTP 409 Conflict
         }
         Optional<Member> foundEmail = memberRepository.findByEmail(email);
         if(foundEmail.isPresent()){
-            throw new DuplicateKeyException("중복된 이메일이 존재합니다.");
+            throw new DuplicateKeyException(ErrorMessage.DUPLICATE_EMAIL.getMessage());
         }
 
         Member member = new Member(requestDto, password);
@@ -69,11 +70,11 @@ public class MemberService {
         String password = requestDto.getPassword();
 
         Member member = memberRepository.findByEmail(email).orElseThrow(
-                ()-> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다.") // HTTP 404 Not Found
+                ()-> new UsernameNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage()) // HTTP 404 Not Found
         );
 
         if (!passwordEncoder.matches(password, member.getPassword())){
-            throw new BadCredentialsException("비밀번호가 틀렸습니다. 다시 입력해주세요"); // HTTP 401 Unauthorized
+            throw new BadCredentialsException(ErrorMessage.WRONG_PASSWORD.getMessage()); // HTTP 401 Unauthorized
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getMembername(), member.getRole()));
@@ -87,14 +88,14 @@ public class MemberService {
         String profileImageUrl = s3Uploader.uploadFiles(memberRequestDto.getProfileImageUrl(), "profileImages");
 
         Member member= memberRepository.findById(id).orElseThrow(
-                ()-> new EntityNotFoundException("해당 유저를 찾을 수 없습니다. 다시 로그인 해주세요")
+                ()-> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
 
         if (member.getRole() == MemberRoleEnum.USER || member.getMembername().equals(userDetails.getUser().getMembername())){
             member.update(profileImageUrl, memberRequestDto);
             return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
         }else{
-            throw new IllegalArgumentException("해당 유저만 회원 정보 수정이 가능합니다. ");
+            throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
         }
     }
 
