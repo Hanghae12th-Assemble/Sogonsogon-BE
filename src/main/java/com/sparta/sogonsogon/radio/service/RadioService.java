@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.radio.service;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
+import com.sparta.sogonsogon.enums.ErrorMessage;
 import com.sparta.sogonsogon.jwt.JwtUtil;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
@@ -43,7 +44,7 @@ public class RadioService {
 
         //유저인지 확인
         Member member = memberRepository.findByMembername(userDetails.getUsername()).orElseThrow(
-            () -> new InsufficientAuthenticationException("로그인해주세요") // 401 Unauthorized
+            () -> new InsufficientAuthenticationException(ErrorMessage.ACCESS_DENIED.getMessage()) // 401 Unauthorized
         );
         // 라디오 방 이름 중복여보 확인
 //        if (radioRepository.findByTitle(requestDto.getTitle()) != null) {
@@ -51,12 +52,13 @@ public class RadioService {
 //        }
         Optional<Radio> found = radioRepository.findByTitle(requestDto.getTitle());
         if (found.isPresent()) {
-            throw new DuplicateKeyException("이미 존재하는 라디오 제목입니다."); // 409 Conflict
+            throw new DuplicateKeyException(ErrorMessage.DUPLICATE_RADIO_NAME.getMessage()); // 409 Conflict
         }
 
-        if (requestDto.getTitle() == null) {
-            throw new IllegalArgumentException("제목을 입력해주세요"); // 400 Bad Request
-        }
+//        if (requestDto.getTitle() == null) {
+//            throw new IllegalArgumentException("제목을 입력해주세요"); // 400 Bad Request
+//        }
+//       해당 내용은 requestDto 에서 검증할 내용이기 때문에 제거
 
         // 라디오 룸 배경이미지 추가
         String imageUrl = s3Uploader.uploadFiles(requestDto.getBackgroundImageUrl(), "radioImages");
@@ -89,7 +91,7 @@ public class RadioService {
     @Transactional
     public RadioResponseDto findRadio(Long radioId) {
         Radio radio = radioRepository.findById(radioId).orElseThrow(
-            () -> new IllegalArgumentException("조회된 라디오가 없습니다."));
+            () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage()));
         return new RadioResponseDto(radio);
     }
 
@@ -133,11 +135,11 @@ public class RadioService {
 
         //라디오 존재여부 확인하기
         Radio radio = radioRepository.findById(radioId).orElseThrow(
-            () -> new IllegalArgumentException("라디오가 존재하지 않습니다.")
+            () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
         );
 
         if (!user.getId().equals(radio.getMember().getId())) {
-            throw new IllegalArgumentException("다른 사용자가 생성된 라디오는 삭제할 수 없습니다.");
+            throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
         }
         radioRepository.deleteById(radioId);
 
@@ -147,11 +149,11 @@ public class RadioService {
     public EnterMemberResponseDto enterRadio(Long radioId, UserDetailsImpl userDetails) {
 
         Radio radio = radioRepository.findById(radioId).orElseThrow(
-            () -> new IllegalArgumentException("해당하는 라디오가 없습니다.")
+            () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
         );
 
         Member member = memberRepository.findById(userDetails.getUser().getId()).orElseThrow(
-            () -> new IllegalArgumentException("로그인 되지 않았습니다.")
+            () -> new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage())
         );
 
         EnterMember enterMember = new EnterMember(member, radio);
@@ -161,12 +163,12 @@ public class RadioService {
 
     public void quitRadio(Long radioId, UserDetailsImpl userDetails) {
         Radio radio = radioRepository.findById(radioId).orElseThrow(
-            () -> new IllegalArgumentException("해당하는 라디오가 없습니다.")
+            () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
         );
 
         EnterMember enterMember = enterMemberRepository.findByRadioAndMember(radio, userDetails.getUser());
         if (enterMember == null) {
-            throw new IllegalArgumentException("해당 방에 참여하지 않았습니다.");
+            throw new IllegalArgumentException(ErrorMessage.NOT_FOUND_ENTER_MEMBER.getMessage());
         } else {
             enterMemberRepository.delete(enterMember);
         }
