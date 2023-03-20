@@ -39,7 +39,7 @@ public class MemberService {
     private final FollowRepository followRepository;
 //    private final FollowRepository followRepository;
     private final JwtUtil jwtUtil;
-    private final S3Uploader s3Uploader;
+
 
     //회원 가입
     @Transactional
@@ -84,14 +84,13 @@ public class MemberService {
     // 회원 정보 수정
     @Transactional
     public StatusResponseDto<MemberResponseDto> update(Long id, MemberRequestDto memberRequestDto, UserDetailsImpl userDetails) throws IOException {
-        String profileImageUrl = s3Uploader.uploadFiles(memberRequestDto.getProfileImageUrl(), "profileImages");
 
         Member member= memberRepository.findById(id).orElseThrow(
                 ()-> new EntityNotFoundException("해당 유저를 찾을 수 없습니다. 다시 로그인 해주세요")
         );
 
         if (member.getRole() == MemberRoleEnum.USER || member.getMembername().equals(userDetails.getUser().getMembername())){
-            member.update(profileImageUrl, memberRequestDto);
+            member.update( memberRequestDto);
             return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
         }else{
             throw new IllegalArgumentException("해당 유저만 회원 정보 수정이 가능합니다. ");

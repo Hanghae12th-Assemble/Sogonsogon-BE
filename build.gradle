@@ -63,6 +63,10 @@ dependencies {
     implementation 'javax.xml.bind:jaxb-api'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+    //Oauth2
+    //google 관련 내용
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
 }
 
 tasks.named('test') {

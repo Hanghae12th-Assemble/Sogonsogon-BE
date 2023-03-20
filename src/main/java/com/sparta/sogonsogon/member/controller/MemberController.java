@@ -5,6 +5,7 @@ import com.sparta.sogonsogon.member.dto.*;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.service.MemberService;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
+import com.sparta.sogonsogon.util.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.Optional;
 public class MemberController {
 
     private final MemberService memberService;
+    private final S3Uploader s3Uploader;
 
     //회원 가입
     @PostMapping("/signup")
@@ -50,7 +52,8 @@ public class MemberController {
                                                                 @RequestParam(value = "memberInfo") String memberInfo,
                                                                 @RequestParam(value = "profileImage")MultipartFile multipartFile,
                                                                 @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        MemberRequestDto memberRequestDto = new MemberRequestDto(nickname, memberInfo, multipartFile);
+        String profileImageUrl = s3Uploader.uploadFiles(multipartFile, "profileImages");
+        MemberRequestDto memberRequestDto = new MemberRequestDto(nickname, memberInfo, profileImageUrl);
         return memberService.update(userId, memberRequestDto, userDetails);
     }
 

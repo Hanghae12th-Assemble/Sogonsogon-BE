@@ -53,6 +53,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors();
         http.csrf().disable();
 
         //로그인 된 후 토큰없이 자동 인증되는 것을 방지

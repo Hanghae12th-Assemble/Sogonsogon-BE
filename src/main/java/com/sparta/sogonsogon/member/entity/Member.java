@@ -5,10 +5,8 @@ import com.sparta.sogonsogon.member.dto.MemberRequestDto;
 import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
 import com.sparta.sogonsogon.noti.entity.Notification;
 import com.sparta.sogonsogon.radio.entity.Radio;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.*;
@@ -18,6 +16,7 @@ import java.util.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Member extends TimeStamped{
 
     @Id
@@ -68,10 +67,17 @@ public class Member extends TimeStamped{
         this.password = password;
     }
 
-    public void update(String profileImageUrl, MemberRequestDto requestDto){
+    public void update(MemberRequestDto requestDto){
         this.nickname = requestDto.getNickname();
         this.memberInfo = requestDto.getMemberInfo();
-        this.profileImageUrl = profileImageUrl;
+        this.profileImageUrl = requestDto.getProfileImageUrl();
     }
+
+//    public Member update(String nickname, String profileImageUrl) {
+//        this.nickname = nickname;
+//        this.profileImageUrl = profileImageUrl;
+//        return this;
+//    }
+
 
 }
