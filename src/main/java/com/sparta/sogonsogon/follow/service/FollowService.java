@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.follow.service;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
+import com.sparta.sogonsogon.enums.ErrorMessage;
 import com.sparta.sogonsogon.follow.dto.FollowRequestDto;
 import com.sparta.sogonsogon.follow.dto.FollowResponseDto;
 import com.sparta.sogonsogon.follow.entity.Follow;
@@ -96,7 +97,7 @@ public class FollowService {
 //
 //        List<FollowResponseDto> followingList = followRepository.findAllBy
         Member member = memberRepository.findById(memberId).orElseThrow(
-                ()-> new EntityNotFoundException("유저를 찾을 수 없습니다. ")
+                ()-> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
 
         List<Follow> followings = followRepository.findByFollower(member);
@@ -116,7 +117,7 @@ public class FollowService {
     @Transactional
     public List<FollowResponseDto> getFollowers(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new IllegalArgumentException("해당 유저는 존재하지 않습니다.")
+                () -> new IllegalArgumentException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
         List<Follow> follows = followRepository.findByFollowingId(memberId);
 
@@ -136,20 +137,20 @@ public class FollowService {
     @Transactional
     public FollowResponseDto toggleFollow(Long memberId, UserDetailsImpl userDetails) {
         Member follow = memberRepository.findById(memberId).orElseThrow(
-            () -> new EntityNotFoundException("해당하는 유저가 없습니다.")
+            () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
-        Member follwer = memberRepository.findById(userDetails.getUser().getId()).orElseThrow(
-            () -> new AuthenticationCredentialsNotFoundException("로그인이 필요합니다.")
+        Member follower = memberRepository.findById(userDetails.getUser().getId()).orElseThrow(
+            () -> new AuthenticationCredentialsNotFoundException(ErrorMessage.ACCESS_DENIED.getMessage())
         );
 
-        if (follow.getId().equals(follwer.getId())) {
-            throw new IllegalArgumentException("자기 자신을 팔로우할 수 없습니다.");
+        if (follow.getId().equals(follower.getId())) {
+            throw new IllegalArgumentException(ErrorMessage.WRONG_SELF_REQUEST.getMessage());
         }
 
-        Follow followStatus = followRepository.findByFollowingAndFollower(follwer, follow).orElse(null);
+        Follow followStatus = followRepository.findByFollowingAndFollower(follower, follow).orElse(null);
 
         if (followStatus == null) {
-            Follow newFollow = new Follow(new FollowRequestDto(follow, follwer));
+            Follow newFollow = new Follow(new FollowRequestDto(follow, follower));
             followRepository.save(newFollow);
             return FollowResponseDto.of(newFollow);
         } else {
