@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.member.oauth.service;
 
 import com.sparta.sogonsogon.member.entity.Member;
+import com.sparta.sogonsogon.member.oauth.dto.MemberSessionDto;
 import com.sparta.sogonsogon.member.oauth.entity.OAuthAttributes;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
         Member member = saveOrUpdate(attributes);
 
         //세션 정보를 직렬화하는 dto 클래스
-        httpSession.setAttribute(attributes);
+        httpSession.setAttribute("member", new MemberSessionDto(member));
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(member.getRoleValue())),

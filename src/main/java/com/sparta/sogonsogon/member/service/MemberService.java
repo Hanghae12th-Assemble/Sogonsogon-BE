@@ -38,7 +38,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
-//    private final FollowRepository followRepository;
     private final JwtUtil jwtUtil;
 
 
