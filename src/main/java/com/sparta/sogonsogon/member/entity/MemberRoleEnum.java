@@ -9,7 +9,7 @@ public enum MemberRoleEnum {
 
     USER("ROLE_USER"),  // 사용자 권한
     ADMIN("ROLE_ADMIN"),  // 관리자 권한
-    SOCIAL("ROLE_SOCIAL")
+    SOCIAL("ROLE_SOCIAL")// 소셜 로그인 회원
     ;
 
     private final String value;
