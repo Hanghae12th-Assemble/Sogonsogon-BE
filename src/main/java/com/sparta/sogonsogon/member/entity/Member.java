@@ -44,7 +44,7 @@ public class Member extends TimeStamped{
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private MemberRoleEnum role = MemberRoleEnum.USER;
+    private MemberRoleEnum role ;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "radio_Id")
@@ -73,11 +73,13 @@ public class Member extends TimeStamped{
         this.profileImageUrl = requestDto.getProfileImageUrl();
     }
 
-//    public Member update(String nickname, String profileImageUrl) {
-//        this.nickname = nickname;
-//        this.profileImageUrl = profileImageUrl;
-//        return this;
-//    }
+    public String getRoleValue() {
+        return this.role.getValue();
+    }
 
+    public Member updateModifiedAt(){
+        this.onPreUpdate();
+        return this;
+    }
 
 }
