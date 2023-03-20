@@ -4,20 +4,12 @@ package com.sparta.sogonsogon.noti.controller;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.LifecycleState;
 import com.sparta.sogonsogon.noti.service.NotificationService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import springfox.documentation.annotations.ApiIgnore;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @RestController
 //@Slf4j
@@ -33,6 +25,18 @@ public class NotificationController {
                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
         return notificationService.subscribe(userDetails.getUser().getId(), lastEventId);
     }
+
+    //    public SseEmitter subscribe(@AuthenticationPrincipal UserDetailsImpl userDetails)  {
+//        return notificationService.subscribe(userDetails.getUser().getId());
+//    }
+//
+    //SSE 구독 요청
+//    @ApiOperation(value = "SSE 구독 요청", notes = "실시간 알림을 받기 위한 구독 신청")
+//    @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+//    public SseEmitter connect(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//
+//        return sseService.subscribe(userDetails.getAccount().getId());
+//    }
 }
 
 //실제 클라이언트로부터 오는 알림 구독 요청을 받는다.

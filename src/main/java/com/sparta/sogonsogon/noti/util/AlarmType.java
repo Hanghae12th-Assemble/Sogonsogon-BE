@@ -5,5 +5,4 @@ public enum AlarmType {
     eventRadioEnd,
     eventFollower,
 
-
 }

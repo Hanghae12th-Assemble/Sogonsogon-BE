@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 // 뒤에 구분자로 회원의 ID를 사용하기 때문에 해당 회원과 관련된 Emitter와 이벤트들을 찾아오는 것이다.
 @Repository
 @NoArgsConstructor
+@Slf4j
 public class EmitterRepositoryImpl implements EmitterRepository {
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
     private final Map<String, Object> eventCache = new ConcurrentHashMap<>();
@@ -31,34 +32,34 @@ public class EmitterRepositoryImpl implements EmitterRepository {
         eventCache.put(eventCacheId, event);
     }
 
+//    @Override
+//    public Map<String, SseEmitter> findAllEmitterStartWithByMemberId(String memberId) {
+//        return emitters.entrySet().stream()
+//                .filter(entry -> entry.getKey().startsWith(memberId))
+//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+//    }
+
+//    @Override
+//    public Map<String, Object> findAllEventCacheStartWithByMemberId(String memberId) {
+//        return eventCache.entrySet().stream()
+//                .filter(entry -> entry.getKey().startsWith(memberId))
+//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+//    }
+
     @Override
     public Map<String, SseEmitter> findAllEmitterStartWithByMemberId(String memberId) {
+
         return emitters.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(memberId))
+                .filter(entry -> Arrays.stream(entry.getKey().split("_")).findFirst().get().equals(memberId))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
     public Map<String, Object> findAllEventCacheStartWithByMemberId(String memberId) {
         return eventCache.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(memberId))
+                .filter(entry -> Arrays.stream(entry.getKey().split("_")).findFirst().get().equals(memberId))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-
-//    @Override
-//    public Map<String, SseEmitter> findAllEmitterStartWithByMemberId(String memberId) {
-//
-//        return emitters.entrySet().stream()
-//                .filter(entry -> Arrays.stream(entry.getKey().split("_")).findFirst().get().equals(memberId))
-//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-//    }
-//
-//    @Override
-//    public Map<String, Object> findAllEventCacheStartWithByMemberId(String memberId) {
-//        return eventCache.entrySet().stream()
-//                .filter(entry -> Arrays.stream(entry.getKey().split("_")).findFirst().get().equals(memberId))
-//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-//    }
 
     @Override
     public void deleteById(String id) {
@@ -76,27 +77,27 @@ public class EmitterRepositoryImpl implements EmitterRepository {
         );
     }
 
-    @Override
-    public void deleteAllEventCacheStartWithId(String memberId) {
-        eventCache.forEach(
-                (key, emitter) -> {
-                    if (key.startsWith(memberId)) {
-                        eventCache.remove(key);
-                    }
-                }
-        );
-    }
-
 //    @Override
 //    public void deleteAllEventCacheStartWithId(String memberId) {
 //        eventCache.forEach(
 //                (key, emitter) -> {
-//                    if (Arrays.stream(key.split("_")).findFirst().get().equals(memberId)) {
+//                    if (key.startsWith(memberId)) {
 //                        eventCache.remove(key);
 //                    }
 //                }
 //        );
 //    }
+
+    @Override
+    public void deleteAllEventCacheStartWithId(String memberId) {
+        eventCache.forEach(
+                (key, emitter) -> {
+                    if (Arrays.stream(key.split("_")).findFirst().get().equals(memberId)) {
+                        eventCache.remove(key);
+                    }
+                }
+        );
+    }
 
 //    @Override
 //    public Map<String, Object> findAllEventCacheStartWithId(String valueOf) {

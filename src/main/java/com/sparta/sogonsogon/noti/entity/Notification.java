@@ -9,13 +9,15 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+
 import javax.persistence.*;
+
 
 @Getter //각 래퍼 클래스에 대한 추출 메소드이다.
 @Setter
 @Entity
 @NoArgsConstructor
-public class Notification {
+public class Notification extends TimeStamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,13 +47,15 @@ public class Notification {
     private AlarmType alarmType; // 알림 종류에 관한 것이다.
 
     @Builder
-    public Notification(Member receiver, Boolean isState,
+    public Notification(Member receiver, Boolean readState,
                         String message, AlarmType alarmType) {
         this.receiver = receiver;
-        this.isRead = isState;
+        this.isRead = readState;
         this.message = message;
         this.alarmType = alarmType;
     }
+
+
 
 //    public void changeState() {
 //        isRead = true;

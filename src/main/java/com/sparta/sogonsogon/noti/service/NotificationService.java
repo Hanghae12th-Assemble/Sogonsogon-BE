@@ -8,7 +8,6 @@ import com.sparta.sogonsogon.noti.repository.NotificationRepository;
 import com.sparta.sogonsogon.noti.util.AlarmType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -16,9 +15,9 @@ import java.io.IOException;
 import java.util.Map;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class NotificationService {
 
     private final EmitterRepository emitterRepository;
@@ -30,7 +29,7 @@ public class NotificationService {
 
 //    private Long timeout;
 
-    public SseEmitter subscribe(Long memberId, String lastEventId) {
+    public SseEmitter subscribe(Long memberId,String lastEventId) {
         String emitterId = makeTimeIncludeId(memberId);
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
@@ -76,26 +75,28 @@ public class NotificationService {
                 .forEach(entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
     }
 
-    public void send(Member receiver, AlarmType alarmType, String message,Boolean isState) {
-        Notification notification = notificationRepository.save(createNotification(receiver, alarmType,message,isState));
+    public void send(Member receiver, AlarmType alarmType, String message) {
+        Notification notification = notificationRepository.save(createNotification(receiver, alarmType,message));
 
         String receiverId = String.valueOf(receiver.getId());
         String eventId = receiverId + "_" + System.currentTimeMillis();
         Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByMemberId(receiverId);
         emitters.forEach(
                 (key, emitter) -> {
+                    // 데이터 캐시 저장(유실된 데이터 처리하기 위함)
                     emitterRepository.saveEventCache(key, notification);
+                    // 데이터 전송
                     sendNotification(emitter, eventId, key, NotificationResponseDto.create(notification));
                 }
         );
     }
 
-    private Notification createNotification(Member receiver, AlarmType alarmType, String message, Boolean isState) {
+    private Notification createNotification(Member receiver, AlarmType alarmType, String message) {
         return Notification.builder()
                 .receiver(receiver)
-                .isState(false)
                 .alarmType(alarmType)
                 .message(message)
+                .readState(false)
                 .build();
     }
 
@@ -126,16 +127,16 @@ public class NotificationService {
 //                .build();
 //    }
 //
-//    private void sendToClient(SseEmitter emitter, String id, Object data) {
-//        try {
-//            emitter.send(SseEmitter.event()
-//                    .id(id)
-//                    .name("sse")
-//                    .data(data));
-//        } catch (IOException exception) {
-//            emitterRepository.deleteById(id);
-//            throw new RuntimeException("연결 오류!");
-//        }
-//    }
+    private void sendToClient(SseEmitter emitter, String id, Object data) {
+        try {
+            emitter.send(SseEmitter.event()
+                    .id(id)
+                    .name("sse")
+                    .data(data));
+        } catch (IOException exception) {
+            emitterRepository.deleteById(id);
+            throw new RuntimeException("연결 오류!");
+        }
+    }
 
 }

@@ -33,9 +33,6 @@ public class Radio extends TimeStamped {
     private String backgroundImageUrl; //배경화면
 
     @CreatedDate
-    private LocalDateTime createdAt; // 방 생성시간
-
-    @CreatedDate
     private LocalDateTime startTime; // 방송시작시간
 
     @LastModifiedDate
