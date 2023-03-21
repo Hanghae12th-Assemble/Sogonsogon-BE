@@ -1,5 +1,6 @@
 package com.sparta.sogonsogon.radio.entity;
 
+import com.sparta.sogonsogon.enums.CategoryType;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.entity.TimeStamped;
 
@@ -32,6 +33,10 @@ public class Radio extends TimeStamped {
     @Column
     private String backgroundImageUrl; //배경화면
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CategoryType categoryType;
+
     @CreatedDate
     private LocalDateTime createdAt; // 방 생성시간
 
@@ -48,12 +53,13 @@ public class Radio extends TimeStamped {
 
     @Builder
     public Radio(String title, String introduction,
-                 String backgroundImageUrl, Member member ) {
+                 String backgroundImageUrl, Member member, CategoryType categoryType ) {
 
         this.title = title;
         this.introduction = introduction;
         this.backgroundImageUrl = backgroundImageUrl;
         this.member = member;
+        this.categoryType = categoryType;
     }
 
 
