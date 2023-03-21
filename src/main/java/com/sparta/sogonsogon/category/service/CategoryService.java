@@ -4,6 +4,7 @@ import com.sparta.sogonsogon.category.dto.CategoryRequestDto;
 import com.sparta.sogonsogon.category.dto.CategoryResponseDto;
 import com.sparta.sogonsogon.category.entity.Category;
 import com.sparta.sogonsogon.category.repository.CategoryRepository;
+import com.sparta.sogonsogon.enums.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class CategoryService {
         Category category = categoryRepository.findBySlug(slug);
 
         if (category == null) {
-            throw new IllegalArgumentException("카테고리를 찾을 수 없습니다.");
+            throw new IllegalArgumentException(ErrorMessage.NOT_FOUND_CATEGORY.getMessage());
         }
         CategoryResponseDto categoryResponseDto = new CategoryResponseDto();
         categoryResponseDto.setId(category.getId());

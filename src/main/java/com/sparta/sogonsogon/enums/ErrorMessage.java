@@ -19,7 +19,10 @@ public enum ErrorMessage {
     // radio
     DUPLICATE_RADIO_NAME("중복된 라디오명입니다."),
     NOT_FOUND_RADIO("해당하는 라디오가 없습니다."),
-    NOT_FOUND_ENTER_MEMBER("해당 라디오에 참여하지 않습니다.")
+    NOT_FOUND_ENTER_MEMBER("해당 라디오에 참여하지 않습니다."),
+
+    // category
+    NOT_FOUND_CATEGORY("해당하는 카테고리가 없습니다.")
 
     ;
 
