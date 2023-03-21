@@ -68,6 +68,8 @@ public class OAuthAttributes {
         Map<String, Object> kakaoAcount =(Map<String, Object>) attributes.get("kakaoAcount");
         Map<String, Object> profile = (Map<String, Object>) kakaoAcount.get("profile");
 
+        log.trace("kakao acountInfo : " + kakaoAcount);
+
         return OAuthAttributes.builder()
                 .membername((String) profile.get("Id"))
                 .email((String) kakaoAcount.get("email"))
