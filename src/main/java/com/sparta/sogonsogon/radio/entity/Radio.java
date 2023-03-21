@@ -43,8 +43,6 @@ public class Radio extends TimeStamped {
     @CreatedDate
     private LocalDateTime startTime; // 방송시작시간
 
-    @LastModifiedDate
-    private LocalDateTime endTime; // 방송종료 시간
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_Id")

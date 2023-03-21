@@ -88,7 +88,7 @@ public class RadioController {
     }
 
     @GetMapping("/{category}")
-    @Operation(summary = "라디오 카테고리 검색", description = "특정 카테고리에 속하는 방속만 조회")
+    @Operation(summary = "라디오 카테고리 검색", description = "특정 카테고리에 속하는 방속만 조회/ sortBy = createdAt, ")
     public StatusResponseDto<List<RadioResponseDto>> findByCategory(@PathVariable @RequestParam(value = "categoryType") CategoryType categoryType) {
         return StatusResponseDto.success(HttpStatus.OK, radioService.findByCategory(categoryType));
     }
