@@ -14,6 +14,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -37,16 +39,19 @@ public class Radio extends TimeStamped {
     @Enumerated(EnumType.STRING)
     private CategoryType categoryType;
 
-    @CreatedDate
-    private LocalDateTime createdAt; // 방 생성시간
 
     @CreatedDate
     private LocalDateTime startTime; // 방송시작시간
+
+    private int enterCnt;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_Id")
     private Member member;
+
+    @OneToMany(mappedBy = "radio", cascade = CascadeType.ALL)
+    private List<EnterMember> enterMemberList = new ArrayList<>();
 
 
     @Builder
@@ -65,5 +70,9 @@ public class Radio extends TimeStamped {
         this.title = requestDto.getTitle();
         this.introduction = requestDto.getIntroduction();
         this.backgroundImageUrl = backgroundImageUrl;
+    }
+
+    public void enter(int cnt) {
+        this.enterCnt = cnt;
     }
 }

@@ -17,6 +17,10 @@ import com.sparta.sogonsogon.security.UserDetailsImpl;
 import com.sparta.sogonsogon.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
@@ -97,41 +101,6 @@ public class RadioService {
         return new RadioResponseDto(radio);
     }
 
-//
-//    // 선택된 라디오 정보 조회
-//    @Transactional
-//    public RadioResponseDto updateRadio(Long radioId, RadioRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
-//
-//        //유저인지 확인
-//        Member member = memberRepository.findByMembername(userDetails.getUsername()).orElseThrow(
-//                () -> new InsufficientAuthenticationException("로그인해주세요")
-//        );
-//
-//        //라디오 존재여부 확인하기
-//        Radio radio = radioRepository.findById(radioId).orElseThrow(
-//                () -> new IllegalArgumentException("라디오가 존재하지 않습니다.")
-//        );
-//
-//
-//        Optional<Radio> found = radioRepository.findByTitle(requestDto.getTitle());
-//        if (found.isPresent()) {
-//            throw new DuplicateKeyException("이미 존재하는 라디오 제목입니다.");
-//        }
-//
-//        String newBGIamgeUrl = null;
-//        if (requestDto.getBackgroundImageUrl() != null) {
-//            // 새로운 이미지 생성
-//            newBGIamgeUrl = s3Uploader.upload(requestDto.getBackgroundImageUrl());
-//        } else {
-//            //기존이미지 유지
-//            newBGIamgeUrl = radio.getBackgroundImageUrl();
-//        }
-//        radio.updateRadio(requestDto, newBGIamgeUrl);
-//        return new RadioResponseDto(radio);
-//    }
-
-
-
     @Transactional
     public void deleteRadio(Long radioId, Member user) {
 
@@ -159,6 +128,7 @@ public class RadioService {
         );
 
         EnterMember enterMember = new EnterMember(member, radio);
+        radio.enter(radio.getEnterCnt()+1);
         enterMemberRepository.save(enterMember);
         return EnterMemberResponseDto.of(enterMember);
     }
@@ -173,6 +143,7 @@ public class RadioService {
             throw new IllegalArgumentException(ErrorMessage.NOT_FOUND_ENTER_MEMBER.getMessage());
         } else {
             enterMemberRepository.delete(enterMember);
+            radio.enter(radio.getEnterCnt()-1);
         }
     }
 
@@ -185,12 +156,18 @@ public class RadioService {
         return radioResponseDtos;
     }
 
-    public List<RadioResponseDto> findByCategory(CategoryType categoryType) {
-        List<Radio> radioList = radioRepository.findAllByCategoryType(categoryType);
+    public List<RadioResponseDto> findByCategory(int page, int size, String sortBy, CategoryType categoryType) {
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Radio> radioPage = radioRepository.findAllByCategoryType(categoryType, pageable);
+
+        List<Radio> radioList = radioPage.getContent();
         List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
+
         for (Radio radio : radioList) {
             radioResponseDtos.add(new RadioResponseDto(radio));
         }
+
         return radioResponseDtos;
     }
 }
