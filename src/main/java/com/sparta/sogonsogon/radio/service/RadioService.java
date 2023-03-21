@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.radio.service;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
+import com.sparta.sogonsogon.enums.CategoryType;
 import com.sparta.sogonsogon.enums.ErrorMessage;
 import com.sparta.sogonsogon.jwt.JwtUtil;
 import com.sparta.sogonsogon.member.entity.Member;
@@ -68,6 +69,7 @@ public class RadioService {
             .title(requestDto.getTitle())
             .introduction(requestDto.getIntroduction())
             .backgroundImageUrl(imageUrl)
+            .categoryType(requestDto.getCategoryType())
             .build();
 
         radio = radioRepository.save(radio);
@@ -174,12 +176,21 @@ public class RadioService {
         }
     }
 
-    public StatusResponseDto<List<RadioResponseDto>> findByTitle(String title) {
+    public List<RadioResponseDto> findByTitle(String title) {
         List<Radio> list = radioRepository.findByTitleContaining(title);
         List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
         for (Radio radio : list){
             radioResponseDtos.add(new RadioResponseDto(radio));
         }
-        return StatusResponseDto.success(HttpStatus.OK, radioResponseDtos);
+        return radioResponseDtos;
+    }
+
+    public List<RadioResponseDto> findByCategory(CategoryType categoryType) {
+        List<Radio> radioList = radioRepository.findAllByCategoryType(categoryType);
+        List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
+        for (Radio radio : radioList) {
+            radioResponseDtos.add(new RadioResponseDto(radio));
+        }
+        return radioResponseDtos;
     }
 }
