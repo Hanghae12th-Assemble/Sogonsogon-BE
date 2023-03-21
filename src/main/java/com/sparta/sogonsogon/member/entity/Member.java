@@ -65,6 +65,7 @@ public class Member extends TimeStamped{
         this.nickname = requestDto.getNickname();
         this.email = requestDto.getEmail();
         this.password = password;
+        this.role = MemberRoleEnum.USER;
     }
 
     public void update(MemberRequestDto requestDto){
