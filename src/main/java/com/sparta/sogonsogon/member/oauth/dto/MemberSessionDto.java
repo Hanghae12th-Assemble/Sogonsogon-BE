@@ -13,6 +13,7 @@ public class MemberSessionDto implements Serializable {
     private String membername;
     private String nickname;
     private String email;
+    private String profileImageUrl;
     private MemberRoleEnum role;
     private String modifiedAt;
 
@@ -22,6 +23,7 @@ public class MemberSessionDto implements Serializable {
         this.membername = member.getMembername();
         this.nickname = member.getNickname();
         this.email = member.getEmail();
+        this.profileImageUrl = member.getProfileImageUrl();
         this.role = member.getRole();
         this.modifiedAt = member.getModifiedAt().toString();
     }
