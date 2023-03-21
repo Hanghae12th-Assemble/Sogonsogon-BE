@@ -90,8 +90,8 @@ public class RadioController {
     @GetMapping("/{category}")
     @Operation(summary = "라디오 카테고리 검색", description = "특정 카테고리에 속하는 방속만 조회/ sortBy = createdAt, enterCnt(청취자)")
     public StatusResponseDto<List<RadioResponseDto>> findByCategory(@PathVariable @RequestParam(value = "categoryType") CategoryType categoryType,
-                                                                    @RequestParam int page,
-                                                                    @RequestParam int size,
+                                                                    @RequestParam(defaultValue = "1") int page,
+                                                                    @RequestParam(defaultValue = "10") int size,
                                                                     @RequestParam(required = false, defaultValue = "createdAt") String sortBy) {
         return StatusResponseDto.success(HttpStatus.OK, radioService.findByCategory(page-1, size, sortBy, categoryType));
     }
