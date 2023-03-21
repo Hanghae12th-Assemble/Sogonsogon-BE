@@ -20,11 +20,10 @@ public class OAuthAttributes {
     private String membername;
     private String nickname;
     private String email;
+    private String profileImageUrl;
     private MemberRoleEnum roleEnum;
 
-    public static OAuthAttributes of(String registrationId,
-                                     String memberNameAttributeName,
-                                     Map<String, Object> attributes){
+    public static OAuthAttributes of(String registrationId, String memberNameAttributeName, Map<String, Object> attributes){
 
         return ofGoogle(memberNameAttributeName, attributes);
     }
@@ -32,9 +31,10 @@ public class OAuthAttributes {
     private static OAuthAttributes ofGoogle(String memberNameAttributeName,
                                             Map<String, Object> attributes){
         return OAuthAttributes.builder()
-                .membername((String) attributes.get("email"))
+                .membername((String) attributes.get("sub"))
                 .email((String) attributes.get("email"))
                 .nickname((String) attributes.get("name"))
+                .profileImageUrl((String) attributes.get("picture"))
                 .attributes(attributes)
                 .nameAttributeKey(memberNameAttributeName)
                 .build();
@@ -42,9 +42,10 @@ public class OAuthAttributes {
 
     public Member toEntity(){
         return Member.builder()
-                .membername(email)
+                .membername(membername)
                 .email(email)
                 .nickname(nickname)
+                .profileImageUrl(profileImageUrl)
                 .role(MemberRoleEnum.SOCIAL)
                 .build();
     }
