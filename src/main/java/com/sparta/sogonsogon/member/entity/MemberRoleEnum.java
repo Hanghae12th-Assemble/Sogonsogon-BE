@@ -16,7 +16,6 @@ public enum MemberRoleEnum {
 
 //    private final String authority;
 //
-//
 //    MemberRoleEnum(String authority) {
 //        this.authority = authority;
 //    }
