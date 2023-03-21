@@ -31,6 +31,7 @@ public class RadioResponseDto extends TimeStamped {
     private LocalDateTime endTime;  // 방송종료 시간
 
     private LocalDateTime createdAt; // 생성시간
+    private int enterCnt;
 
     public RadioResponseDto(Radio radio) {
         this.id = radio.getId();
@@ -44,5 +45,6 @@ public class RadioResponseDto extends TimeStamped {
         this.createdAt = radio.getCreatedAt();
         this.memberId = radio.getMember().getId();
         this.categoryType = radio.getCategoryType();
+        this.enterCnt = radio.getEnterCnt();
     }
 }
