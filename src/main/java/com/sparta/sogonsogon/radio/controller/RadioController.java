@@ -1,6 +1,7 @@
 package com.sparta.sogonsogon.radio.controller;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
+import com.sparta.sogonsogon.enums.CategoryType;
 import com.sparta.sogonsogon.radio.dto.RadioRequestDto;
 import com.sparta.sogonsogon.radio.dto.RadioResponseDto;
 import com.sparta.sogonsogon.radio.entity.EnterMemberResponseDto;
@@ -83,7 +84,13 @@ public class RadioController {
     @GetMapping("/find")
     @Operation(summary = "타이틀 조회", description = "해당 방송중 제목에 단어가 들어간 모든 방송 조회")
     public StatusResponseDto<List<RadioResponseDto>> findBytitle(@RequestParam(value = "title") String title){
-        return radioService.findByTitle(title);
+        return StatusResponseDto.success(HttpStatus.OK,radioService.findByTitle(title));
+    }
+
+    @GetMapping("/{category}")
+    @Operation(summary = "라디오 카테고리 검색", description = "특정 카테고리에 속하는 방속만 조회")
+    public StatusResponseDto<List<RadioResponseDto>> findByCategory(@PathVariable @RequestParam(value = "categoryType") CategoryType categoryType) {
+        return StatusResponseDto.success(HttpStatus.OK, radioService.findByCategory(categoryType));
     }
 
 }
