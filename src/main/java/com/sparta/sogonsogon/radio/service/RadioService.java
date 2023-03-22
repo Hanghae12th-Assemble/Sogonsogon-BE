@@ -31,6 +31,7 @@ import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -158,16 +159,9 @@ public class RadioService {
 
     public List<RadioResponseDto> findByCategory(int page, int size, String sortBy, CategoryType categoryType) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Radio> radioPage = radioRepository.findAllByCategoryType(categoryType, pageable);
+        Pageable sortedPageable = PageRequest.of(page, size, sort);
+        Page<Radio> radioPage = radioRepository.findAllByCategoryType(categoryType, sortedPageable);
 
-        List<Radio> radioList = radioPage.getContent();
-        List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
-
-        for (Radio radio : radioList) {
-            radioResponseDtos.add(new RadioResponseDto(radio));
-        }
-
-        return radioResponseDtos;
+        return radioPage.getContent().stream().map(RadioResponseDto::new).toList();
     }
 }
