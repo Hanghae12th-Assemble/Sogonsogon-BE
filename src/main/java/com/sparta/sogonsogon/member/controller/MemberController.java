@@ -46,7 +46,7 @@ public class MemberController {
     @PutMapping(value = "/update/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "회원 정보 수정", description = "프로필에서 보이는 회원 정보 수정")
     public StatusResponseDto<MemberResponseDto> updateMemberInfo(@PathVariable Long userId,
-                                                                @RequestBody @Valid MemberRequestDto requestDto,
+                                                                 @Valid @ModelAttribute MemberRequestDto requestDto,
                                                                 @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return StatusResponseDto.success(HttpStatus.OK, memberService.update(userId, requestDto, userDetails));
     }
