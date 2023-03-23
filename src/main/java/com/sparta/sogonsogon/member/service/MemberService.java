@@ -2,6 +2,7 @@ package com.sparta.sogonsogon.member.service;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.enums.ErrorMessage;
+import com.sparta.sogonsogon.enums.ErrorType;
 import com.sparta.sogonsogon.follow.repository.FollowRepository;
 import com.sparta.sogonsogon.jwt.JwtUtil;
 import com.sparta.sogonsogon.member.dto.*;
@@ -100,13 +101,12 @@ public class MemberService {
     }
 
     // 고유 아이디로 유저 정보 조회
-    public StatusResponseDto<List<MemberResponseDto>> getInfoByMembername(String membername) {
-        List<Member> list = memberRepository.findAllByMembernameContaining(membername);
-        List<MemberResponseDto> memberResponseDto = new ArrayList<>();
-            for (Member member: list) {
-                memberResponseDto.add(new MemberResponseDto(member));
-            }
-            return StatusResponseDto.success(HttpStatus.OK, memberResponseDto);
+    public StatusResponseDto<MemberResponseDto> getInfoByMembername(String membername) {
+        Member member = memberRepository.findByMembername(membername).orElseThrow(
+                () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
+        );
+
+            return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
     }
 
     //유저 닉네임으로 정보 조회
