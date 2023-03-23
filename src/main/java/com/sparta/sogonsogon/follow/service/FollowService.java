@@ -135,8 +135,8 @@ public class FollowService {
 
 
     @Transactional
-    public FollowResponseDto toggleFollow(Long memberId, UserDetailsImpl userDetails) {
-        Member follow = memberRepository.findById(memberId).orElseThrow(
+    public FollowResponseDto toggleFollow(String membername, UserDetailsImpl userDetails) {
+        Member follow = memberRepository.findByMembername(membername).orElseThrow(
             () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
         Member follower = memberRepository.findById(userDetails.getUser().getId()).orElseThrow(

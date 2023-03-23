@@ -21,12 +21,12 @@ import java.util.List;
 public class FollowController {
     private final FollowService followService;
 
-    @PostMapping("/{memberId}")
+    @PostMapping("/{membername}")
     @Operation(summary = "팔로우 토글", description = "팔로우 토글")
-    public StatusResponseDto<FollowResponseDto> follow(@PathVariable Long memberId,
+    public StatusResponseDto<FollowResponseDto> follow(@PathVariable String membername,
                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // 팔로우를 토글로 구현, 홀수번 팔로우, 짝수번 언팔로우
-        return StatusResponseDto.success(HttpStatus.OK, followService.toggleFollow(memberId, userDetails));
+        return StatusResponseDto.success(HttpStatus.OK, followService.toggleFollow(membername, userDetails));
     }
 
 
