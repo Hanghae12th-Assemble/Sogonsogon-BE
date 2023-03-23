@@ -29,11 +29,10 @@ import java.util.List;
 @RequestMapping("/api/radios")
 public class RadioController {
     private final RadioService radioService;
-//    private final RadioRepository radioRepository;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "라디오  생성", description = "라디오 생성")
-    public StatusResponseDto<RadioResponseDto> createRadio(@RequestBody @Valid RadioRequestDto requestDto,
+    public StatusResponseDto<RadioResponseDto> createRadio(@Valid @ModelAttribute RadioRequestDto requestDto,
                                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return StatusResponseDto.success(HttpStatus.CREATED, radioService.createRadio(requestDto, userDetails));
     }
@@ -43,22 +42,6 @@ public class RadioController {
     public StatusResponseDto<List<RadioResponseDto>> getRadios() {
         return StatusResponseDto.success(HttpStatus.OK, radioService.findAllRadios());
     }
-
-//
-//    @GetMapping("/{radioId}")
-//    @Operation(summary = "선택된 라디오 조회", description ="선택된 라디오 조회" )
-//    public StatusResponseDto<RadioResponseDto> getRadio(@PathVariable Long radioId){
-//        return StatusResponseDto.success(HttpStatus.OK, radioService.findRadio(radioId));
-//    }
-//
-//    @PutMapping(value = "/{radioId}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-//    @Operation(summary = "선택된 라디오 정보 수정", description ="선택된 라디오 정보 수정" )
-//    public StatusResponseDto<RadioResponseDto> updateRadio(@PathVariable Long radioId,
-//                                                           @Valid @ModelAttribute RadioRequestDto requestDto,
-//                                                           @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-//        return StatusResponseDto.success(HttpStatus.OK, radioService.updateRadio(radioId,requestDto,userDetails));
-//    }
-
 
     @DeleteMapping("/{radioId}")
     @Operation(summary = "선택된 라디오 삭제", description = "선택된 라디오 삭제")
