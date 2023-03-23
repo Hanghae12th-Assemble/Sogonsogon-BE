@@ -3,6 +3,7 @@ package com.sparta.sogonsogon.radio.controller;
 import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.enums.CategoryType;
 import com.sparta.sogonsogon.noti.dto.NotificationRequestDto;
+import com.sparta.sogonsogon.noti.service.NotificationService;
 import com.sparta.sogonsogon.radio.dto.RadioRequestDto;
 import com.sparta.sogonsogon.radio.dto.RadioResponseDto;
 import com.sparta.sogonsogon.radio.entity.EnterMemberResponseDto;
@@ -28,12 +29,13 @@ import java.util.List;
 public class RadioController {
     private final RadioService radioService;
     private final RadioRepository radioRepository;
+    private final NotificationService notificationService;
 
 
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "라디오  생성", description = "라디오 생성")
-    public StatusResponseDto<RadioResponseDto> createRadio(@RequestBody @Valid @ModelAttribute RadioRequestDto requestDto,
+    public StatusResponseDto<RadioResponseDto> createRadio(@Valid @ModelAttribute RadioRequestDto requestDto,
                                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return StatusResponseDto.success(HttpStatus.CREATED, radioService.createRadio(requestDto, userDetails));
     }
@@ -105,17 +107,45 @@ public class RadioController {
 
     // 방송 시작 및 종료 기능 추가*************************************************
 
+
     @PostMapping("/{radioId}/start")
-    public ResponseEntity<Radio> startRadio(@PathVariable Long radioId) {
-        radioService.startRadio(radioId);
+    public ResponseEntity<Radio> startRadio(@PathVariable Long radioId,
+                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Radio radio = radioService.startRadio(radioId,userDetails);
+        notificationService.notifyRadioStarted(radio);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{radioId}/end")
-    public ResponseEntity<Radio> endRadio(@PathVariable Long radioId) {
-        radioService.endRadio(radioId);
+    public ResponseEntity<Radio> endRadio(@PathVariable Long radioId,
+                                          @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Radio radio = radioService.endRadio(radioId);
+        notificationService.notifyRadioEnded(radio);
         return ResponseEntity.ok().build();
     }
+//    @PostMapping("/{radioId}/start")
+//    public ResponseEntity<Radio> startRadio(@PathVariable Long radioId) {
+//        radioService.startRadio(radioId);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @PostMapping("/{radioId}/end")
+//    public ResponseEntity<Radio> endRadio(@PathVariable Long radioId) {
+//        radioService.endRadio(radioId);
+//        return ResponseEntity.ok().build();
+//    }
+
+
+
+
+
+
+
+
+
+
+
+
 //    @PostMapping("/{id}/start")
 //    @Operation(summary = "라디오 시작", description = "라디오 시작")
 //    public ResponseEntity<Radio> startRadio(@PathVariable Long id) {

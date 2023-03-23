@@ -11,32 +11,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-
-
+@Repository
 public interface FollowRepository extends JpaRepository<Follow, Long> {
+
+    List<Follow> findByFollower(Member follower);
+
+    List<Follow> findByFollowingId(Long followingId);
+
     Optional<Follow> findByFollowingAndFollower(Member following, Member follower);
 
-    List<Follow> findByFollowingId(Long memberId);
-
-    List<Follow> findByFollower(Member member);
-
-    List<Member> findByFollowing(Member member);
+    @Query("select f.follower from follow f where f.following.id = :radioId")
     List<Member> findSubscribersByRadioId(Long radioId);
-
-    List<Radio> findFollowedRadiosByMemberId(Long memberId);
-
-
-//    List<Follow> findByFollowingId(Long followingId);
-//    List<Follow> findByFollowerId(Long followerId);
-//
-//    List<Follow> findByFollowing(Long memberId);
-
-
-//    List<Follow> findByFollower(Member follower);
-//
-//    List<Follow> findByFollowing(Member following);
-//
-//    Follow findByFollowerAndFollowing(Member follower, Member following);
-
-//    StatusResponseDto<List<FollowResponseDto>> findFollowersByFollowingId(Long memberId);
 }
+

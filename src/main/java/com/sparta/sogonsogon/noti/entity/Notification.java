@@ -3,19 +3,17 @@ package com.sparta.sogonsogon.noti.entity;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.noti.util.AlarmType;
 import com.sparta.sogonsogon.radio.entity.Radio;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter //각 래퍼 클래스에 대한 추출 메소드이다.
+
+@Entity(name = "notifications")
 @Setter
-@Entity
+@Getter //각 래퍼 클래스에 대한 추출 메소드이다.
 @NoArgsConstructor
 public class Notification extends TimeStamped{
 
@@ -36,13 +34,19 @@ public class Notification extends TimeStamped{
     @Column(nullable = false)
     private String message;  //알림의 내용. 비어있지 않아야하며 50자 이내여야한다.
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "alarm_type", nullable = false)
     private AlarmType alarmType; // 알림 종류에 관한 것이다.
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "radio_id")
     private Radio radio;
+
+
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_Id")
+//    private Member member;
 
     public void setRadio(Radio radio) {
         this.radio = radio;

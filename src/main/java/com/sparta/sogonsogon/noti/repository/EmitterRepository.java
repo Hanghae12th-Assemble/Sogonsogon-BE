@@ -1,5 +1,6 @@
 package com.sparta.sogonsogon.noti.repository;
 
+import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Map;
 //그렇기 때문에 추가적으로 EmitterRepository를 추가적으로 구현해주었다.
 
 // 현재는 Map을 이용해 Emitter와 이벤트를 저장하는 형식으로 구현하였으나 추후 다른 방식으로 이를 구현할 수 있기 때문에 유연한 전환을 위해 추상체를 생성하고
+@Repository
 public interface EmitterRepository {
     SseEmitter save(String emitterId, SseEmitter sseEmitter); //Emitter를 저장한다.
 

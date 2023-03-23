@@ -133,6 +133,7 @@ public class NotificationService {
         String eventId = receiverId + "_" + System.currentTimeMillis();
 
         //수신자 ID를 key로 하여 emitterRepository에서 해당 수신자에 대한 모든 SseEmitter 객체를 가져와서
+        // 로그인 한 유저의 SseEmitter 모두 가져오기
         Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByMemberId(receiverId);
         emitters.forEach(
                 //forEach로 각각의 emitter에 대해
@@ -148,6 +149,9 @@ public class NotificationService {
         );
     }
 
+
+
+    // 라디오 방송 시작시 팔로워 한 알림보내기
     public void notifyRadioStarted(Radio radio) {
         String message = "Radio '" + radio.getTitle() + "' started at " + radio.getStartTime();
         List<Member> subscribers = followRepository.findSubscribersByRadioId(radio.getId());
@@ -156,6 +160,8 @@ public class NotificationService {
         }
     }
 
+
+    // 라디오 방속 종료시 알림보내기
     public void notifyRadioEnded(Radio radio) {
         String message = "Radio '" + radio.getTitle() + "' ended at " + radio.getEndTime();
         List<Member> subscribers = followRepository.findSubscribersByRadioId(radio.getId());

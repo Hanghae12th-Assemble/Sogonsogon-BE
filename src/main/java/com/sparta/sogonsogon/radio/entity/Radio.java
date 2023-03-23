@@ -6,9 +6,7 @@ import com.sparta.sogonsogon.member.entity.TimeStamped;
 
 import com.sparta.sogonsogon.noti.entity.Notification;
 import com.sparta.sogonsogon.radio.dto.RadioRequestDto;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 import javax.persistence.*;
@@ -16,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name = "radios")
 @Getter
 @NoArgsConstructor
 public class Radio extends TimeStamped {
@@ -45,7 +43,7 @@ public class Radio extends TimeStamped {
     @Column(nullable = false)
     private LocalDateTime endTime; // 방송 종료시간
 
-    @OneToMany(mappedBy = "radio")
+    @OneToMany(mappedBy = "radio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications = new ArrayList<>();
 
     private int enterCnt;
@@ -55,8 +53,10 @@ public class Radio extends TimeStamped {
     @JoinColumn(name = "member_Id")
     private Member member;
 
+
     @OneToMany(mappedBy = "radio", cascade = CascadeType.ALL)
     private List<EnterMember> enterMemberList = new ArrayList<>();
+
 
 
     @Builder
@@ -70,12 +70,12 @@ public class Radio extends TimeStamped {
         this.categoryType = categoryType;
     }
 
-    public Radio(String title, String introduction, LocalDateTime startTime, LocalDateTime endTime) {
-        this.title = title;
-        this.introduction = introduction;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
+//    public Radio(String title, String introduction, LocalDateTime startTime, LocalDateTime endTime) {
+//        this.title = title;
+//        this.introduction = introduction;
+//        this.startTime = startTime;
+//        this.endTime = endTime;
+//    }
 
 
     public void updateRadio(RadioRequestDto requestDto, String backgroundImageUrl) {
@@ -125,5 +125,7 @@ public class Radio extends TimeStamped {
         LocalDateTime now = LocalDateTime.now();
         return startTime.isBefore(now) && endTime.isAfter(now);
     }
+
+
 
 }
