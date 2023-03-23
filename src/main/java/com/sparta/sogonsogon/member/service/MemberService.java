@@ -2,6 +2,7 @@ package com.sparta.sogonsogon.member.service;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.enums.ErrorMessage;
+import com.sparta.sogonsogon.enums.ErrorType;
 import com.sparta.sogonsogon.follow.repository.FollowRepository;
 import com.sparta.sogonsogon.jwt.JwtUtil;
 import com.sparta.sogonsogon.member.dto.*;
@@ -84,29 +85,28 @@ public class MemberService {
 
     // 회원 정보 수정
     @Transactional
-    public StatusResponseDto<MemberResponseDto> update(Long id, MemberRequestDto memberRequestDto, UserDetailsImpl userDetails) throws IOException {
+    public MemberResponseDto update(Long id, MemberRequestDto memberRequestDto, UserDetailsImpl userDetails) throws IOException {
         String profileImageUrl = s3Uploader.uploadFiles(memberRequestDto.getProfileImageUrl(), "profileImages");
 
         Member member= memberRepository.findById(id).orElseThrow(
                 ()-> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
 
-        if (member.getRole() == MemberRoleEnum.USER || member.getMembername().equals(userDetails.getUser().getMembername())){
+        if (member.getRole() == MemberRoleEnum.USER && member.getMembername().equals(userDetails.getUser().getMembername())){
             member.update(profileImageUrl, memberRequestDto);
-            return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
+            return new MemberResponseDto(member);
         }else{
             throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
         }
     }
 
     // 고유 아이디로 유저 정보 조회
-    public StatusResponseDto<List<MemberResponseDto>> getInfoByMembername(String membername) {
-        List<Member> list = memberRepository.findAllByMembernameContaining(membername);
-        List<MemberResponseDto> memberResponseDto = new ArrayList<>();
-            for (Member member: list) {
-                memberResponseDto.add(new MemberResponseDto(member));
-            }
-            return StatusResponseDto.success(HttpStatus.OK, memberResponseDto);
+    public StatusResponseDto<MemberResponseDto> getInfoByMembername(String membername) {
+        Member member = memberRepository.findByMembername(membername).orElseThrow(
+                () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
+        );
+
+            return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
     }
 
     //유저 닉네임으로 정보 조회

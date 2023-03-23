@@ -15,15 +15,12 @@ import com.sparta.sogonsogon.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -77,8 +74,8 @@ public class FollowService {
 
 
     @Transactional
-    public FollowResponseDto toggleFollow(Long memberId, UserDetailsImpl userDetails) {
-        Member follow = memberRepository.findById(memberId).orElseThrow(
+    public FollowResponseDto toggleFollow(String membername, UserDetailsImpl userDetails) {
+        Member follow = memberRepository.findByMembername(membername).orElseThrow(
             () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
         Member follower = memberRepository.findById(userDetails.getUser().getId()).orElseThrow(

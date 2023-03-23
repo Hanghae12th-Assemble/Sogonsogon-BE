@@ -7,6 +7,7 @@ import com.sparta.sogonsogon.member.entity.TimeStamped;
 import com.sparta.sogonsogon.noti.entity.Notification;
 import com.sparta.sogonsogon.radio.dto.RadioRequestDto;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 
 import javax.persistence.*;
@@ -38,10 +39,12 @@ public class Radio extends TimeStamped {
 
 
     @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime startTime; // 방송시작시간
 
     @Column(nullable = false)
-    private LocalDateTime endTime; // 방송 종료시간
+    @CreatedDate
+    private LocalDateTime endTime ; // 방송 종료시간
 
     @OneToMany(mappedBy = "radio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications = new ArrayList<>();
@@ -98,11 +101,11 @@ public class Radio extends TimeStamped {
         this.startTime = LocalDateTime.now();
 
     }
-    public void radioEnd(Member member,String title,  LocalDateTime endTime) {
-        this.member = member;
-        this.title = title;
-        this.endTime = LocalDateTime.now();
-    }
+//    public void radioEnd(Member member,String title,  LocalDateTime endTime) {
+//        this.member = member;
+//        this.title = title;
+//        this.endTime = LocalDateTime.now();
+//    }
 
     public LocalDateTime getStartTime() {
         return startTime;

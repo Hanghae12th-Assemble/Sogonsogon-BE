@@ -47,9 +47,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({EntityNotFoundException.class,
         UsernameNotFoundException.class})
-    private StatusResponseDto<ErrorResponseDTO> nofoundExceptionHandler(Exception ex) {
-//        String error = ex.getMessage();
-//        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(error);
+    private StatusResponseDto<ErrorResponseDTO> notfoundExceptionHandler(Exception ex) {
         return StatusResponseDto.fail(HttpStatus.NOT_FOUND, getErrorResponseDTO(ErrorType.EXCEPTION, ex));
     }
 
@@ -58,9 +56,6 @@ public class GlobalExceptionHandler {
         BadCredentialsException.class,
         AuthenticationException.class})
     private StatusResponseDto<ErrorResponseDTO> unauthorizedExceptionHandler(Exception ex) {
-//        String error = ex.getMessage();
-//        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(error);
-        ;
         return StatusResponseDto.fail(HttpStatus.UNAUTHORIZED, getErrorResponseDTO(ErrorType.UNAUTHORIZED_EXCEPTION,ex));
     }
 
