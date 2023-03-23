@@ -41,14 +41,12 @@ public class NotificationService {
 
     //DEFAULT_TIMEOUT을 기본값으로 설정
     private static final Long DEFAULT_TIMEOUT = 60 * 1000L;
+    //DEFAULT_TIMEOUT 변수는 SSE 연결의 타임아웃 시간을 밀리초(ms) 단위로 설정하는 상수입니다. 기본값은 60초(1분)입니다. 따라서 클라이언트와 SSE 연결을 유지하기 위해 60초 이내에 요청을 보내지 않으면 연결이 종료됩니다.
+    //
+    //이 값을 변경하면 SSE 연결이 종료되는 시간을 조정할 수 있습니다.
 
 
 
-
-    // SSE 연결을 시작하는 메서드인 subscribe()를 구현한 코드********************************
-    // SSE 연결을 시작하려면, SseEmitter 객체를 생성
-    // SseEmitter는 생성되면 일정 시간이 지나면 연결이 끊어지도록 설정
-    // 이 예제에서는 60초 동안 응답이 없으면 연결이 끊어지도록 설정하였습니다.
 
     public SseEmitter subscribe(Long memberId) {
         String emitterId = makeTimeIncludeId(memberId);
@@ -56,22 +54,36 @@ public class NotificationService {
 
         // 시간이 만료된 경우에 대해 자동으로 레포지토리에서 삭제 처리해줄 수 있는 콜백을 등록해놓을 수 있다.
         //emitter의 onCompletion()과 onTimeout() 메서드를 이용하여 연결이 종료될 때 emitterRepository에서 emitter를 삭제하도록 설정
-        emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
-        emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
+        // onCompletion 메서드: SseEmitter가 완료될 때 호출되는 콜백 함수를 정의
+        emitter.onCompletion(() -> emitterRepository.deleteById(emitterId)); //onCompletion 메서드: SseEmitter가 완료될 때 호출되는 콜백 함수를 정의
+        emitter.onTimeout(() -> emitterRepository.deleteById(emitterId)); //  SSEEmitter를 찾아 emitterRepository에서 삭제하는 메서드
 
         // SSE 연결이 시작되면, 503 에러를 방지하기 위한 더미 이벤트 전송
         String eventId = makeTimeIncludeId(memberId);
         sendNotification(emitter, eventId, emitterId, "EventStream Created. [userId=" + memberId + "]");
 
-//
-//        // 클라이언트가 미수신한 Event 목록이 존재할 경우 sendLostData() 메서드를 이용하여 재전송함.
-//        if (hasLostData(lastEventId)) {
-//            sendLostData(lastEventId, memberId, emitterId, emitter);
-//        }
 
         return emitter;
         // 마지막으로, emitter를 반환하여 SSE 연결을 완료
     }
+    //subscribe 메서드는 Long memberId 매개 변수를 받습니다.
+    // 이 매개 변수는 SSE 스트림을 구독하는 사용자의 ID입니다.
+    //
+    //makeTimeIncludeId 메서드를 호출하여 현재 시간과 memberId를 조합한 고유한 emitterId를 생성합니다.
+    // 이 emitterId는 SSE 스트림에서 이벤트를 전송할 때 사용됩니다.
+    //
+    //emitterRepository.save 메서드를 호출하여 emitterId와 SseEmitter 객체를 저장합니다.
+    // SseEmitter는 SSE 스트림의 역할을 합니다.
+    //
+    //emitter.onCompletion 및 emitter.onTimeout 메서드를 호출하여 SSE 연결이 종료될 때
+    // emitterRepository에서 emitter를 삭제하도록 설정합니다.
+    //
+    //sendNotification 메서드를 호출하여 더미 이벤트를 생성하고, 이벤트를 SSE 스트림으로 전송합니다.
+    // 이렇게 하면 구독자가 SSE 스트림을 구독하기 전에도 503 오류를 방지할 수 있습니다.
+    //
+    //마지막으로, emitter를 반환하여 SSE 연결을 완료합니다. 이 emitter는 SSE 스트림에 이벤트를 전송할 수 있는 객체입니다.
+
+
 
 
 
@@ -81,6 +93,9 @@ public class NotificationService {
         // 이를 통해 누가 구독 중인지에 대한 구분을 하여 SseEmitter 객체를 식별
         return memberId + "_" + System.currentTimeMillis();
     }
+
+    // 구독자에게 알림을 보내는 메서드
+
 
 
     //sendNotification 메서드는 생성한 SseEmitter 객체를 통해 클라이언트로 알림을 전송**************************
@@ -151,12 +166,17 @@ public class NotificationService {
 
 
 
+
     // 라디오 방송 시작시 팔로워 한 알림보내기
     public void notifyRadioStarted(Radio radio) {
         String message = "Radio '" + radio.getTitle() + "' started at " + radio.getStartTime();
+
         List<Member> subscribers = followRepository.findSubscribersByRadioId(radio.getId());
         for (Member subscriber : subscribers) {
-            send(subscriber, AlarmType.eventRadioStart, message,radio);
+            SseEmitter emitter = subscribe(subscriber.getId());
+//            sendLostData(emitter.getHeaders().get("Last-Event-ID"), subscriber.getId(), emitter.getEmitterId(), emitter);
+            send(subscriber, AlarmType.eventRadioStart, message, radio);
+
         }
     }
 
@@ -166,6 +186,7 @@ public class NotificationService {
         String message = "Radio '" + radio.getTitle() + "' ended at " + radio.getEndTime();
         List<Member> subscribers = followRepository.findSubscribersByRadioId(radio.getId());
         for (Member subscriber : subscribers) {
+            SseEmitter emitter = subscribe(subscriber.getId());
             send(subscriber, AlarmType.eventRadioEnd, message,radio);
         }
     }
