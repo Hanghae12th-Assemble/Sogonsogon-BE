@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RadioRepository extends JpaRepository<Radio, Long> {
-  Optional<Radio> findByTitle(String title);
+    Optional<Radio> findByTitle(String title);
 
     List<Radio> findByTitleContaining(String title);
 
-  Page<Radio> findAllByCategoryType(CategoryType categoryType,
-                                    Pageable pageable);
+    Page<Radio> findAllByCategoryType(CategoryType categoryType,
+                                      Pageable pageable);
 }

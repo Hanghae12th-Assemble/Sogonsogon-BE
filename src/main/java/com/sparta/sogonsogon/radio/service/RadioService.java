@@ -50,7 +50,7 @@ public class RadioService {
 
         //유저인지 확인
         Member member = memberRepository.findByMembername(userDetails.getUsername()).orElseThrow(
-            () -> new InsufficientAuthenticationException(ErrorMessage.ACCESS_DENIED.getMessage()) // 401 Unauthorized
+                () -> new InsufficientAuthenticationException(ErrorMessage.ACCESS_DENIED.getMessage()) // 401 Unauthorized
         );
         // 라디오 방 이름 중복여보 확인
 //        if (radioRepository.findByTitle(requestDto.getTitle()) != null) {
@@ -70,12 +70,12 @@ public class RadioService {
         String imageUrl = s3Uploader.uploadFiles(requestDto.getBackgroundImageUrl(), "radioImages");
 
         Radio radio = Radio.builder()
-            .member(member)
-            .title(requestDto.getTitle())
-            .introduction(requestDto.getIntroduction())
-            .backgroundImageUrl(imageUrl)
-            .categoryType(requestDto.getCategoryType())
-            .build();
+                .member(member)
+                .title(requestDto.getTitle())
+                .introduction(requestDto.getIntroduction())
+                .backgroundImageUrl(imageUrl)
+                .categoryType(requestDto.getCategoryType())
+                .build();
 
         radio = radioRepository.save(radio);
         return new RadioResponseDto(radio);
@@ -98,7 +98,7 @@ public class RadioService {
     @Transactional
     public RadioResponseDto findRadio(Long radioId) {
         Radio radio = radioRepository.findById(radioId).orElseThrow(
-            () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage()));
+                () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage()));
         return new RadioResponseDto(radio);
     }
 
@@ -107,7 +107,7 @@ public class RadioService {
 
         //라디오 존재여부 확인하기
         Radio radio = radioRepository.findById(radioId).orElseThrow(
-            () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
+                () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
         );
 
         if (!user.getId().equals(radio.getMember().getId())) {
@@ -121,22 +121,22 @@ public class RadioService {
     public EnterMemberResponseDto enterRadio(Long radioId, UserDetailsImpl userDetails) {
 
         Radio radio = radioRepository.findById(radioId).orElseThrow(
-            () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
+                () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
         );
 
         Member member = memberRepository.findById(userDetails.getUser().getId()).orElseThrow(
-            () -> new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage())
+                () -> new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage())
         );
 
         EnterMember enterMember = new EnterMember(member, radio);
-        radio.enter(radio.getEnterCnt()+1);
+        radio.enter(radio.getEnterCnt() + 1);
         enterMemberRepository.save(enterMember);
         return EnterMemberResponseDto.of(enterMember);
     }
 
     public void quitRadio(Long radioId, UserDetailsImpl userDetails) {
         Radio radio = radioRepository.findById(radioId).orElseThrow(
-            () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
+                () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
         );
 
         EnterMember enterMember = enterMemberRepository.findByRadioAndMember(radio, userDetails.getUser());
@@ -144,14 +144,14 @@ public class RadioService {
             throw new IllegalArgumentException(ErrorMessage.NOT_FOUND_ENTER_MEMBER.getMessage());
         } else {
             enterMemberRepository.delete(enterMember);
-            radio.enter(radio.getEnterCnt()-1);
+            radio.enter(radio.getEnterCnt() - 1);
         }
     }
 
     public List<RadioResponseDto> findByTitle(String title) {
         List<Radio> list = radioRepository.findByTitleContaining(title);
         List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
-        for (Radio radio : list){
+        for (Radio radio : list) {
             radioResponseDtos.add(new RadioResponseDto(radio));
         }
         return radioResponseDtos;
