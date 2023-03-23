@@ -84,16 +84,16 @@ public class MemberService {
 
     // 회원 정보 수정
     @Transactional
-    public StatusResponseDto<MemberResponseDto> update(Long id, MemberRequestDto memberRequestDto, UserDetailsImpl userDetails) throws IOException {
+    public MemberResponseDto update(Long id, MemberRequestDto memberRequestDto, UserDetailsImpl userDetails) throws IOException {
         String profileImageUrl = s3Uploader.uploadFiles(memberRequestDto.getProfileImageUrl(), "profileImages");
 
         Member member= memberRepository.findById(id).orElseThrow(
                 ()-> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
 
-        if (member.getRole() == MemberRoleEnum.USER || member.getMembername().equals(userDetails.getUser().getMembername())){
+        if (member.getRole() == MemberRoleEnum.USER && member.getMembername().equals(userDetails.getUser().getMembername())){
             member.update(profileImageUrl, memberRequestDto);
-            return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
+            return new MemberResponseDto(member);
         }else{
             throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
         }

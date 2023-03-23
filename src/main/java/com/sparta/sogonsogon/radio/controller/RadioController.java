@@ -33,7 +33,7 @@ public class RadioController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "라디오  생성", description = "라디오 생성")
-    public StatusResponseDto<RadioResponseDto> createRadio(@RequestBody @Valid @ModelAttribute RadioRequestDto requestDto,
+    public StatusResponseDto<RadioResponseDto> createRadio(@RequestBody @Valid RadioRequestDto requestDto,
                                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return StatusResponseDto.success(HttpStatus.CREATED, radioService.createRadio(requestDto, userDetails));
     }
