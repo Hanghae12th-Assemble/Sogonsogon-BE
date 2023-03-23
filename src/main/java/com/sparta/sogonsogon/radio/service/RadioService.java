@@ -1,11 +1,18 @@
 package com.sparta.sogonsogon.radio.service;
 
-import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.enums.CategoryType;
 import com.sparta.sogonsogon.enums.ErrorMessage;
+import com.sparta.sogonsogon.follow.dto.FollowRequestDto;
+import com.sparta.sogonsogon.follow.repository.FollowRepository;
 import com.sparta.sogonsogon.jwt.JwtUtil;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
+import com.sparta.sogonsogon.noti.dto.NotificationRequestDto;
+import com.sparta.sogonsogon.noti.entity.Notification;
+import com.sparta.sogonsogon.noti.repository.EmitterRepository;
+import com.sparta.sogonsogon.noti.repository.NotificationRepository;
+import com.sparta.sogonsogon.noti.service.NotificationService;
+import com.sparta.sogonsogon.noti.util.AlarmType;
 import com.sparta.sogonsogon.radio.dto.RadioRequestDto;
 import com.sparta.sogonsogon.radio.dto.RadioResponseDto;
 import com.sparta.sogonsogon.radio.entity.EnterMember;
@@ -21,16 +28,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -41,6 +49,10 @@ public class RadioService {
     private JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
     private final EnterMemberRepository enterMemberRepository;
+    private final NotificationRepository notificationRepository;
+    private final FollowRepository followRepository;
+    private final NotificationService notificationService;
+    private final EmitterRepository emitterRepository;
 
 
     // 라디오생성
@@ -170,4 +182,84 @@ public class RadioService {
 
         return radioResponseDtos;
     }
+
+
+
+
+    // 라디오 방송 시작 및 종료 기능 추가 **********************************
+
+//    public Radio startRadio(Long radioId) {
+//        // 라디오 시작 시간 가져오기
+//        Radio radio = radioRepository.findById(radioId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid radio ID"));
+//
+//        // 라디오 시작 알림 보내기
+//        notificationService.notifyRadioStarted(radio);
+//    }
+//
+//    public Radio endRadio(Long radioId) {
+//        // 라디오 종료 시간 가져오기
+//        Radio radio = radioRepository.findById(radioId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid radio ID"));
+//
+//        // 라디오 종료 알림 보내기
+//        notificationService.notifyRadioEnded(radio);
+//
+//        // 라디오 종료 시간 설정하기
+//        radio.setEndTime(LocalDateTime.now());
+//        radioRepository.save(radio);
+//    }
+    public Radio startRadio(Long radioId) {
+        Optional<Radio> optionalRadio = radioRepository.findById(radioId);
+
+        if (optionalRadio.isPresent()) {
+            Radio radio = optionalRadio.get();
+            LocalDateTime now = LocalDateTime.now();
+            if (radio.getStartTime().isBefore(now) && radio.getEndTime().isAfter(now)) {
+                // 이미 방송 중이면 아무것도 하지 않음
+                return radio;
+            } else if (radio.getStartTime().isAfter(now)) {
+                // 방송 시작 시간이 아직 되지 않은 경우 시작 시간을 현재 시간으로 업데이트
+                radio.setStartTime(now);
+                radio = radioRepository.save(radio);
+
+                // NotificationService로 알림 전송
+                notificationService.notifyRadioStarted(radio);
+            } else {
+                // 방송 종료된 경우 null 반환
+                return null;
+            }
+        }
+            throw new IllegalArgumentException("Invalid radio ID: " + radioId);
+    }
+
+    public Radio endRadio(Long radioId) {
+        Optional<Radio> optionalRadio = radioRepository.findById(radioId);
+
+        if (optionalRadio.isPresent()) {
+            Radio radio = optionalRadio.get();
+            LocalDateTime now = LocalDateTime.now();
+            if (radio.getStartTime().isBefore(now) && radio.getEndTime().isAfter(now)) {
+                // 방송 중이면 종료 시간을 현재 시간으로 업데이트
+                radio.setEndTime(now);
+                radioRepository.save(radio);
+
+                // NotificationService로 알림 전송
+                notificationService.notifyRadioEnded(radio);
+
+                return radio;
+            } else if (radio.getEndTime().isBefore(now)) {
+                // 이미 방송 종료된 경우 아무것도 하지 않음
+                return radio;
+            } else {
+                // 아직 방송 시작되지 않은 경우 null 반환
+                return null;
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid broadcast ID: " + radioId);
+        }
+    }
+
+
+
 }

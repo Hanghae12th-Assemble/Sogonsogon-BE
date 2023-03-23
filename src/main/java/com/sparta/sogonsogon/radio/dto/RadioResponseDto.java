@@ -26,9 +26,9 @@ public class RadioResponseDto extends TimeStamped {
 
     private CategoryType categoryType;
 
-    private LocalDateTime startTime;  // 방송시작시간
-
-    private LocalDateTime endTime;  // 방송종료 시간
+//    private LocalDateTime startTime;  // 방송시작시간
+//
+//    private LocalDateTime endTime;  // 방송종료 시간
 
     private LocalDateTime createdAt; // 생성시간
     private int enterCnt;

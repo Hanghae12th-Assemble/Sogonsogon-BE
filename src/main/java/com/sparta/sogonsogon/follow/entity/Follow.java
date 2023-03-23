@@ -3,6 +3,7 @@ package com.sparta.sogonsogon.follow.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.sogonsogon.follow.dto.FollowRequestDto;
 import com.sparta.sogonsogon.member.entity.Member;
+import com.sparta.sogonsogon.radio.entity.Radio;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,7 +29,12 @@ public class Follow {
 //    public Follow(Member follower, Member following) {
 //        this.follower = follower;
 //        this.following = following;
-//    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "radio_id")
+    private Radio radio;
+
+
 
     public Follow(FollowRequestDto followRequestDto) {
         this.follower = followRequestDto.getFollower();

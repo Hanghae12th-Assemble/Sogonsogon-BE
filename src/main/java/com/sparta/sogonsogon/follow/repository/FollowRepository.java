@@ -4,7 +4,9 @@ import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.follow.dto.FollowResponseDto;
 import com.sparta.sogonsogon.follow.entity.Follow;
 import com.sparta.sogonsogon.member.entity.Member;
+import com.sparta.sogonsogon.radio.entity.Radio;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,6 +19,12 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     List<Follow> findByFollowingId(Long memberId);
 
     List<Follow> findByFollower(Member member);
+
+    List<Member> findByFollowing(Member member);
+    List<Member> findSubscribersByRadioId(Long radioId);
+
+    List<Radio> findFollowedRadiosByMemberId(Long memberId);
+
 
 //    List<Follow> findByFollowingId(Long followingId);
 //    List<Follow> findByFollowerId(Long followerId);

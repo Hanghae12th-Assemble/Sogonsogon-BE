@@ -2,6 +2,7 @@ package com.sparta.sogonsogon.noti.entity;
 
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.noti.util.AlarmType;
+import com.sparta.sogonsogon.radio.entity.Radio;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter //각 래퍼 클래스에 대한 추출 메소드이다.
 @Setter
@@ -24,7 +26,7 @@ public class Notification extends TimeStamped{
 
     //누구 : ~에 대한 알림이 도착했습니다.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "receiver_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE) //한 번 알림을 읽으면 읽음 표시되어 더이상 우리에게 반짝이지 않는다
     private Member receiver;     //    private Member receiver;
 
@@ -34,19 +36,22 @@ public class Notification extends TimeStamped{
     @Column(nullable = false)
     private String message;  //알림의 내용. 비어있지 않아야하며 50자 이내여야한다.
 
-//    @Embedded
-//    private NotificationContent content; //어떤 내용의 알림인지 (내용)
-
-//    @Embedded
-//    private RelatedURL url;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AlarmType alarmType; // 알림 종류에 관한 것이다.
 
+    @ManyToOne
+    @JoinColumn(name = "radio_id")
+    private Radio radio;
+
+    public void setRadio(Radio radio) {
+        this.radio = radio;
+    }
+
+
     @Builder
     public Notification(Member receiver, Boolean readState,
-                        String message, AlarmType alarmType) {
+                        String message, AlarmType alarmType,Radio radio) {
         this.receiver = receiver;
         this.isRead = readState;
         this.message = message;

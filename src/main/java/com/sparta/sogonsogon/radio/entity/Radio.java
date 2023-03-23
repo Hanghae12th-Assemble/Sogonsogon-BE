@@ -4,12 +4,11 @@ import com.sparta.sogonsogon.enums.CategoryType;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.entity.TimeStamped;
 
+import com.sparta.sogonsogon.noti.entity.Notification;
 import com.sparta.sogonsogon.radio.dto.RadioRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 
 import javax.persistence.*;
@@ -40,8 +39,14 @@ public class Radio extends TimeStamped {
     private CategoryType categoryType;
 
 
-    @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime startTime; // 방송시작시간
+
+    @Column(nullable = false)
+    private LocalDateTime endTime; // 방송 종료시간
+
+    @OneToMany(mappedBy = "radio")
+    private List<Notification> notifications = new ArrayList<>();
 
     private int enterCnt;
 
@@ -56,13 +61,20 @@ public class Radio extends TimeStamped {
 
     @Builder
     public Radio(String title, String introduction,
-                 String backgroundImageUrl, Member member, CategoryType categoryType ) {
+                 String backgroundImageUrl, Member member, CategoryType categoryType) {
 
         this.title = title;
         this.introduction = introduction;
         this.backgroundImageUrl = backgroundImageUrl;
         this.member = member;
         this.categoryType = categoryType;
+    }
+
+    public Radio(String title, String introduction, LocalDateTime startTime, LocalDateTime endTime) {
+        this.title = title;
+        this.introduction = introduction;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
 
@@ -75,4 +87,43 @@ public class Radio extends TimeStamped {
     public void enter(int cnt) {
         this.enterCnt = cnt;
     }
+
+
+    
+    //라디오 방송 시작 및 종료시 사용
+
+    public void radioStart(Member member,String title, LocalDateTime startTime) {
+        this.member = member;
+        this.title = title;
+        this.startTime = LocalDateTime.now();
+
+    }
+    public void radioEnd(Member member,String title,  LocalDateTime endTime) {
+        this.member = member;
+        this.title = title;
+        this.endTime = LocalDateTime.now();
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    // 현재 방송이 진행 중인지를 나타내는 boolean 값을 반환
+    public boolean isLive() {
+        LocalDateTime now = LocalDateTime.now();
+        return startTime.isBefore(now) && endTime.isAfter(now);
+    }
+
 }

@@ -51,7 +51,7 @@ public class Member extends TimeStamped{
     @JoinColumn(name = "radio_Id")
     private List<Radio> radio = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "notification_Id")
     private List<Notification> notification = new ArrayList<>();
 

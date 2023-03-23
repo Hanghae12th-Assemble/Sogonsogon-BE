@@ -1,11 +1,17 @@
 package com.sparta.sogonsogon.noti.service;
 
+import com.sparta.sogonsogon.follow.entity.Follow;
+import com.sparta.sogonsogon.follow.repository.FollowRepository;
 import com.sparta.sogonsogon.member.entity.Member;
+import com.sparta.sogonsogon.member.repository.MemberRepository;
 import com.sparta.sogonsogon.noti.dto.NotificationResponseDto;
 import com.sparta.sogonsogon.noti.entity.Notification;
 import com.sparta.sogonsogon.noti.repository.EmitterRepository;
+import com.sparta.sogonsogon.noti.repository.EmitterRepositoryImpl;
 import com.sparta.sogonsogon.noti.repository.NotificationRepository;
 import com.sparta.sogonsogon.noti.util.AlarmType;
+import com.sparta.sogonsogon.radio.entity.Radio;
+import com.sparta.sogonsogon.radio.repository.RadioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -13,7 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
 
 
 @Service
@@ -21,9 +30,13 @@ import java.util.Map;
 @Slf4j
 public class NotificationService {
 
-    private final EmitterRepository emitterRepository;
+    private final EmitterRepository emitterRepository ;
+
+    private final RadioRepository radioRepository;
 
     private final NotificationRepository notificationRepository;
+    private final FollowRepository followRepository;
+    private final MemberRepository memberRepository;
 
 
     //DEFAULT_TIMEOUT을 기본값으로 설정
@@ -50,6 +63,7 @@ public class NotificationService {
         String eventId = makeTimeIncludeId(memberId);
         sendNotification(emitter, eventId, emitterId, "EventStream Created. [userId=" + memberId + "]");
 
+//
 //        // 클라이언트가 미수신한 Event 목록이 존재할 경우 sendLostData() 메서드를 이용하여 재전송함.
 //        if (hasLostData(lastEventId)) {
 //            sendLostData(lastEventId, memberId, emitterId, emitter);
@@ -70,7 +84,7 @@ public class NotificationService {
 
 
     //sendNotification 메서드는 생성한 SseEmitter 객체를 통해 클라이언트로 알림을 전송**************************
-    private void sendNotification(SseEmitter emitter, String eventId, String emitterId, Object data) {
+    public void sendNotification(SseEmitter emitter, String eventId, String emitterId, Object data) {
         try {
             //SseEmitter 객체의 send() 메서드를 호출하여 이벤트 데이터를 전송
             //eventId는 이벤트 ID를 나타내며, data는 전송할 데이터
@@ -109,9 +123,9 @@ public class NotificationService {
 
     //SSE를 이용하여 알림(Notification) 메시지를 구독(subscribe)한 클라이언트에게 전송하는 기능을 구현한 메서드이다.
     //이를 통해 클라이언트는 Notification을 실시간으로 받을 수 있게 됩니다.
-    public void send(Member receiver, AlarmType alarmType, String message) {
+    public void send(Member receiver, AlarmType alarmType, String message, Radio radio) {
         //send() 메서드는 Member 객체와 AlarmType 열거형, 알림 메시지(String)와 알림 상태(Boolean) 값을 인자로 받아 기능을 구현한다.
-        Notification notification = notificationRepository.save(createNotification(receiver, alarmType,message));
+        Notification notification = notificationRepository.save(createNotification(receiver, alarmType,message,radio));
 
         // Notification 객체의 수신자 ID를 추출하고,
         String receiverId = String.valueOf(receiver.getId());
@@ -134,13 +148,32 @@ public class NotificationService {
         );
     }
 
-    private Notification createNotification(Member receiver, AlarmType alarmType, String message) {
-        return Notification.builder()
-                .receiver(receiver)
-                .readState(false)
-                .alarmType(alarmType)
-                .message(message)
-                .build();
+    public void notifyRadioStarted(Radio radio) {
+        String message = "Radio '" + radio.getTitle() + "' started at " + radio.getStartTime();
+        List<Member> subscribers = followRepository.findSubscribersByRadioId(radio.getId());
+        for (Member subscriber : subscribers) {
+            send(subscriber, AlarmType.eventRadioStart, message,radio);
+        }
+    }
+
+    public void notifyRadioEnded(Radio radio) {
+        String message = "Radio '" + radio.getTitle() + "' ended at " + radio.getEndTime();
+        List<Member> subscribers = followRepository.findSubscribersByRadioId(radio.getId());
+        for (Member subscriber : subscribers) {
+            send(subscriber, AlarmType.eventRadioEnd, message,radio);
+        }
+    }
+
+
+    private Notification createNotification(Member receiver, AlarmType alarmType, String message, Radio radio) {
+        Notification notification = new Notification();
+        notification.setReceiver(receiver);
+        notification.setAlarmType(alarmType);
+        notification.setMessage(message);
+        if (radio != null) {
+            notification.setRadio(radio);
+        }
+        return notificationRepository.save(notification);
     }
 
 }

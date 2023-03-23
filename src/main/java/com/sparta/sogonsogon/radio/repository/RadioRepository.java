@@ -17,4 +17,10 @@ public interface RadioRepository extends JpaRepository<Radio, Long> {
 
   Page<Radio> findAllByCategoryType(CategoryType categoryType,
                                     Pageable pageable);
+
+//    List<Member> findSubscribersByRadioId(Long radioId);
+
+//  Radio startBroadcast(Long memberId);
+//
+//  Radio endBroadcast(Long memberId);
 }
