@@ -15,9 +15,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -70,10 +74,10 @@ public class RadioController {
 
     @GetMapping("/{categoryType}")
     @Operation(summary = "라디오 카테고리 검색", description = "특정 카테고리에 속하는 방속만 조회/ sortBy = createdAt, enterCnt(청취자)")
-    public StatusResponseDto<List<RadioResponseDto>> findByCategory(@PathVariable CategoryType categoryType,
-                                                                    @RequestParam(defaultValue = "1") int page,
-                                                                    @RequestParam(defaultValue = "10") int size,
-                                                                    @RequestParam(required = false, defaultValue = "createdAt") String sortBy) {
+    public StatusResponseDto<Map<String, Object>> findByCategory(@PathVariable CategoryType categoryType,
+                                                                  @RequestParam(defaultValue = "1") int page,
+                                                                  @RequestParam(defaultValue = "10") int size,
+                                                                  @RequestParam(required = false, defaultValue = "createdAt") String sortBy) {
         return StatusResponseDto.success(HttpStatus.OK, radioService.findByCategory(page-1, size, sortBy, categoryType));
     }
 
