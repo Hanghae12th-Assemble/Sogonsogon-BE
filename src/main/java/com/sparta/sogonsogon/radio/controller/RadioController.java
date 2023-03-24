@@ -34,8 +34,10 @@ public class RadioController {
 
     @GetMapping("/")
     @Operation(summary = "전체 라디오 조회", description = "전체 라디오 조회")
-    public StatusResponseDto<List<RadioResponseDto>> getRadios() {
-        return StatusResponseDto.success(HttpStatus.OK, radioService.findAllRadios());
+    public StatusResponseDto<List<RadioResponseDto>> getRadios(@RequestParam(defaultValue = "1") int page,
+                                                               @RequestParam(defaultValue = "10") int size,
+                                                               @RequestParam(required = false, defaultValue = "createdAt") String sortBy) {
+        return StatusResponseDto.success(HttpStatus.OK, radioService.findAllRadios(page -1, size, sortBy));
     }
 
     @DeleteMapping("/{radioId}")

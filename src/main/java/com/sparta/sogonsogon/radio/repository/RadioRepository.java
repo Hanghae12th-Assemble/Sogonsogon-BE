@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface RadioRepository extends JpaRepository<Radio, Long> {
     Optional<Radio> findByTitle(String title);
 
+    Page<Radio> findAll(Pageable pageable);
+
     List<Radio> findByTitleContaining(String title);
 
     Page<Radio> findAllByCategoryType(CategoryType categoryType,

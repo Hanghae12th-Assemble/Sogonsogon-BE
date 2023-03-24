@@ -73,13 +73,12 @@ public class RadioService {
 
     // 라디오 전체 조회
     @Transactional
-    public List<RadioResponseDto> findAllRadios() {
-        List<Radio> list = radioRepository.findAll();
-        List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
-        for (Radio radio : list) {
-            radioResponseDtos.add(new RadioResponseDto(radio));
-        }
-        return radioResponseDtos;
+    public List<RadioResponseDto> findAllRadios(int page, int size, String sortBy) {
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Pageable sortedPageable = PageRequest.of(page, size, sort);
+        Page<Radio> radioPage = radioRepository.findAll(sortedPageable);
+
+        return radioPage.getContent().stream().map(RadioResponseDto::new).toList();
     }
 
     // 선택된 라디오 조회
