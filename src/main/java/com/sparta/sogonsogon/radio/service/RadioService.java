@@ -24,10 +24,9 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -144,11 +143,19 @@ public class RadioService {
         return radioResponseDtos;
     }
 
-    public List<RadioResponseDto> findByCategory(int page, int size, String sortBy, CategoryType categoryType) {
+    public Map<String, Object> findByCategory(int page, int size, String sortBy, CategoryType categoryType) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable sortedPageable = PageRequest.of(page, size, sort);
         Page<Radio> radioPage = radioRepository.findAllByCategoryType(categoryType, sortedPageable);
+        List<RadioResponseDto> radioResponseDtoList = radioPage.getContent().stream().map(RadioResponseDto::new).toList();
+        // 방송 길이 구하는 객체 생성
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("radioCount", radioPage.getTotalElements());
 
-        return radioPage.getContent().stream().map(RadioResponseDto::new).toList();
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("result", radioResponseDtoList);
+        responseBody.put("metadata", metadata);
+
+        return responseBody;
     }
 }
