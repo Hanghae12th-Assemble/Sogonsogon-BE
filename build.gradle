@@ -64,8 +64,12 @@ dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     //Oauth2
-    //google 관련 내용
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    //json parsing
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '5.5.7.Final'
+    implementation 'com.google.code.gson:gson:2.10'
 
 }
 
