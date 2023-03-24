@@ -72,21 +72,12 @@ public class RadioService {
 
     // 라디오 전체 조회
     @Transactional
-    public Map<String, Object> findAllRadios(int page, int size, String sortBy) {
-
+    public List<RadioResponseDto> findAllRadios(int page, int size, String sortBy) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable sortedPageable = PageRequest.of(page, size, sort);
         Page<Radio> radioPage = radioRepository.findAll(sortedPageable);
-        List<RadioResponseDto> radioResponseDtoList = radioPage.getContent().stream().map(RadioResponseDto::new).toList();
-        // 방송 길이 구하는 객체 생성
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("radioCount", radioPage.getTotalElements());
 
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("result", radioResponseDtoList);
-        responseBody.put("metadata", metadata);
-
-        return responseBody;
+        return radioPage.getContent().stream().map(RadioResponseDto::new).toList();
     }
 
     // 선택된 라디오 조회
