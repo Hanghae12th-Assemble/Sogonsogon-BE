@@ -10,6 +10,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -26,19 +28,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = jwtUtil.resolveToken(request);
         //회원가입할 때는 토큰이 필요하지 않으므로 분기처리 필요
         if (jwtUtil.validateToken(token)) {
-            Claims info = jwtUtil.getUserInfoFromToken(token);
-            setAuthentication(info.getSubject());
+            String info = jwtUtil.getEmailFromToken(token);
+            setAuthentication(info);
         }
         filterChain.doFilter(request,response);
     }
 
     //Authentication -> context -> SecurityContextHolder
-    public void setAuthentication(String username) {
+    public void setAuthentication(String email) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = jwtUtil.createAuthentication(username);
+        Authentication authentication = jwtUtil.createAuthentication(email);
         context.setAuthentication(authentication);
 
         SecurityContextHolder.setContext(context);
     }
+
+
 
 }
