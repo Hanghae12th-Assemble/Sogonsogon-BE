@@ -184,52 +184,20 @@ public class RadioService {
 
 
     // 라디오 방송 시작 및 종료 기능 추가 **********************************
-//    public Radio startRadio(Long radioId, UserDetailsImpl userDetails) {
-//        Radio radio = radioRepository.findById(radioId)
-//                .orElseThrow(() -> new EntityNotFoundException("Radio not found."));
-//
-//        Member member = userDetails.getUser();
-//
-        // 라디오 생성자와 라디오 방송 시작하는 사람이 같은 사람인지 확인
-//        if (!radio.getMember().equals(member)) {
-//            throw new AuthenticationCredentialsNotFoundException("Access denied.");
-//        }
-//
-//        radio.setStartTime(LocalDateTime.now());
-//        Radio savedRadio = radioRepository.save(radio);
-//
-//        // NotificationService로 알림 전송
-//        notificationService.notifyRadioStarted(savedRadio);
-//
-//        return savedRadio;
-//
-//
-//    }
 
-//    public Radio startRadio(Long radioId) {
-//        Optional<Radio> optionalRadio = radioRepository.findById(radioId);
-//        if (optionalRadio.isPresent()) {
-//            Radio radio = optionalRadio.get();
-//            // 라디오 생성자와 라디오 방송 시작하는 사람이 같은 사람인지 확인
-//            if (!radio.getMember().equals(userDetails.getUser())) {
-//                throw new AuthenticationCredentialsNotFoundException("Access denied.");
-//            }
-//
-//            radio.setStartTime(LocalDateTime.now());
-//            Radio saveRadio = radioRepository.save(radio);
-//
-//            // NotificationService로 알림 전송
-//            notificationService.notifyRadioStarted(saveRadio);
-//
-//            return saveRadio;
-//        } else {
-//            throw new RuntimeException("Invalid broadcast ID: " + radioId);
-//        }
-//    }
         public Radio startRadio(Long radioId, UserDetailsImpl userDetails) {
+            //라디오 존재여부 확인하기
             Optional<Radio> optionalRadio = radioRepository.findById(radioId);
+            //라디오 존재여부 확인하기
+//            Radio radio = radioRepository.findById(radioId).orElseThrow(
+//                    () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
+//            );
+
             if (optionalRadio.isPresent()) {
                 Radio radio = optionalRadio.get();
+                if (!userDetails.getUser().getId().equals(radio.getMember().getId())) {
+                    throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
+                }
 
                 radio.setStartTime(LocalDateTime.now());
                 Radio saveRadio = radioRepository.save(radio);
@@ -252,6 +220,10 @@ public class RadioService {
         Optional<Radio> optionalRadio = radioRepository.findById(radioId);
         if (optionalRadio.isPresent()) {
             Radio radio = optionalRadio.get();
+
+            if (!userDetails.getUser().getId().equals(radio.getMember().getId())) {
+                throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
+            }
 
             // 라디오 정보를 업데이트하고
             radio.setEndTime(LocalDateTime.now());

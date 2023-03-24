@@ -6,10 +6,13 @@ import com.sparta.sogonsogon.noti.util.Chrono;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
+@Setter
 public class NotificationResponseDto {
+
 
 
     private Long notificationId;
@@ -52,4 +55,13 @@ public class NotificationResponseDto {
                 .createdAt(createdAt)
                 .build();
     }
+//    public static NotificationResponseDto create(Notification notification) {
+//        String createdAt = Chrono.timesAgo(notification.getCreatedAt());
+//        NotificationResponseDto dto = new NotificationResponseDto();
+//        dto.setNotificationId(notification.getId());
+//        dto.setAlarmType(notification.getAlarmType());
+//        dto.setMessage(notification.getMessage());
+//        dto.setCreatedAt(createdAt);
+//        return dto;
+//    }
 }

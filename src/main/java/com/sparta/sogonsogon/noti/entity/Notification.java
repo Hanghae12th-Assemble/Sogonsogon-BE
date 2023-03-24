@@ -28,8 +28,9 @@ public class Notification extends TimeStamped{
     @OnDelete(action = OnDeleteAction.CASCADE) //한 번 알림을 읽으면 읽음 표시되어 더이상 우리에게 반짝이지 않는다
     private Member receiver;     //    private Member receiver;
 
-    @Column(nullable = false)
-    private Boolean isRead = false; //  읽었는지에 대한 여부를 나타낸다
+    @Column
+    private Boolean isRead; //  읽었는지에 대한 여부를 나타낸다
+//    private Boolean isRead = false; //  읽었는지에 대한 여부를 나타낸다
 
     @Column(nullable = false)
     private String message;  //알림의 내용. 비어있지 않아야하며 50자 이내여야한다.
@@ -43,11 +44,6 @@ public class Notification extends TimeStamped{
     private Radio radio;
 
 
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_Id")
-//    private Member member;
-
     public void setRadio(Radio radio) {
         this.radio = radio;
     }
@@ -55,14 +51,21 @@ public class Notification extends TimeStamped{
 
     @Builder
     public Notification(Member receiver, Boolean readState,
-                        String message, AlarmType alarmType,Radio radio) {
+                        String message, AlarmType alarmType) {
         this.receiver = receiver;
         this.isRead = readState;
         this.message = message;
         this.alarmType = alarmType;
     }
 
-//    public void changeState() {
-//        isRead = true;
+//    public boolean getIsRead() {
+//        return isRead=false;
 //    }
+//
+//    public void setIsRead(boolean isRead) {
+//        this.isRead = isRead;
+//    }
+
+
+
 }

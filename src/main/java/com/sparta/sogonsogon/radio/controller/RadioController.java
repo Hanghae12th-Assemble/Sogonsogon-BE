@@ -112,7 +112,7 @@ public class RadioController {
     @Operation(summary = "라디오 방송 시작", description = "라디오 방송 시작")
     public ResponseEntity<Radio> startRadio(@PathVariable Long radioId,
                                             @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Radio radio = radioService.startRadio(radioId,userDetails);
+        radioService.startRadio(radioId,userDetails);
         return ResponseEntity.ok().build();
     }
 
@@ -120,52 +120,9 @@ public class RadioController {
     @Operation(summary = "라디오 방송 종료", description = "라디오 방송 종료")
     public ResponseEntity<Radio> endRadio(@PathVariable Long radioId,
                                           @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Radio radio = radioService.endRadio(radioId,userDetails);
+        radioService.endRadio(radioId,userDetails);
         return ResponseEntity.ok().build();
     }
-//    @PostMapping("/{radioId}/start")
-//    public ResponseEntity<Radio> startRadio(@PathVariable Long radioId) {
-//        radioService.startRadio(radioId);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("/{radioId}/end")
-//    public ResponseEntity<Radio> endRadio(@PathVariable Long radioId) {
-//        radioService.endRadio(radioId);
-//        return ResponseEntity.ok().build();
-//    }
 
-
-
-
-
-
-
-
-
-
-
-
-//    @PostMapping("/{id}/start")
-//    @Operation(summary = "라디오 시작", description = "라디오 시작")
-//    public ResponseEntity<Radio> startRadio(@PathVariable Long id) {
-//        Radio radio = radioService.startRadio(id);
-//        if (radio != null) {
-//            return ResponseEntity.ok(radio);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//
-//    @PostMapping("/{id}/end")
-//    @Operation(summary = "라디오  종료", description = "라디오 종료")
-//    public ResponseEntity<Radio> endRadio(@PathVariable Long id) {
-//        Radio radio = radioService.endRadio(id);
-//        if (radio != null) {
-//            return ResponseEntity.ok(radio);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
 
 }

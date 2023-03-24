@@ -1,29 +1,24 @@
 package com.sparta.sogonsogon.noti.service;
 
-import com.sparta.sogonsogon.follow.entity.Follow;
-import com.sparta.sogonsogon.follow.repository.FollowRepository;
+import com.amazonaws.services.kms.model.NotFoundException;
+import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
 import com.sparta.sogonsogon.noti.dto.NotificationResponseDto;
 import com.sparta.sogonsogon.noti.entity.Notification;
 import com.sparta.sogonsogon.noti.repository.EmitterRepository;
-import com.sparta.sogonsogon.noti.repository.EmitterRepositoryImpl;
 import com.sparta.sogonsogon.noti.repository.NotificationRepository;
 import com.sparta.sogonsogon.noti.util.AlarmType;
-import com.sparta.sogonsogon.radio.entity.Radio;
-import com.sparta.sogonsogon.radio.repository.RadioRepository;
+import com.sparta.sogonsogon.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,22 +26,14 @@ import java.util.Map;
 public class NotificationService {
 
     private final EmitterRepository emitterRepository ;
-
-    private final RadioRepository radioRepository;
-
     private final NotificationRepository notificationRepository;
-    private final FollowRepository followRepository;
+
     private final MemberRepository memberRepository;
-
-
     //DEFAULT_TIMEOUT을 기본값으로 설정
     private static final Long DEFAULT_TIMEOUT = 60 * 1000L;
     //DEFAULT_TIMEOUT 변수는 SSE 연결의 타임아웃 시간을 밀리초(ms) 단위로 설정하는 상수입니다. 기본값은 60초(1분)입니다. 따라서 클라이언트와 SSE 연결을 유지하기 위해 60초 이내에 요청을 보내지 않으면 연결이 종료됩니다.
     //
     //이 값을 변경하면 SSE 연결이 종료되는 시간을 조정할 수 있습니다.
-
-
-
 
     public SseEmitter subscribe(Long memberId) {
         String emitterId = makeTimeIncludeId(memberId);
@@ -164,8 +151,6 @@ public class NotificationService {
     }
 
 
-
-
     private Notification createNotification(Member receiver, AlarmType alarmType, String message) {
         Notification notification = new Notification();
         notification.setReceiver(receiver);
@@ -174,4 +159,47 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
 
+    //받은 알림 전체 조회
+    public List<NotificationResponseDto> getAllNotifications(Long memberId) {
+
+            List<Notification> notifications = notificationRepository.findAllByReceiverIdOrderByCreatedAtDesc(memberId);
+            return notifications.stream()
+                    .map(NotificationResponseDto::create)
+                    .collect(Collectors.toList());
+
+    }
+
+
+    // 받은 알림 선택하여 조회
+    public NotificationResponseDto getNotification(Long notificationId, UserDetailsImpl userDetails) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid notification ID: " + notificationId));
+        return NotificationResponseDto.create(notification);
+    }
+
+
+
+    // 특정 회원이 받은 알림을 확인했다는 것을 서비스에 알리는 기능
+    public NotificationResponseDto confirmNotification(Member member, Long notificationId) {
+        Notification notification = notificationRepository.findById(notificationId).orElseThrow(
+                () -> new NotFoundException("Notification not found"));
+
+        // 확인한 유저가 알림을 받은 대상자가 아니라면 예외 발생
+        if (!notification.getReceiver().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("접근권한이 없습니다. ");
+        }
+        List<Notification> notificationList = notificationRepository.findAllByReceiverIdOrderByCreatedAtDesc(member.getId());
+        for (Notification notification1 : notificationList){
+            if (notification1.getId() <= notification.getId()){
+                notification1.setIsRead(true);
+//                notificationRepository.save(notification1);
+            }
+        }
+// else if (!notification.getIsRead()) {
+//            // 알림을 확인하지 않은 경우 상태 변경
+//            notification.setIsRead(true);
+//            notificationRepository.save(notification);
+//        }
+        return new NotificationResponseDto(notification);
+    }
 }
