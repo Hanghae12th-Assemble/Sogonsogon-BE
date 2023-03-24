@@ -3,6 +3,7 @@ package com.sparta.sogonsogon.radio.service;
 import com.sparta.sogonsogon.enums.CategoryType;
 import com.sparta.sogonsogon.enums.ErrorMessage;
 import com.sparta.sogonsogon.follow.dto.FollowRequestDto;
+import com.sparta.sogonsogon.follow.entity.Follow;
 import com.sparta.sogonsogon.follow.repository.FollowRepository;
 import com.sparta.sogonsogon.jwt.JwtUtil;
 import com.sparta.sogonsogon.member.entity.Member;
@@ -225,7 +226,7 @@ public class RadioService {
 //            throw new RuntimeException("Invalid broadcast ID: " + radioId);
 //        }
 //    }
-        public Radio startRadio(Long radioId) {
+        public Radio startRadio(Long radioId, UserDetailsImpl userDetails) {
             Optional<Radio> optionalRadio = radioRepository.findById(radioId);
             if (optionalRadio.isPresent()) {
                 Radio radio = optionalRadio.get();
@@ -233,8 +234,13 @@ public class RadioService {
                 radio.setStartTime(LocalDateTime.now());
                 Radio saveRadio = radioRepository.save(radio);
 
-                // NotificationService로 알림 전송
-                notificationService.notifyRadioStarted(saveRadio);
+
+                // NotificationService를 통해 라디오 시작 알림을 구독한 유저들에게 알림을 보낸다.
+                String message = radio.getMember().getMembername()+"님이 " + radio.getStartTime() +"에 "+ radio.getTitle() + "방송을 시작하였습니다. ";
+                List<Follow> followings = followRepository.findByFollower(userDetails.getUser());
+                for (Follow following : followings) {
+                    notificationService.send(following.getFollowing(), AlarmType.eventRadioStart, message);
+                }
 
                 return saveRadio;
             } else {
@@ -242,9 +248,8 @@ public class RadioService {
             }
         }
 
-    public Radio endRadio(Long radioId) {
+    public Radio endRadio(Long radioId, UserDetailsImpl userDetails) {
         Optional<Radio> optionalRadio = radioRepository.findById(radioId);
-
         if (optionalRadio.isPresent()) {
             Radio radio = optionalRadio.get();
 
@@ -253,7 +258,11 @@ public class RadioService {
             Radio saveRadio = radioRepository.save(radio);
 
             // NotificationService를 통해 라디오 종료 알림을 구독한 유저들에게 알림을 보낸다.
-            notificationService.notifyRadioEnded(saveRadio);
+            String message = userDetails.getUsername() +"님이 " + radio.getEndTime() +"에 "+ radio.getTitle() + "방송을 종료하였습니다. ";
+            List<Follow> followings = followRepository.findByFollower(userDetails.getUser());
+            for (Follow following : followings) {
+                notificationService.send(following.getFollowing(), AlarmType.eventRadioEnd, message);
+            }
 
             return saveRadio;
 

@@ -110,17 +110,17 @@ public class RadioController {
 
     @PostMapping("/{radioId}/start")
     @Operation(summary = "라디오 방송 시작", description = "라디오 방송 시작")
-    public ResponseEntity<Radio> startRadio(@PathVariable Long radioId) {
-        Radio radio = radioService.startRadio(radioId);
-        notificationService.notifyRadioStarted(radio);
+    public ResponseEntity<Radio> startRadio(@PathVariable Long radioId,
+                                            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Radio radio = radioService.startRadio(radioId,userDetails);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{radioId}/end")
     @Operation(summary = "라디오 방송 종료", description = "라디오 방송 종료")
-    public ResponseEntity<Radio> endRadio(@PathVariable Long radioId) {
-        Radio radio = radioService.endRadio(radioId);
-        notificationService.notifyRadioEnded(radio);
+    public ResponseEntity<Radio> endRadio(@PathVariable Long radioId,
+                                          @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Radio radio = radioService.endRadio(radioId,userDetails);
         return ResponseEntity.ok().build();
     }
 //    @PostMapping("/{radioId}/start")

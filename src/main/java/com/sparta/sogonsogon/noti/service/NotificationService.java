@@ -51,7 +51,6 @@ public class NotificationService {
     public SseEmitter subscribe(Long memberId) {
         String emitterId = makeTimeIncludeId(memberId);
         SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
-
         // 시간이 만료된 경우에 대해 자동으로 레포지토리에서 삭제 처리해줄 수 있는 콜백을 등록해놓을 수 있다.
         //emitter의 onCompletion()과 onTimeout() 메서드를 이용하여 연결이 종료될 때 emitterRepository에서 emitter를 삭제하도록 설정
         // onCompletion 메서드: SseEmitter가 완료될 때 호출되는 콜백 함수를 정의
@@ -138,9 +137,9 @@ public class NotificationService {
 
     //SSE를 이용하여 알림(Notification) 메시지를 구독(subscribe)한 클라이언트에게 전송하는 기능을 구현한 메서드이다.
     //이를 통해 클라이언트는 Notification을 실시간으로 받을 수 있게 됩니다.
-    public void send(Member receiver, AlarmType alarmType, String message, Radio radio) {
+    public void send(Member receiver, AlarmType alarmType, String message) {
         //send() 메서드는 Member 객체와 AlarmType 열거형, 알림 메시지(String)와 알림 상태(Boolean) 값을 인자로 받아 기능을 구현한다.
-        Notification notification = notificationRepository.save(createNotification(receiver, alarmType,message,radio));
+        Notification notification = notificationRepository.save(createNotification(receiver, alarmType, message));
 
         // Notification 객체의 수신자 ID를 추출하고,
         String receiverId = String.valueOf(receiver.getId());
@@ -167,39 +166,11 @@ public class NotificationService {
 
 
 
-    // 라디오 방송 시작시 팔로워 한 알림보내기
-    public void notifyRadioStarted(Radio radio) {
-        String message = "Radio '" + radio.getTitle() + "' started at " + radio.getStartTime();
-
-        List<Member> subscribers = followRepository.findSubscribersByRadioId(radio.getId());
-        for (Member subscriber : subscribers) {
-            SseEmitter emitter = subscribe(subscriber.getId());
-//            sendLostData(emitter.getHeaders().get("Last-Event-ID"), subscriber.getId(), emitter.getEmitterId(), emitter);
-            send(subscriber, AlarmType.eventRadioStart, message, radio);
-
-        }
-    }
-
-
-    // 라디오 방속 종료시 알림보내기
-    public void notifyRadioEnded(Radio radio) {
-        String message = "Radio '" + radio.getTitle() + "' ended at " + radio.getEndTime();
-        List<Member> subscribers = followRepository.findSubscribersByRadioId(radio.getId());
-        for (Member subscriber : subscribers) {
-            SseEmitter emitter = subscribe(subscriber.getId());
-            send(subscriber, AlarmType.eventRadioEnd, message,radio);
-        }
-    }
-
-
-    private Notification createNotification(Member receiver, AlarmType alarmType, String message, Radio radio) {
+    private Notification createNotification(Member receiver, AlarmType alarmType, String message) {
         Notification notification = new Notification();
         notification.setReceiver(receiver);
         notification.setAlarmType(alarmType);
         notification.setMessage(message);
-        if (radio != null) {
-            notification.setRadio(radio);
-        }
         return notificationRepository.save(notification);
     }
 
