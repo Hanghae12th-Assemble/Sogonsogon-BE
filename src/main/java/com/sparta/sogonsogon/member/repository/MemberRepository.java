@@ -16,7 +16,7 @@ import static org.hibernate.hql.internal.antlr.HqlTokenTypes.FROM;
 
 public interface MemberRepository extends JpaRepository<Member , Long> {
 
-    Optional<Member> findMemberByMembernameContaining(String membername);
+//    Optional<Member> findMemberByMembernameContaining(String membername);
     Optional<Member> findByEmail(String email);
 
     @Query(
@@ -27,4 +27,8 @@ public interface MemberRepository extends JpaRepository<Member , Long> {
     Optional<Member> findByMembername(String membername);
 
     List<Member> findAllByMembernameContaining(String membername);
+
+    Optional<Member> findByKakaoId(Long kakaoId);
+
+    int countByNickname(String nickname);
 }

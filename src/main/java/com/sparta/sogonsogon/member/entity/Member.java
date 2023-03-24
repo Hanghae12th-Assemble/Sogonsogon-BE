@@ -6,6 +6,7 @@ import com.sparta.sogonsogon.member.dto.SignUpRequestDto;
 import com.sparta.sogonsogon.noti.entity.Notification;
 import com.sparta.sogonsogon.radio.entity.Radio;
 import lombok.*;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -18,6 +19,8 @@ import java.util.*;
 @NoArgsConstructor
 @Builder
 public class Member extends TimeStamped{
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +44,12 @@ public class Member extends TimeStamped{
 
     @Column(nullable = true)
     private String memberInfo;
+
+    @Column(unique = true)
+    private Long kakaoId;
+
+    @Column(unique = true)
+    private String naverId;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -74,13 +83,36 @@ public class Member extends TimeStamped{
         this.profileImageUrl = requestDto.getProfileImageUrl();
     }
 
+    //네이버 회원 정보
+    public Member(String naverId, String email, String profileImageUrl, String password, String nickname){
+        this.membername = naverId;
+        this.email = email;
+        this.profileImageUrl = profileImageUrl;
+        this.password = password;
+        this.nickname = nickname;
+        this.naverId = naverId;
+        this.role = MemberRoleEnum.SOCIAL;
+    }
+
+    //카카오 회원 정보
+    public Member(String nickname, String profileImageUrl, String password, String email, Long kakaoId, String membername){
+        this.membername = membername;
+        this.email = email;
+        this.password = password;
+        this.profileImageUrl = profileImageUrl;
+        this.nickname = nickname;
+        this.kakaoId = kakaoId;
+        this.role = MemberRoleEnum.SOCIAL;
+
+    }
+
     public String getRoleValue() {
         return this.role.getValue();
     }
 
-    public Member updateModifiedAt(){
-        this.onPreUpdate();
-        return this;
-    }
+//    public Member updateModifiedAt(){
+//        this.onPreUpdate();
+//        return this;
+//    }
 
 }
