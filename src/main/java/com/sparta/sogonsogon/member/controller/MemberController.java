@@ -54,8 +54,8 @@ public class MemberController {
     //해당 고유 아이디 조회
     @GetMapping("/")
     @Operation(summary = "고유 아이디 조회", description = "고유 아이디로 사용자 조회")
-    public StatusResponseDto<MemberResponseDto> findbyMembername(@RequestParam(value = "membername") String membername){
-        return memberService.getInfoByMembername(membername);
+    public StatusResponseDto<MemberResponseDto> findbyMembername(@RequestParam(value = "membername") String membername) {
+        return StatusResponseDto.success(HttpStatus.OK, memberService.getInfoByMembername(membername));
     }
 
     //해당 유저 닉네임으로 조회

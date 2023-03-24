@@ -39,7 +39,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
-//    private final FollowRepository followRepository;
+    //    private final FollowRepository followRepository;
     private final JwtUtil jwtUtil;
     private final S3Uploader s3Uploader;
 
@@ -51,11 +51,11 @@ public class MemberService {
         String email = requestDto.getEmail();
 
         Optional<Member> foundMembername = memberRepository.findByMembername(membername);
-        if(foundMembername.isPresent()){
+        if (foundMembername.isPresent()) {
             throw new DuplicateKeyException(ErrorMessage.DUPLICATE_USERNAME.getMessage()); // HTTP 409 Conflict
         }
         Optional<Member> foundEmail = memberRepository.findByEmail(email);
-        if(foundEmail.isPresent()){
+        if (foundEmail.isPresent()) {
             throw new DuplicateKeyException(ErrorMessage.DUPLICATE_EMAIL.getMessage());
         }
 
@@ -66,15 +66,15 @@ public class MemberService {
 
     //로그인
     @Transactional(readOnly = true)
-    public MemberResponseDto login(LoginRequestDto requestDto, HttpServletResponse response)  {
+    public MemberResponseDto login(LoginRequestDto requestDto, HttpServletResponse response) {
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
 
         Member member = memberRepository.findByEmail(email).orElseThrow(
-                ()-> new UsernameNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage()) // HTTP 404 Not Found
+                () -> new UsernameNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage()) // HTTP 404 Not Found
         );
 
-        if (!passwordEncoder.matches(password, member.getPassword())){
+        if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new BadCredentialsException(ErrorMessage.WRONG_PASSWORD.getMessage()); // HTTP 401 Unauthorized
         }
 
@@ -88,25 +88,25 @@ public class MemberService {
     public MemberResponseDto update(Long id, MemberRequestDto memberRequestDto, UserDetailsImpl userDetails) throws IOException {
         String profileImageUrl = s3Uploader.uploadFiles(memberRequestDto.getProfileImageUrl(), "profileImages");
 
-        Member member= memberRepository.findById(id).orElseThrow(
-                ()-> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
+        Member member = memberRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
 
-        if (member.getRole() == MemberRoleEnum.USER && member.getMembername().equals(userDetails.getUser().getMembername())){
+        if (member.getRole() == MemberRoleEnum.USER && member.getMembername().equals(userDetails.getUser().getMembername())) {
             member.update(profileImageUrl, memberRequestDto);
             return new MemberResponseDto(member);
-        }else{
+        } else {
             throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
         }
     }
 
     // 고유 아이디로 유저 정보 조회
-    public StatusResponseDto<MemberResponseDto> getInfoByMembername(String membername) {
+    public MemberResponseDto getInfoByMembername(String membername) {
         Member member = memberRepository.findByMembername(membername).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
 
-            return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
+        return new MemberResponseDto(member);
     }
 
     //유저 닉네임으로 정보 조회
