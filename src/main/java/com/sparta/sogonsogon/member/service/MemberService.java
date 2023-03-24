@@ -89,7 +89,7 @@ public class MemberService {
                 ()-> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
 
-        if (member.getRole() == MemberRoleEnum.USER || member.getMembername().equals(userDetails.getUser().getMembername())){
+        if ((member.getRole() == MemberRoleEnum.USER || member.getRole() == MemberRoleEnum.SOCIAL)&& member.getMembername().equals(userDetails.getUser().getMembername())){
             member.update( memberRequestDto);
             return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
         }else{
