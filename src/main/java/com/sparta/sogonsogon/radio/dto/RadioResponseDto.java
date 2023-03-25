@@ -1,5 +1,6 @@
 package com.sparta.sogonsogon.radio.dto;
 
+import com.sparta.sogonsogon.enums.CategoryType;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.entity.TimeStamped;
 import com.sparta.sogonsogon.radio.entity.Radio;
@@ -23,12 +24,14 @@ public class RadioResponseDto extends TimeStamped {
 
     private String membername;
 
+    private CategoryType categoryType;
 
     private LocalDateTime startTime;  // 방송시작시간
 
     private LocalDateTime endTime;  // 방송종료 시간
 
     private LocalDateTime createdAt; // 생성시간
+    private int enterCnt;
 
     public RadioResponseDto(Radio radio) {
         this.id = radio.getId();
@@ -41,5 +44,7 @@ public class RadioResponseDto extends TimeStamped {
 //        this.endTime = radio.getEndTime();
         this.createdAt = radio.getCreatedAt();
         this.memberId = radio.getMember().getId();
+        this.categoryType = radio.getCategoryType();
+        this.enterCnt = radio.getEnterCnt();
     }
 }

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -44,24 +45,19 @@ public class MemberController {
     }
 
     //회원 정보 수정
-    @ResponseBody
-    @PutMapping("/update/{userId}")
+    @PutMapping(value = "/update/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "회원 정보 수정", description = "프로필에서 보이는 회원 정보 수정")
     public StatusResponseDto<MemberResponseDto> updateMemberInfo(@PathVariable Long userId,
-                                                                @RequestParam(value = "nickname") String nickname,
-                                                                @RequestParam(value = "memberInfo") String memberInfo,
-                                                                @RequestParam(value = "profileImage")MultipartFile multipartFile,
+                                                                 @Valid @ModelAttribute MemberRequestDto requestDto,
                                                                 @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        String profileImageUrl = s3Uploader.uploadFiles(multipartFile, "profileImages");
-        MemberRequestDto memberRequestDto = new MemberRequestDto(nickname, memberInfo, profileImageUrl);
-        return memberService.update(userId, memberRequestDto, userDetails);
+        return StatusResponseDto.success(HttpStatus.OK, memberService.update(userId, requestDto, userDetails));
     }
 
     //해당 고유 아이디 조회
     @GetMapping("/")
     @Operation(summary = "고유 아이디 조회", description = "고유 아이디로 사용자 조회")
-    public StatusResponseDto<List<MemberResponseDto>> findbyMembername(@RequestParam(value = "membername") String membername){
-        return memberService.getInfoByMembername(membername);
+    public StatusResponseDto<MemberResponseDto> findbyMembername(@RequestParam(value = "membername") String membername) {
+        return StatusResponseDto.success(HttpStatus.OK, memberService.getInfoByMembername(membername));
     }
 
     //해당 유저 닉네임으로 조회
