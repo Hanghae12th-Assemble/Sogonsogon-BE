@@ -22,7 +22,6 @@ import com.sparta.sogonsogon.radio.entity.Radio;
 import com.sparta.sogonsogon.radio.repository.EnterMemberRepository;
 import com.sparta.sogonsogon.radio.repository.RadioRepository;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
-
 import com.sparta.sogonsogon.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
@@ -38,6 +37,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -93,13 +93,21 @@ public class RadioService {
 
     // 라디오 전체 조회
     @Transactional
-    public List<RadioResponseDto> findAllRadios() {
-        List<Radio> list = radioRepository.findAll();
-        List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
-        for (Radio radio : list) {
-            radioResponseDtos.add(new RadioResponseDto(radio));
-        }
-        return radioResponseDtos;
+    public Map<String, Object> findAllRadios(int page, int size, String sortBy) {
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Pageable sortedPageable = PageRequest.of(page, size, sort);
+        Page<Radio> radioPage = radioRepository.findAll(sortedPageable);
+        List<RadioResponseDto> radioResponseDtoList = radioPage.getContent().stream().map(RadioResponseDto::new).toList();
+
+        // 방송 길이 구하는 객체 생성
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("radioCount", radioPage.getTotalElements());
+
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("result", radioResponseDtoList);
+        responseBody.put("metadata", metadata);
+
+        return responseBody;
     }
 
     // 선택된 라디오 조회
@@ -137,14 +145,14 @@ public class RadioService {
         );
 
         EnterMember enterMember = new EnterMember(member, radio);
-        radio.enter(radio.getEnterCnt()+1);
+        radio.enter(radio.getEnterCnt() + 1);
         enterMemberRepository.save(enterMember);
         return EnterMemberResponseDto.of(enterMember);
     }
 
     public void quitRadio(Long radioId, UserDetailsImpl userDetails) {
         Radio radio = radioRepository.findById(radioId).orElseThrow(
-            () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
+                () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
         );
 
         EnterMember enterMember = enterMemberRepository.findByRadioAndMember(radio, userDetails.getUser());
@@ -152,32 +160,33 @@ public class RadioService {
             throw new IllegalArgumentException(ErrorMessage.NOT_FOUND_ENTER_MEMBER.getMessage());
         } else {
             enterMemberRepository.delete(enterMember);
-            radio.enter(radio.getEnterCnt()-1);
+            radio.enter(radio.getEnterCnt() - 1);
         }
     }
 
     public List<RadioResponseDto> findByTitle(String title) {
         List<Radio> list = radioRepository.findByTitleContaining(title);
         List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
-        for (Radio radio : list){
+        for (Radio radio : list) {
             radioResponseDtos.add(new RadioResponseDto(radio));
         }
         return radioResponseDtos;
     }
 
-    public List<RadioResponseDto> findByCategory(int page, int size, String sortBy, CategoryType categoryType) {
+    public Map<String, Object> findByCategory(int page, int size, String sortBy, CategoryType categoryType) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Radio> radioPage = radioRepository.findAllByCategoryType(categoryType, pageable);
+        Pageable sortedPageable = PageRequest.of(page, size, sort);
+        Page<Radio> radioPage = radioRepository.findAllByCategoryType(categoryType, sortedPageable);
+        List<RadioResponseDto> radioResponseDtoList = radioPage.getContent().stream().map(RadioResponseDto::new).toList();
+        // 방송 길이 구하는 객체 생성
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("radioCount", radioPage.getTotalElements());
 
-        List<Radio> radioList = radioPage.getContent();
-        List<RadioResponseDto> radioResponseDtos = new ArrayList<>();
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("result", radioResponseDtoList);
+        responseBody.put("metadata", metadata);
 
-        for (Radio radio : radioList) {
-            radioResponseDtos.add(new RadioResponseDto(radio));
-        }
-
-        return radioResponseDtos;
+        return responseBody;
     }
 
 
@@ -185,36 +194,36 @@ public class RadioService {
 
     // 라디오 방송 시작 및 종료 기능 추가 **********************************
 
-        public Radio startRadio(Long radioId, UserDetailsImpl userDetails) {
-            //라디오 존재여부 확인하기
-            Optional<Radio> optionalRadio = radioRepository.findById(radioId);
-            //라디오 존재여부 확인하기
+    public Radio startRadio(Long radioId, UserDetailsImpl userDetails) {
+        //라디오 존재여부 확인하기
+        Optional<Radio> optionalRadio = radioRepository.findById(radioId);
+        //라디오 존재여부 확인하기
 //            Radio radio = radioRepository.findById(radioId).orElseThrow(
 //                    () -> new IllegalArgumentException(ErrorMessage.NOT_FOUND_RADIO.getMessage())
 //            );
 
-            if (optionalRadio.isPresent()) {
-                Radio radio = optionalRadio.get();
-                if (!userDetails.getUser().getId().equals(radio.getMember().getId())) {
-                    throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
-                }
-
-                radio.setStartTime(LocalDateTime.now());
-                Radio saveRadio = radioRepository.save(radio);
-
-
-                // NotificationService를 통해 라디오 시작 알림을 구독한 유저들에게 알림을 보낸다.
-                String message = radio.getMember().getMembername()+"님이 " + radio.getStartTime() +"에 "+ radio.getTitle() + "방송을 시작하였습니다. ";
-                List<Follow> followings = followRepository.findByFollower(userDetails.getUser());
-                for (Follow following : followings) {
-                    notificationService.send(following.getFollowing(), AlarmType.eventRadioStart, message);
-                }
-
-                return saveRadio;
-            } else {
-                throw new RuntimeException("Invalid broadcast ID: " + radioId);
+        if (optionalRadio.isPresent()) {
+            Radio radio = optionalRadio.get();
+            if (!userDetails.getUser().getId().equals(radio.getMember().getId())) {
+                throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
             }
+
+            radio.setStartTime(LocalDateTime.now());
+            Radio saveRadio = radioRepository.save(radio);
+
+
+            // NotificationService를 통해 라디오 시작 알림을 구독한 유저들에게 알림을 보낸다.
+            String message = radio.getMember().getMembername()+"님이 " + radio.getStartTime() +"에 "+ radio.getTitle() + "방송을 시작하였습니다. ";
+            List<Follow> followings = followRepository.findByFollower(userDetails.getUser());
+            for (Follow following : followings) {
+                notificationService.send(following.getFollowing(), AlarmType.eventRadioStart, message);
+            }
+
+            return saveRadio;
+        } else {
+            throw new RuntimeException("Invalid broadcast ID: " + radioId);
         }
+    }
 
     public Radio endRadio(Long radioId, UserDetailsImpl userDetails) {
         Optional<Radio> optionalRadio = radioRepository.findById(radioId);

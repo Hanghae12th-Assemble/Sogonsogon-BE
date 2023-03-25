@@ -188,18 +188,12 @@ public class NotificationService {
         if (!notification.getReceiver().getId().equals(member.getId())) {
             throw new IllegalArgumentException("접근권한이 없습니다. ");
         }
-        List<Notification> notificationList = notificationRepository.findAllByReceiverIdOrderByCreatedAtDesc(member.getId());
-        for (Notification notification1 : notificationList){
-            if (notification1.getId() <= notification.getId()){
-                notification1.setIsRead(true);
-//                notificationRepository.save(notification1);
-            }
+
+        if (!notification.getIsRead()) {
+            notification.setIsRead(true);
+            notificationRepository.save(notification);
         }
-// else if (!notification.getIsRead()) {
-//            // 알림을 확인하지 않은 경우 상태 변경
-//            notification.setIsRead(true);
-//            notificationRepository.save(notification);
-//        }
+
         return new NotificationResponseDto(notification);
     }
 }

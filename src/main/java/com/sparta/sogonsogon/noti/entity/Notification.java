@@ -29,8 +29,8 @@ public class Notification extends TimeStamped{
     private Member receiver;     //    private Member receiver;
 
     @Column
-    private Boolean isRead; //  읽었는지에 대한 여부를 나타낸다
-//    private Boolean isRead = false; //  읽었는지에 대한 여부를 나타낸다
+//    private Boolean isRead; //  읽었는지에 대한 여부를 나타낸다
+    private Boolean isRead = false; //  읽었는지에 대한 여부를 나타낸다
 
     @Column(nullable = false)
     private String message;  //알림의 내용. 비어있지 않아야하며 50자 이내여야한다.
