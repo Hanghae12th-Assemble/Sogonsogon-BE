@@ -2,13 +2,17 @@ package com.sparta.sogonsogon.noti.dto;
 
 import com.sparta.sogonsogon.noti.entity.Notification;
 import com.sparta.sogonsogon.noti.util.AlarmType;
+import com.sparta.sogonsogon.noti.util.Chrono;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
+@Setter
 public class NotificationResponseDto {
+
 
 
     private Long notificationId;
@@ -37,18 +41,19 @@ public class NotificationResponseDto {
         this.message = notification.getMessage();
         this.readStatus = notification.getIsRead();
         this.alarmType = notification.getAlarmType();
-//        this.createdAt = Chrono.timesAgo(notification.getCreatedAt());
+        this.createdAt = Chrono.timesAgo(notification.getCreatedAt());
     }
 
     public static NotificationResponseDto create(Notification notification) {
-//        createdAt = Chrono.timesAgo(notification.getCreatedAt());
+        String createdAt = Chrono.timesAgo(notification.getCreatedAt());
 
         return NotificationResponseDto.builder()
                 .id(notification.getId())
                 .message(notification.getMessage())
                 .alarmType(notification.getAlarmType())
                 .readStatus(notification.getIsRead())
-//                .createdAt(createdAt)
+                .createdAt(createdAt)
                 .build();
     }
+
 }

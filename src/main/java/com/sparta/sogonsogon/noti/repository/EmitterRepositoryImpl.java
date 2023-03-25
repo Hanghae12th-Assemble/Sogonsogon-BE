@@ -87,24 +87,4 @@ public class EmitterRepositoryImpl implements EmitterRepository {
         );
     }
 
-//    @Override
-//    public void deleteAllEventCacheStartWithId(String memberId) {
-//        eventCache.forEach(
-//                (key, emitter) -> {
-//                    if (Arrays.stream(key.split("_")).findFirst().get().equals(memberId)) {
-//                        eventCache.remove(key);
-//                    }
-//                }
-//        );
-//    }
-
-//    @Override
-//    public Map<String, Object> findAllEventCacheStartWithId(String valueOf) {
-//        return null;
-//    }
-//
-//    @Override
-//    public Map<String, SseEmitter> findAllStartWithById(String id) {
-//        return null;
-//    }
 }

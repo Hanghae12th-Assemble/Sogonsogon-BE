@@ -1,5 +1,6 @@
 package com.sparta.sogonsogon.follow.service;
 
+import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.enums.ErrorMessage;
 import com.sparta.sogonsogon.follow.dto.FollowRequestDto;
 import com.sparta.sogonsogon.follow.dto.FollowResponseDto;
@@ -7,6 +8,9 @@ import com.sparta.sogonsogon.follow.entity.Follow;
 import com.sparta.sogonsogon.follow.repository.FollowRepository;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
+import com.sparta.sogonsogon.noti.service.NotificationService;
+import com.sparta.sogonsogon.noti.util.AlarmType;
+import com.sparta.sogonsogon.radio.dto.RadioResponseDto;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +28,13 @@ import java.util.List;
 public class FollowService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
-
+    private final NotificationService notificationService;
 
     // 유저를 팔로잉하는 모든 사용자 가져오기
     @Transactional
     public List<FollowResponseDto> getFollowings(Long memberId) {
+//
+//        List<FollowResponseDto> followingList = followRepository.findAllBy
         Member member = memberRepository.findById(memberId).orElseThrow(
                 ()-> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
@@ -85,9 +91,11 @@ public class FollowService {
         if (followStatus == null) {
             Follow newFollow = new Follow(new FollowRequestDto(follow, follower));
             followRepository.save(newFollow);
+            notificationService.send(follow, AlarmType.eventFollower, "회원 " + follower.getMembername() + " 님이 " + follow.getMembername() + "님을 팔로우하였니다.");
             return FollowResponseDto.of(newFollow);
         } else {
             followRepository.deleteById(followStatus.getId());
+            notificationService.send(follow, AlarmType.eventFollower, "회원 "+ follower.getMembername() +" 님이 " + follow.getMembername() + "님을 팔로우 취소하였습니다.");
             return FollowResponseDto.of(followStatus);
         }
     }
