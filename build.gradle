@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
@@ -65,6 +66,10 @@ dependencies {
 
     //Oauth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    //이 의존성이 왜 필요한 건가 .. ㅡㅡ 의심중
+    implementation 'io.mzlnk.oauth2.exchange:oauth2-exchange-spring-boot-autoconfigure:0.1.1'
+    implementation 'org.springframework.security:spring-security-oauth2-jose:6.0.2'
+    implementation 'org.apache.oltu.jose:org.apache.oltu.jose.jws:1.0.1'
 
     //json parsing
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
