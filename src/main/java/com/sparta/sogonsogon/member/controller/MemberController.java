@@ -5,6 +5,7 @@ import com.sparta.sogonsogon.member.dto.*;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.service.MemberService;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
+import com.sparta.sogonsogon.util.S3Uploader;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.Optional;
 public class MemberController {
 
     private final MemberService memberService;
+    private final S3Uploader s3Uploader;
 
     //회원 가입
     @PostMapping("/signup")
@@ -63,6 +65,13 @@ public class MemberController {
     @Operation(summary = "닉네임 조회", description = "단어로 해당 닉네임에 포함되는 모든 사용자 조회")
     public StatusResponseDto<List<MemberOneResponseDto>> findListByNickname(@RequestParam(value = "nickname") String nickname){
         return memberService.getListByNickname(nickname);
+    }
+
+    //상세 사용자 조회
+    @GetMapping("/{memberId}")
+    @Operation(summary = "상세 회원 조회", description = "id 로 조회 하여 해당 회원의 정보를 가져옴")
+    public StatusResponseDto<MemberResponseDto> detailsMember(@PathVariable Long memberId){
+        return memberService.detailsMember(memberId);
     }
 
 }

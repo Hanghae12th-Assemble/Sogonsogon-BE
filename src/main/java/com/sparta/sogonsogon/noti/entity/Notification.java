@@ -21,7 +21,6 @@ public class Notification extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     //누구 : ~에 대한 알림이 도착했습니다.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id", nullable = false)

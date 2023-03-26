@@ -25,18 +25,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
 
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -49,6 +50,32 @@ dependencies {
 
     // feat : chatting
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //embedded - redis
+    implementation 'it.ozimov:embedded-redis:0.7.3'
+    implementation 'org.webjars.bower:bootstrap:5.2.2'
+    implementation 'org.webjars.bower:vue:2.6.14'
+    implementation 'org.webjars.bower:axios:0.21.1'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation 'javax.xml.bind:jaxb-api'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    //Oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    //이 의존성이 왜 필요한 건가 .. ㅡㅡ 의심중
+    implementation 'io.mzlnk.oauth2.exchange:oauth2-exchange-spring-boot-autoconfigure:0.1.1'
+    implementation 'org.springframework.security:spring-security-oauth2-jose:6.0.2'
+    implementation 'org.apache.oltu.jose:org.apache.oltu.jose.jws:1.0.1'
+
+    //json parsing
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    implementation group: 'org.hibernate', name: 'hibernate-spatial', version: '6.1.7.Final'
+    implementation 'com.google.code.gson:gson:2.10.1'
+
 }
 
 tasks.named('test') {

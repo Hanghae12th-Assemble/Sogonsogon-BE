@@ -12,11 +12,10 @@ import java.util.Collection;
 public class UserDetailsImpl implements UserDetails {
 
     private final Member member;
-    private final String username;
+//    private final String username;
 
-    public UserDetailsImpl(Member member, String username) {
+    public UserDetailsImpl(Member member) {
         this.member = member;
-        this.username = username;
     }
 
     public Member getUser() {   //Getter가 없어서 안씀
@@ -26,7 +25,7 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         MemberRoleEnum role = member.getRole();
-        String authority = role.getAuthority();
+        String authority = role.getValue();//나중에 수정 해야 할지도...
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
         Collection<GrantedAuthority> authorities = new ArrayList<>();
@@ -37,7 +36,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.username;
+        return null;
     }
 
     @Override

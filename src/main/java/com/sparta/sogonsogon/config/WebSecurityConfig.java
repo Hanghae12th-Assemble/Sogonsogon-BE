@@ -2,9 +2,11 @@ package com.sparta.sogonsogon.config;
 
 import com.sparta.sogonsogon.jwt.JwtAuthFilter;
 import com.sparta.sogonsogon.jwt.JwtUtil;
+//import com.sparta.sogonsogon.member.oauth.service.CustomOAuth2MemberService;
 import com.sparta.sogonsogon.security.CustomAccessDeniedHandler;
 import com.sparta.sogonsogon.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +37,9 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
+//    @Autowired
+//    private CustomOAuth2MemberService customOAuth2MemberService;//커스텀 oauth2 맴버 서비스 추가
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -53,6 +58,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.cors();
         http.csrf().disable();
 
         //로그인 된 후 토큰없이 자동 인증되는 것을 방지
@@ -72,7 +78,15 @@ public class WebSecurityConfig implements WebMvcConfigurer {
             .anyRequest().authenticated()
             // JWT 인증/인가를 사용하기 위한 설정
             .and()
-            .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login();
+//                .logout()//oauth2 관련 내용 추가 (89번째 줄까지)
+//                .logoutSuccessUrl("/")
+//                .and()
+//                .oauth2Login()
+//                .defaultSuccessUrl("/login-success")
+//                .userInfoEndpoint()
+//                .userService(customOAuth2MemberService);
 
         //Controller 단 전에 시큐리티에서 검사하므로 따로 Exceptionhandler가 필요하다
         http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);

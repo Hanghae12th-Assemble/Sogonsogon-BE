@@ -39,7 +39,6 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
-    //    private final FollowRepository followRepository;
     private final JwtUtil jwtUtil;
     private final S3Uploader s3Uploader;
 
@@ -92,7 +91,7 @@ public class MemberService {
                 () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
 
-        if (member.getRole() == MemberRoleEnum.USER && member.getMembername().equals(userDetails.getUser().getMembername())) {
+        if ((member.getRole() == MemberRoleEnum.USER || member.getRole() == MemberRoleEnum.SOCIAL)&& member.getMembername().equals(userDetails.getUser().getMembername())) {
             member.update(profileImageUrl, memberRequestDto);
             return new MemberResponseDto(member);
         } else {
@@ -121,5 +120,12 @@ public class MemberService {
         }
         log.info(memberResponseDtos.toString());
         return StatusResponseDto.success(HttpStatus.OK, memberResponseDtos);
+    }
+
+    public StatusResponseDto<MemberResponseDto> detailsMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                ()-> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다. ")
+        );
+        return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
     }
 }
