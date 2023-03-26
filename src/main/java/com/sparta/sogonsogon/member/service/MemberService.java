@@ -92,7 +92,7 @@ public class MemberService {
         );
 
         if ((member.getRole() == MemberRoleEnum.USER || member.getRole() == MemberRoleEnum.SOCIAL)&& member.getMembername().equals(userDetails.getUser().getMembername())) {
-            member.update(profileImageUrl, memberRequestDto);
+            member.update(memberRequestDto, profileImageUrl);
             return new MemberResponseDto(member);
         } else {
             throw new IllegalArgumentException(ErrorMessage.ACCESS_DENIED.getMessage());
