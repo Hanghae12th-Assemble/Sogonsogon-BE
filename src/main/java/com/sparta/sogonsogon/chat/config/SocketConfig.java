@@ -1,5 +1,6 @@
 package com.sparta.sogonsogon.chat.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -8,6 +9,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class SocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
@@ -18,9 +20,11 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
                 .withSockJS()
                 .setHeartbeatTime(2000);
     }
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/topic","/queue");
         registry.setApplicationDestinationPrefixes("/");
     }
+
 }

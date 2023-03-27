@@ -19,8 +19,8 @@ public class TimeStamped {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getCreatedAt() {
+        return createdAt.toString();
     }
 
     public LocalDateTime getModifiedAt() {

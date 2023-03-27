@@ -2,6 +2,7 @@ package com.sparta.sogonsogon.security;
 
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.entity.MemberRoleEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Slf4j
 public class UserDetailsImpl implements UserDetails {
 
     private final Member member;
@@ -36,7 +38,9 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
+        log.info(member.getMembername());
         return member.getMembername();
+
     }
 
     @Override
