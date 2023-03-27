@@ -16,7 +16,7 @@ public class MemberRequestDto {
 
     private String nickname;
     private String memberInfo;
-    private String profileImageUrl;
+    private MultipartFile profileImageUrl;
 
 
 
