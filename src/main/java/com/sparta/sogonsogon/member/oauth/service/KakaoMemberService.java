@@ -12,6 +12,7 @@ import com.sparta.sogonsogon.member.oauth.dto.KakaoMemberInfoDto;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.*;
@@ -28,10 +29,12 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class KakaoMemberService {
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -46,16 +49,20 @@ public class KakaoMemberService {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
+        log.info(accessToken);
 
         // 2. "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
         KakaoMemberInfoDto kakaoMemberInfo = getKakaoMemberInfo(accessToken);
+        log.info(kakaoMemberInfo.toString());
 
         // 3. "카카오 사용자 정보"로 필요시 회원가입
         Member kakaoMember = registerKakaoUserIfNeeded(kakaoMemberInfo);
+        log.info(kakaoMember.toString());
 
         forceLogin(kakaoMember);
 
         String token = jwtUtil.createToken(kakaoMemberInfo.getEmail(), MemberRoleEnum.SOCIAL);
+        log.info(token);
 
         response.addHeader("Authorization", token);
 
@@ -89,6 +96,7 @@ public class KakaoMemberService {
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
+        log.info(jsonNode.get("access_token").asText());
         return jsonNode.get("access_token").asText();
     }
 
@@ -118,7 +126,10 @@ public class KakaoMemberService {
                 .get("email").asText();
         String profileImage = jsonNode.get("kakao_account")
                 .get("profile").get("profile_image_url").asText();
-
+        log.info(id.toString());
+        log.info(email.toString());
+        log.info(nickname.toString());
+        log.info(profileImage.toString());
         return new KakaoMemberInfoDto(id, nickname, email, profileImage);
     }
 
@@ -126,11 +137,13 @@ public class KakaoMemberService {
     private Member registerKakaoUserIfNeeded(KakaoMemberInfoDto kakaoMemberInfo) {
         // DB 에 중복된 Kakao Id 가 있는지 확인
         Long kakaoId = kakaoMemberInfo.getId();
-        Member kakaoMember = memberRepository.findByKakaoId(kakaoId)
-                .orElse(null);
+        log.info(kakaoId.toString());
+        Member kakaoMember = memberRepository.findByKakaoId(kakaoId).orElse(null);
+        log.info(kakaoMemberInfo.getEmail().toString());
         if (kakaoMember == null) {
             // 카카오 사용자 이메일과 동일한 이메일을 가진 회원이 있는지 확인
-            String kakaoEmail = kakaoMember.getEmail();
+            String kakaoEmail = kakaoMemberInfo.getEmail();
+            log.info(kakaoEmail);
             Member sameEmailUser = memberRepository.findByEmail(kakaoEmail).orElse(null);
             if (sameEmailUser != null) {
                 kakaoMember = sameEmailUser;
@@ -140,8 +153,8 @@ public class KakaoMemberService {
                 // 신규 회원가입
                 // username: kakao nickname
                 String nickname = kakaoMemberInfo.getNickname();
-                int count = memberRepository.countByNickname(nickname);
-                nickname = count == 0 ? nickname : nickname + count;
+//                int count = memberRepository.countByNickname(nickname);
+//                nickname = count == 0 ? nickname : nickname + count;
 
                 // password: random UUID
                 String password = UUID.randomUUID().toString();
@@ -153,17 +166,11 @@ public class KakaoMemberService {
                 // 프로필 사진 가져오기
                 String profileImage = kakaoMemberInfo.getProfileImageUrl();
                 //고유 아이디 랜덤 생성
-                String membername = RandomStringUtils.random(5, true, false);
-                while (true){
-                    if(memberRepository.findByMembername(membername).isPresent()){
-                        membername = RandomStringUtils.random(6, true, false);
-                        break;
-                    }
-                }
-                kakaoMember = new Member(nickname, encodedPassword, email, profileImage, kakaoId, membername);
+                String membername =email.substring(0, email.indexOf('@'));
+                kakaoMember = new Member(nickname,profileImage, encodedPassword, email, kakaoId, membername);
 
             }
-
+            log.info(kakaoMember.toString());
             memberRepository.save(kakaoMember);
         }
         return kakaoMember;

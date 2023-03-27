@@ -32,4 +32,6 @@ public interface MemberRepository extends JpaRepository<Member , Long> {
     Optional<Member> findByKakaoId(Long kakaoId);
 
     int countByNickname(String nickname);
+
+    Optional<Member> findByNaverId(String naverId);
 }

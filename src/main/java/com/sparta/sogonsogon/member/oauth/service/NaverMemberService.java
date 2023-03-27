@@ -12,6 +12,8 @@ import com.sparta.sogonsogon.member.oauth.dto.NaverMemberInfoDto;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +31,7 @@ import java.net.URL;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class NaverMemberService {
 
@@ -47,11 +50,13 @@ public class NaverMemberService {
 
         NaverMemberInfoDto naverMemberInfo = getNaverMemberInfo(code, state);
 
-        String naverId = naverMemberInfo.getMembername();
-        Member naverMember = memberRepository.findByMembername(naverId).orElse(null);
+        String naverId = naverMemberInfo.getNaverId();
+        log.info(naverId);
+        Member naverMember = memberRepository.findByNaverId(naverId).orElse(null);
 
         if(naverMember == null){
             String naverEmail = naverMemberInfo.getEmail();
+            log.info(naverEmail);
             Member sameEmailMember = memberRepository.findByEmail(naverEmail).orElse(null);
 
             if(sameEmailMember != null){
@@ -65,8 +70,17 @@ public class NaverMemberService {
 
                 String profileImageUrl = naverMemberInfo.getProfileImageUrl();
                 String email = naverMemberInfo.getEmail();
+                String membername = email.substring(0, email.indexOf('@'));
 
-                naverMember = new Member(nickname, encodedPassword, email, profileImageUrl, naverId);
+                naverMember = Member.builder()
+                        .naverId(naverId)
+                        .membername(membername)
+                        .email(email)
+                        .profileImageUrl(profileImageUrl)
+                        .nickname(nickname)
+                        .password(encodedPassword)
+                        .role(MemberRoleEnum.SOCIAL)
+                        .build();
             }
         memberRepository.save(naverMember);
         }
@@ -114,6 +128,7 @@ public class NaverMemberService {
 
         while ((line = br.readLine()) != null) {
             result.append(line);
+            log.info(result.toString());
         }
         br.close();
 
@@ -133,25 +148,31 @@ public class NaverMemberService {
         JsonElement tokenElement = jsonElement(codeReqURL, null, code, state);
 
         String accessToken = tokenElement.getAsJsonObject().get("access_token").getAsString();
+        log.info(accessToken);
 
         // 엑세스 토큰을 네이버에 전달하여 유저정보 가져옴
         JsonElement userInfoElement = jsonElement(tokenReqURL, accessToken, null, null);
 
+
         String naverId = String.valueOf(userInfoElement.getAsJsonObject().get("response")
                 .getAsJsonObject().get("id"));
+        log.info(naverId.toString());
         String userEmail = String.valueOf(userInfoElement.getAsJsonObject().get("response")
                 .getAsJsonObject().get("email"));
+        log.info(userEmail.toString());
         String nickName = String.valueOf(userInfoElement.getAsJsonObject().get("response")
                 .getAsJsonObject().get("nickname"));
+        log.info(nickName.toString());
         String profileImage = String.valueOf(userInfoElement.getAsJsonObject().get("response")
                 .getAsJsonObject().get("profile_image"));
+        log.info(profileImage.toString());
 
         naverId = naverId.substring(1, naverId.length() - 1);
         userEmail = userEmail.substring(1, userEmail.length() - 1);
         nickName = nickName.substring(1, nickName.length() - 1);
         profileImage = profileImage.substring(1, profileImage.length() - 1);
 
-        return new NaverMemberInfoDto(naverId, nickName, userEmail, profileImage, accessToken);
+        return new NaverMemberInfoDto(naverId, nickName,profileImage, userEmail, accessToken);
     }
 
     // 강제 로그인 처리
