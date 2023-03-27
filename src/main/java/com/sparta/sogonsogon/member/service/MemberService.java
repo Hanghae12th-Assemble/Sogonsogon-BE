@@ -14,6 +14,7 @@ import com.sparta.sogonsogon.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,9 +27,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -120,6 +119,29 @@ public class MemberService {
         }
         log.info(memberResponseDtos.toString());
         return StatusResponseDto.success(HttpStatus.OK, memberResponseDtos);
+    }
+
+    @Transactional
+    public Map<String, Object> getListBySimilarNickname(int page, int size, String sortBy, String nickname) {
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("nickname", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+        Member member = new Member();
+        member.setNickname(nickname);
+        Example<Member> example = Example.of(member, matcher);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Pageable sortedPageable = PageRequest.of(page, size, sort);
+        Page<Member> nicknamePage = memberRepository.findAll(example, sortedPageable);
+        List<MemberResponseDto> memberResponseDtoList = nicknamePage.getContent().stream().map(MemberResponseDto::new).toList();
+
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("nicknameCount", nicknamePage.getTotalElements());
+
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("result", memberResponseDtoList);
+        responseBody.put("metadata", metadata);
+
+        return responseBody;
     }
 
     public StatusResponseDto<MemberResponseDto> detailsMember(Long memberId) {

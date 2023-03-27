@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -65,6 +66,15 @@ public class MemberController {
     @Operation(summary = "닉네임 조회", description = "단어로 해당 닉네임에 포함되는 모든 사용자 조회")
     public StatusResponseDto<List<MemberOneResponseDto>> findListByNickname(@RequestParam(value = "nickname") String nickname){
         return memberService.getListByNickname(nickname);
+    }
+
+    @GetMapping("/similar-nickname")
+    @Operation(summary = "유사한 닉네임 조회", description = "유사한 닉네임 조회 무한스크롤 적용")
+    public Map<String, Object> getMembersBySimilarNickname(@RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int size,
+                                                           @RequestParam(defaultValue = "id") String sortBy,
+                                                           @RequestParam String nickname) {
+        return memberService.getListBySimilarNickname(page, size, sortBy, nickname);
     }
 
     //상세 사용자 조회
