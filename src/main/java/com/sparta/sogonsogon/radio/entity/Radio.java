@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name = "radios")
+@Entity(name = "radio")
 @Getter
 @NoArgsConstructor
 public class Radio extends TimeStamped {

@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 
-@Entity(name = "notifications")
+@Entity(name = "notification")
 @Setter
 @Getter //각 래퍼 클래스에 대한 추출 메소드이다.
 @NoArgsConstructor
