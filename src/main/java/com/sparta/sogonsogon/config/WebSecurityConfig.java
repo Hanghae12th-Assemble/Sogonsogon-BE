@@ -7,6 +7,7 @@ import com.sparta.sogonsogon.security.CustomAccessDeniedHandler;
 import com.sparta.sogonsogon.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,18 +28,19 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Arrays;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET) //붐비 붐비에 추가 되어 있는 내용
 public class WebSecurityConfig implements WebMvcConfigurer {
 
     private final JwtUtil jwtUtil;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-//    @Autowired
-//    private CustomOAuth2MemberService customOAuth2MemberService;//커스텀 oauth2 맴버 서비스 추가
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -111,6 +113,15 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         CorsConfiguration config = new CorsConfiguration();
 
         config.addAllowedOrigin("http://3.37.146.173:8080");
+        config.setAllowedOriginPatterns(Arrays.asList("*"));
+        config.addAllowedOrigin("http://localhost:3000");
+//        config.addAllowedOrigin("https://www.boombiboombi.com");
+//        config.addAllowedOrigin("http://boombiboombi.o-r.kr");
+        config.addAllowedOriginPattern("*");
+        config.setAllowedMethods(Arrays.asList("POST", "GET", "DELETE", "PUT"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowCredentials(true);
+        config.addExposedHeader("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
