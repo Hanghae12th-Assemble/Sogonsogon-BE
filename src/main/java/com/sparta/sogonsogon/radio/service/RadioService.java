@@ -24,6 +24,7 @@ import com.sparta.sogonsogon.radio.repository.RadioRepository;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
 import com.sparta.sogonsogon.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class RadioService {
     private final RadioRepository radioRepository;
@@ -63,7 +65,7 @@ public class RadioService {
     // 라디오생성
     @Transactional
     public RadioResponseDto createRadio(RadioRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
-
+        log.info(userDetails.getUsername());
         //유저인지 확인
         Member member = memberRepository.findByMembername(userDetails.getUsername()).orElseThrow(
                 () -> new InsufficientAuthenticationException(ErrorMessage.ACCESS_DENIED.getMessage()) // 401 Unauthorized

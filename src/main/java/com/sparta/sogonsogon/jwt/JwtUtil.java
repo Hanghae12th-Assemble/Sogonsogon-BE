@@ -51,12 +51,12 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String email, MemberRoleEnum role) {
+    public String createToken(String membername, MemberRoleEnum role) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(email)
+                        .setSubject(membername)
                         .claim(AUTHORIZATION_KEY, role)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
@@ -88,8 +88,9 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
 
-    public Authentication createAuthentication(String email) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+    public Authentication createAuthentication(String membername) {
+        log.info(membername);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(membername);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
