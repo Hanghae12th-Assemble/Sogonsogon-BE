@@ -20,8 +20,6 @@ import java.util.*;
 @Builder
 public class Member extends TimeStamped{
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
