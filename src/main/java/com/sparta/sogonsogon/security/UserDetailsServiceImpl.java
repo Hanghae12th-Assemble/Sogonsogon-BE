@@ -18,7 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String membername) throws IllegalArgumentException {
         log.info(membername);
-        Member user = memberRepository.findByMembername(membername) //이메일로 커스텀이 가능하다
+        Member user = memberRepository.findByEmail(membername) //이메일로 커스텀이 가능하다
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         return new UserDetailsImpl(user);

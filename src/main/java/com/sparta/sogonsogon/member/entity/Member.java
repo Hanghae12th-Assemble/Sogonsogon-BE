@@ -20,8 +20,6 @@ import java.util.*;
 @Builder
 public class Member extends TimeStamped{
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -109,13 +107,6 @@ public class Member extends TimeStamped{
 
     }
 
-    public String getRoleValue() {
-        return this.role.getValue();
-    }
 
-//    public Member updateModifiedAt(){
-//        this.onPreUpdate();
-//        return this;
-//    }
 
 }
