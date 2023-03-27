@@ -58,7 +58,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors();
+//        http.cors().configurationSource(corsConfigurationSource());
         http.csrf().disable();
 
         //로그인 된 후 토큰없이 자동 인증되는 것을 방지
@@ -110,7 +110,12 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOrigin("http://3.37.146.173:8080");
+//        config.addAllowedOrigin("http://3.37.146.173:8080");
+        config.addAllowedOriginPattern("*");
+        config.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
+        config.addAllowedMethod("*");
+        config.setAllowCredentials(true);
+        config.validateAllowCredentials();
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
