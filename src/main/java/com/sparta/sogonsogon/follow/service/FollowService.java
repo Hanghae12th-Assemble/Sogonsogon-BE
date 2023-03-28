@@ -74,8 +74,8 @@ public class FollowService {
 
 
     @Transactional
-    public FollowResponseDto toggleFollow(String membername, UserDetailsImpl userDetails) {
-        Member follow = memberRepository.findByMembername(membername).orElseThrow(
+    public FollowResponseDto toggleFollow(String nickname, UserDetailsImpl userDetails) {
+        Member follow = memberRepository.findByNickname(nickname).orElseThrow(
             () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
         Member follower = memberRepository.findById(userDetails.getUser().getId()).orElseThrow(
@@ -91,12 +91,12 @@ public class FollowService {
         if (followStatus == null) {
             Follow newFollow = new Follow(new FollowRequestDto(follow, follower));
             followRepository.save(newFollow);
-            notificationService.send(follow, AlarmType.eventFollower, "회원 " + follower.getMembername() + " 님이 회원님을 팔로우하였습니다.",follower.getMembername(),follower.getNickname(),follower.getProfileImageUrl());
-            return FollowResponseDto.of(newFollow);
+            notificationService.send(follow, AlarmType.eventFollower, "회원 " + follower.getNickname() + " 님이 회원님을 팔로우하였습니다.",follower.getMembername(),follower.getNickname(),follower.getProfileImageUrl());
+            return FollowResponseDto.of(newFollow,follow.getNickname() + "님을 팔로우하였습니다. ");
         } else {
             followRepository.deleteById(followStatus.getId());
-            notificationService.send(follow, AlarmType.eventFollower, "회원 "+ follower.getMembername() +" 님이 회원님을 팔로우 취소하였습니다.",follower.getMembername(),follower.getNickname(),follower.getProfileImageUrl());
-            return FollowResponseDto.of(followStatus);
+            notificationService.send(follow, AlarmType.eventFollower, "회원 "+ follower.getNickname() +" 님이 회원님을 팔로우 취소하였습니다.",follower.getMembername(),follower.getNickname(),follower.getProfileImageUrl());
+            return FollowResponseDto.of(followStatus,follow.getNickname() + "님을 팔로우 취소하였습니다.");
         }
     }
 }

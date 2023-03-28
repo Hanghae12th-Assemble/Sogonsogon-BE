@@ -37,6 +37,8 @@ public interface MemberRepository extends JpaRepository<Member , Long> {
 
     int countByNickname(String nickname);
 
+    Optional<Member> findByNickname(String nickname);
+
 //    Page<Member> findAllByNicknameLike(Example<Member> example, Pageable pageable);
 //
 //    Page<Member> searchAllByNicknameLikes(String nickname, Pageable pageable);
