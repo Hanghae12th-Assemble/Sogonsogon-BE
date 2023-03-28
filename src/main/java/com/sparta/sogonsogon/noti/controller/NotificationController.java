@@ -74,12 +74,12 @@ public class NotificationController {
         return StatusResponseDto.success(HttpStatus.OK, notificationService.getAllNotifications(userDetails.getUser().getId()));
     }
 
-    @GetMapping("/{notificationId}")
-    @Operation(summary = "받은 알림 선택하여 조회", description = "받은 알림 선택하여 조회")
-    public NotificationResponseDto getNotification(@PathVariable Long notificationId,
-                                                   @ApiIgnore @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return notificationService.getNotification(notificationId,userDetails);
-    }
+//    @GetMapping("/{notificationId}")
+//    @Operation(summary = "받은 알림 선택하여 조회", description = "받은 알림 선택하여 조회")
+//    public NotificationResponseDto getNotification(@PathVariable Long notificationId,
+//                                                   @ApiIgnore @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return notificationService.getNotification(notificationId,userDetails);
+//    }
 
     @PutMapping("/{notificationId}/confirm")
     @Operation(summary = "알림확인", description = "알림확인")
@@ -90,5 +90,13 @@ public class NotificationController {
         return StatusResponseDto.success(HttpStatus.OK, notificationResponseDto);
 //        return ResponseEntity.ok("Notification confirmed successfully");
 
+    }
+
+    @DeleteMapping("/{notificationId}")
+    @Operation(summary = "받은 알림 선택하여 삭제", description = "받은 알림 선택하여 삭제")
+    public StatusResponseDto<NotificationResponseDto> deleteNotification(@PathVariable Long notificationId,
+                                                      @ApiIgnore @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails){
+        notificationService.deleteNotification(notificationId,userDetails.getUser());
+        return StatusResponseDto.success(HttpStatus.OK,null);
     }
 }

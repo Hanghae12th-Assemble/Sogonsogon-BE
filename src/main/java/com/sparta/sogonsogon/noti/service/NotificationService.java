@@ -159,6 +159,9 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
 
+
+
+
     //받은 알림 전체 조회
     public List<NotificationResponseDto> getAllNotifications(Long memberId) {
 
@@ -169,13 +172,13 @@ public class NotificationService {
 
     }
 
-
-    // 받은 알림 선택하여 조회
-    public NotificationResponseDto getNotification(Long notificationId, UserDetailsImpl userDetails) {
-        Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid notification ID: " + notificationId));
-        return NotificationResponseDto.create(notification);
-    }
+//
+//    // 받은 알림 선택하여 조회
+//    public NotificationResponseDto getNotification(Long notificationId, UserDetailsImpl userDetails) {
+//        Notification notification = notificationRepository.findById(notificationId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid notification ID: " + notificationId));
+//        return NotificationResponseDto.create(notification);
+//    }
 
 
 
@@ -195,5 +198,18 @@ public class NotificationService {
         }
 
         return new NotificationResponseDto(notification);
+    }
+
+    // 선택된 알림 삭제
+    public void deleteNotification(Long notificationId, Member member) {
+        Notification notification = notificationRepository.findById(notificationId).orElseThrow(
+                () -> new NotFoundException("Notification not found"));
+
+        // 확인한 유저가 알림을 받은 대상자가 아니라면 예외 발생
+        if (!notification.getReceiver().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("접근권한이 없습니다. ");
+        }
+        notificationRepository.deleteById(notificationId);
+
     }
 }

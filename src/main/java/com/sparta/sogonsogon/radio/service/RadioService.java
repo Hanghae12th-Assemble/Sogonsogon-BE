@@ -133,7 +133,6 @@ public class RadioService {
         }
         radioRepository.deleteById(radioId);
 
-
     }
 
     public EnterMemberResponseDto enterRadio(Long radioId, UserDetailsImpl userDetails) {
