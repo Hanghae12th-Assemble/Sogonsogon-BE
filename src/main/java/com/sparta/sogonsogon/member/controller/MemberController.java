@@ -11,17 +11,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -69,12 +66,13 @@ public class MemberController {
     }
 
     @GetMapping("/similar-nickname")
-    @Operation(summary = "유사한 닉네임 조회", description = "유사한 닉네임 조회 무한스크롤 적용")
-    public Map<String, Object> getMembersBySimilarNickname(@RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "10") int size,
-                                                           @RequestParam(defaultValue = "id") String sortBy,
-                                                           @RequestParam String nickname) {
-        return memberService.getListBySimilarNickname(page, size, sortBy, nickname);
+    @Operation(summary = "유사한 닉네임으로 유저 조회", description = "유사한 닉네임 조회 무한스크롤 적용")
+    public ResponseEntity<List<MemberOneResponseDto>> getMembersBySimilarNickname(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                                    @RequestParam(value = "size",defaultValue = "10") int size,
+                                                                    @RequestParam(value = "sortBy",defaultValue = "id") String sortBy,
+                                                                    @RequestParam(value = "nickname") String nickname) {
+        return ResponseEntity.ok(memberService.getListBySimilarNickname(page, size, sortBy, nickname));
+
     }
 
     //상세 사용자 조회

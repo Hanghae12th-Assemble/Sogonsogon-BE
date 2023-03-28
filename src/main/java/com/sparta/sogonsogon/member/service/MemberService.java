@@ -2,7 +2,6 @@ package com.sparta.sogonsogon.member.service;
 
 import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.enums.ErrorMessage;
-import com.sparta.sogonsogon.enums.ErrorType;
 import com.sparta.sogonsogon.follow.repository.FollowRepository;
 import com.sparta.sogonsogon.jwt.JwtUtil;
 import com.sparta.sogonsogon.member.dto.*;
@@ -16,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,9 +25,9 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -110,44 +110,60 @@ public class MemberService {
     //유저 닉네임으로 정보 조회
     @Transactional
     public StatusResponseDto<List<MemberOneResponseDto>> getListByNickname(String nickname) {
-        log.info(nickname);
+//        log.info(nickname);
+
         List<Member> memberlist = memberRepository.searchAllByNicknameLike(nickname);
-        log.info(memberlist.toString());
+//        log.info(memberlist.toString());
         List<MemberOneResponseDto> memberResponseDtos = new ArrayList<>();
         for (Member member : memberlist) {
             memberResponseDtos.add(MemberOneResponseDto.of(member));
         }
-        log.info(memberResponseDtos.toString());
+//        log.info(memberResponseDtos.toString());
         return StatusResponseDto.success(HttpStatus.OK, memberResponseDtos);
     }
 
-    @Transactional
-    public Map<String, Object> getListBySimilarNickname(int page, int size, String sortBy, String nickname) {
+
+    //유사한 유저 닉네임으로 정보 조회 무한스크롤 적용
+    @Transactional(readOnly = true)
+    public List<MemberOneResponseDto> getListBySimilarNickname(int page, int size , String sortBy, String nickname) {
+        // 검색 조건 설정. 대소문자 상관없이 검색
+        // Create Example Matcher for searching by nickname
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withMatcher("nickname", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
         Member member = new Member();
         member.setNickname(nickname);
         Example<Member> example = Example.of(member, matcher);
 
+        // Set up pagination and sorting options
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        Pageable sortedPageable = PageRequest.of(page, size, sort);
-        Page<Member> nicknamePage = memberRepository.findAll(example, sortedPageable);
-        List<MemberResponseDto> memberResponseDtoList = nicknamePage.getContent().stream().map(MemberResponseDto::new).toList();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("nicknameCount", nicknamePage.getTotalElements());
+        // Find all members that match the given nickname
+        Page<Member> nicknamePage = memberRepository.findAll(example, pageable);
+        List<Member> memberList = nicknamePage.getContent();
 
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("result", memberResponseDtoList);
-        responseBody.put("metadata", metadata);
+        // Convert members to DTOs
+        List<MemberOneResponseDto> memberOneResponseDtoList = new ArrayList<>();
+        for (Member member1 : memberList) {
+            memberOneResponseDtoList.add(MemberOneResponseDto.of(member1));
+        }
 
-        return responseBody;
+        return memberOneResponseDtoList;
     }
 
-    public StatusResponseDto<MemberResponseDto> detailsMember(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                ()-> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다. ")
-        );
-        return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
-    }
+
+
+
+
+        public StatusResponseDto<MemberResponseDto> detailsMember(Long memberId) {
+            Member member = memberRepository.findById(memberId).orElseThrow(
+                    ()-> new EntityNotFoundException("해당 사용자를 찾을 수 없습니다. ")
+            );
+            return StatusResponseDto.success(HttpStatus.OK, new MemberResponseDto(member));
+        }
+
+
+
 }
+
+

@@ -2,6 +2,10 @@ package com.sparta.sogonsogon.member.repository;
 
 import com.sparta.sogonsogon.member.entity.Member;
 import org.springframework.boot.context.properties.bind.BindResult;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,4 +36,17 @@ public interface MemberRepository extends JpaRepository<Member , Long> {
     Optional<Member> findByKakaoId(Long kakaoId);
 
     int countByNickname(String nickname);
+
+//    Page<Member> findAllByNicknameLike(Example<Member> example, Pageable pageable);
+//
+//    Page<Member> searchAllByNicknameLikes(String nickname, Pageable pageable);
+
+//    List<Member> searchAllByNicknameLikes(String nickname, Pageable pageable);
+
+
+//    Page<Member> findAllByNicknameLike(String nickname, Pageable pageable);
+
+
+//    Page<Member> findAllByNicknameLike(Example<Member> example, Pageable sortedPageable);
+    
 }
