@@ -12,18 +12,18 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class TimeStamped {
+public abstract class TimeStamped {
     @CreatedDate
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
-    public String getCreatedAt() {
-        return createdAt.toString();
-    }
-
-    public LocalDateTime getModifiedAt() {
-        return modifiedAt;
-    }
+//    public String getCreatedAt() {
+//        return createdAt.toString();
+//    }
+//
+//    public LocalDateTime getModifiedAt() {
+//        return modifiedAt;
+//    }
 }
