@@ -85,8 +85,9 @@ public class Member extends TimeStamped{
     }
 
     //네이버 회원 정보
-    public Member(String naverId, String email, String profileImageUrl, String password, String nickname){
-        this.membername = naverId;
+    @Builder
+    public Member(String naverId, String email, String profileImageUrl, String password, String nickname, String membername){
+        this.membername = membername;
         this.email = email;
         this.profileImageUrl = profileImageUrl;
         this.password = password;
