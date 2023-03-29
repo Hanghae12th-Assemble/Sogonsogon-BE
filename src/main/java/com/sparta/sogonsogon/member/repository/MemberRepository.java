@@ -2,6 +2,10 @@ package com.sparta.sogonsogon.member.repository;
 
 import com.sparta.sogonsogon.member.entity.Member;
 import org.springframework.boot.context.properties.bind.BindResult;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -33,5 +37,9 @@ public interface MemberRepository extends JpaRepository<Member , Long> {
 
     int countByNickname(String nickname);
 
+
+    Optional<Member> findByNickname(String nickname);
+
     Optional<Member> findByNaverId(String naverId);
+
 }

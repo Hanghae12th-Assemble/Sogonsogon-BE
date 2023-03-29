@@ -133,7 +133,6 @@ public class RadioService {
         }
         radioRepository.deleteById(radioId);
 
-
     }
 
     public EnterMemberResponseDto enterRadio(Long radioId, UserDetailsImpl userDetails) {
@@ -215,10 +214,10 @@ public class RadioService {
 
 
             // NotificationService를 통해 라디오 시작 알림을 구독한 유저들에게 알림을 보낸다.
-            String message = radio.getMember().getMembername()+"님이 " + radio.getStartTime() +"에 "+ radio.getTitle() + "방송을 시작하였습니다. ";
+            String message = radio.getMember().getMembername()+"님이 " + radio.getTitle() + "방송을 시작하였습니다. ";
             List<Follow> followings = followRepository.findByFollower(userDetails.getUser());
             for (Follow following : followings) {
-                notificationService.send(following.getFollowing(), AlarmType.eventRadioStart, message);
+                notificationService.send(following.getFollowing(), AlarmType.eventRadioStart, message,radio.getMember().getMembername(),radio.getMember().getNickname(),radio.getMember().getProfileImageUrl());
             }
 
             return saveRadio;
@@ -241,10 +240,10 @@ public class RadioService {
             Radio saveRadio = radioRepository.save(radio);
 
             // NotificationService를 통해 라디오 종료 알림을 구독한 유저들에게 알림을 보낸다.
-            String message = userDetails.getUsername() +"님이 " + radio.getEndTime() +"에 "+ radio.getTitle() + "방송을 종료하였습니다. ";
+            String message = userDetails.getUsername() +"님이 " + radio.getTitle() + "방송을 종료하였습니다. ";
             List<Follow> followings = followRepository.findByFollower(userDetails.getUser());
             for (Follow following : followings) {
-                notificationService.send(following.getFollowing(), AlarmType.eventRadioEnd, message);
+                notificationService.send(following.getFollowing(), AlarmType.eventRadioEnd, message,radio.getMember().getMembername(),radio.getMember().getNickname(),radio.getMember().getProfileImageUrl());
             }
 
             return saveRadio;

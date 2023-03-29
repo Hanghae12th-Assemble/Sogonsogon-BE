@@ -1,13 +1,9 @@
 package com.sparta.sogonsogon.follow.dto;
 
-import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.follow.entity.Follow;
-import com.sparta.sogonsogon.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -17,10 +13,12 @@ public class FollowResponseDto {
     private String followername;
     private String followingname;
 //    private boolean isFollowed;
+    private String message;
 
-    FollowResponseDto (Follow follow) {
-        this.followername = follow.getFollower().getMembername();
-        this.followingname = follow.getFollowing().getMembername();
+    FollowResponseDto (Follow follow, String message) {
+        this.followername = follow.getFollower().getNickname();
+        this.followingname = follow.getFollowing().getNickname();
+        this.message = message;
 
     }
 
@@ -29,8 +27,8 @@ public class FollowResponseDto {
         this.followingname = followingname;
     }
 
-    public static FollowResponseDto of (Follow follow){
-        return new FollowResponseDto(follow);
+    public static FollowResponseDto of (Follow follow, String message){
+        return new FollowResponseDto(follow,message);
     }
 
 

@@ -25,14 +25,22 @@ public class NotificationResponseDto {
 
     private String createdAt;
 
+    private String senderMembername;
+    private String senderNickname;
+    private String senderProfileImageUrl;
+
 
     @Builder
     public NotificationResponseDto(Long id, String message,Boolean readStatus,
-                                   AlarmType alarmType, String createdAt) {
+                                   AlarmType alarmType, String createdAt,
+                                   String senderMembername,String senderNickname,String senderProfileImageUrl) {
         this.notificationId = id;
         this.message = message;
         this.readStatus = readStatus;
         this.alarmType = alarmType;
+        this.senderMembername = senderMembername;
+        this.senderNickname = senderNickname;
+        this.senderProfileImageUrl = senderProfileImageUrl;
         this.createdAt = createdAt;
     }
 
@@ -41,6 +49,9 @@ public class NotificationResponseDto {
         this.message = notification.getMessage();
         this.readStatus = notification.getIsRead();
         this.alarmType = notification.getAlarmType();
+        this.senderMembername = notification.getSenderMembername();
+        this.senderNickname = notification.getSenderNickname();
+        this.senderProfileImageUrl = notification.getSenderProfileImageUrl();
         this.createdAt = Chrono.timesAgo(notification.getCreatedAt());
     }
 
@@ -52,6 +63,9 @@ public class NotificationResponseDto {
                 .message(notification.getMessage())
                 .alarmType(notification.getAlarmType())
                 .readStatus(notification.getIsRead())
+                .senderMembername(notification.getSenderMembername())
+                .senderNickname(notification.getSenderNickname())
+                .senderProfileImageUrl(notification.getSenderProfileImageUrl())
                 .createdAt(createdAt)
                 .build();
     }
