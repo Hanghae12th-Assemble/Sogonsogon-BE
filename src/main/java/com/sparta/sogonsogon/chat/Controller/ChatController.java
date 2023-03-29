@@ -31,7 +31,6 @@ public class ChatController {
 //    private final
 //    private final ChatService chatService;
     private final SimpMessagingTemplate template;
-    private final MemberRepository memberRepository;
 
     @MessageMapping("/{radioId}")
     @SendTo("/chat/{radioId}")
