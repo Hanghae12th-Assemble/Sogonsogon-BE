@@ -2,9 +2,6 @@ package com.sparta.sogonsogon.chat.Controller;
 
 
 import com.sparta.sogonsogon.chat.dto.ChattingDto;
-import com.sparta.sogonsogon.enums.ErrorMessage;
-import com.sparta.sogonsogon.member.entity.Member;
-import com.sparta.sogonsogon.member.repository.MemberRepository;
 import com.sparta.sogonsogon.security.UserDetailsImpl;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Parameter;
