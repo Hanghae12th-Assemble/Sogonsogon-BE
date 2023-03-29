@@ -136,6 +136,7 @@ public class RadioService {
 
     }
 
+    // 라디오에 들어가기
     public EnterMemberResponseDto enterRadio(Long radioId, UserDetailsImpl userDetails) {
 
         Radio radio = radioRepository.findById(radioId).orElseThrow(

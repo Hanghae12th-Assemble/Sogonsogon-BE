@@ -17,6 +17,7 @@ import java.util.List;
 
 @Entity(name = "radio")
 @Getter
+@Setter
 @NoArgsConstructor
 public class Radio extends TimeStamped {
 
@@ -59,8 +60,6 @@ public class Radio extends TimeStamped {
 
     @OneToMany(mappedBy = "radio", cascade = CascadeType.ALL)
     private List<EnterMember> enterMemberList = new ArrayList<>();
-
-
 
     @Builder
     public Radio(String title, String introduction,
