@@ -1,7 +1,6 @@
 package com.sparta.sogonsogon.noti.service;
 
 import com.amazonaws.services.kms.model.NotFoundException;
-import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.member.repository.MemberRepository;
 import com.sparta.sogonsogon.noti.dto.NotificationResponseDto;
@@ -9,7 +8,6 @@ import com.sparta.sogonsogon.noti.entity.Notification;
 import com.sparta.sogonsogon.noti.repository.EmitterRepository;
 import com.sparta.sogonsogon.noti.repository.NotificationRepository;
 import com.sparta.sogonsogon.noti.util.AlarmType;
-import com.sparta.sogonsogon.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -124,9 +122,9 @@ public class NotificationService {
 
     //SSE를 이용하여 알림(Notification) 메시지를 구독(subscribe)한 클라이언트에게 전송하는 기능을 구현한 메서드이다.
     //이를 통해 클라이언트는 Notification을 실시간으로 받을 수 있게 됩니다.
-    public void send(Member receiver, AlarmType alarmType, String message) {
+    public void send(Member receiver, AlarmType alarmType, String message, String senderMembername, String senderNickname, String senderProfileImageUrl) {
         //send() 메서드는 Member 객체와 AlarmType 열거형, 알림 메시지(String)와 알림 상태(Boolean) 값을 인자로 받아 기능을 구현한다.
-        Notification notification = notificationRepository.save(createNotification(receiver, alarmType, message));
+        Notification notification = notificationRepository.save(createNotification(receiver, alarmType, message,senderMembername,senderNickname,senderProfileImageUrl));
 
         // Notification 객체의 수신자 ID를 추출하고,
         String receiverId = String.valueOf(receiver.getId());
@@ -151,13 +149,19 @@ public class NotificationService {
     }
 
 
-    private Notification createNotification(Member receiver, AlarmType alarmType, String message) {
+    private Notification createNotification(Member receiver, AlarmType alarmType, String message, String senderMembername, String senderNickname, String senderProfileImageUrl) {
         Notification notification = new Notification();
         notification.setReceiver(receiver);
         notification.setAlarmType(alarmType);
         notification.setMessage(message);
+        notification.setSenderMembername(senderMembername);
+        notification.setSenderNickname(senderNickname);
+        notification.setSenderProfileImageUrl(senderProfileImageUrl);
         return notificationRepository.save(notification);
     }
+
+
+
 
     //받은 알림 전체 조회
     public List<NotificationResponseDto> getAllNotifications(Long memberId) {
@@ -169,13 +173,13 @@ public class NotificationService {
 
     }
 
-
-    // 받은 알림 선택하여 조회
-    public NotificationResponseDto getNotification(Long notificationId, UserDetailsImpl userDetails) {
-        Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid notification ID: " + notificationId));
-        return NotificationResponseDto.create(notification);
-    }
+//
+//    // 받은 알림 선택하여 조회
+//    public NotificationResponseDto getNotification(Long notificationId, UserDetailsImpl userDetails) {
+//        Notification notification = notificationRepository.findById(notificationId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid notification ID: " + notificationId));
+//        return NotificationResponseDto.create(notification);
+//    }
 
 
 
@@ -195,5 +199,18 @@ public class NotificationService {
         }
 
         return new NotificationResponseDto(notification);
+    }
+
+    // 선택된 알림 삭제
+    public void deleteNotification(Long notificationId, Member member) {
+        Notification notification = notificationRepository.findById(notificationId).orElseThrow(
+                () -> new NotFoundException("Notification not found"));
+
+        // 확인한 유저가 알림을 받은 대상자가 아니라면 예외 발생
+        if (!notification.getReceiver().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("접근권한이 없습니다. ");
+        }
+        notificationRepository.deleteById(notificationId);
+
     }
 }
