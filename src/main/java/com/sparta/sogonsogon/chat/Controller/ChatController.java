@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 import static com.sparta.sogonsogon.chat.dto.ChattingDto.MessageType.TALK;
 
 @RestController
@@ -32,15 +34,15 @@ public class ChatController {
     @MessageMapping("/{radioId}")
     @SendTo("/chat/{radioId}")
     @ApiOperation(value = "chatting", notes = "라디오 채팅 기능")
-    public void createChat(@DestinationVariable Long radioId, @Payload ChattingDto chattingDto, @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        log.info("CHAT {}", chattingDto);
+    public void createChat(@DestinationVariable Long radioId, @Payload String message, @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         ChattingDto chat = ChattingDto.builder()
                 .type(TALK)
                 .sender(userDetails.getUsername())
-                .message(chattingDto.getMessage())
+                .message(message)
                 .radioId(radioId)
                 .build();
+        log.info("CHAT {}", chat);
         template.convertAndSend("/chat/" + radioId, chat);
     }
 }
