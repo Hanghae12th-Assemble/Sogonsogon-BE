@@ -116,6 +116,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         config.addAllowedOrigin("http://3.37.146.173:8080");
         config.setAllowedOriginPatterns(Arrays.asList("*"));
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("https://sogonsogon-fe.vercel.app/");
         config.addAllowedOriginPattern("*");
         config.setAllowedMethods(Arrays.asList("POST", "GET", "DELETE", "PUT"));
         config.setAllowedHeaders(Arrays.asList("*"));
