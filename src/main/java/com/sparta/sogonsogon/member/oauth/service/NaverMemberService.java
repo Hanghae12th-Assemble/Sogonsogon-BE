@@ -111,7 +111,7 @@ public class NaverMemberService {
             String sb = "grant_type=authorization_code" +
                     "&client_id=" + clientId +
                     "&client_secret=" + clientSecret +
-                    "&redirect_uri= http://localhost:3000/login/oauth2/code/naver" +// 수정필수
+                    "&redirect_uri= https://sogonsogon-fe.vercel.app/login/oauth2/code/naver" +// 수정필수
                     "&code=" + code +
                     "&state=" + state;
             bw.write(sb);
