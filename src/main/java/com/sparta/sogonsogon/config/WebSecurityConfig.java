@@ -102,9 +102,9 @@ public class WebSecurityConfig implements WebMvcConfigurer {
             .addMapping("/**") // 프로그램에서 제공하는 URL
             .allowedOrigins("*") // 요청을 허용할 출처를 명시, 전체 허용 (가능하다면 목록을 작성한다.
             .allowedMethods("*") // 어떤 메서드를 허용할 것인지 (GET, POST...)
-            .allowedHeaders("Content-Type", "Authorization") // 어떤 헤더들을 허용할 것인지
-            .exposedHeaders("Content-Type", "Authorization")
-            .allowCredentials(false) // 쿠키 요청을 허용한다(다른 도메인 서버에 인증하는 경우에만 사용해야하며, true 설정시 보안상 이슈가 발생할 수 있다)
+            .allowedHeaders("*") // 어떤 헤더들을 허용할 것인지
+            .exposedHeaders("*")
+            .allowCredentials(true) // 쿠키 요청을 허용한다(다른 도메인 서버에 인증하는 경우에만 사용해야하며, true 설정시 보안상 이슈가 발생할 수 있다)
             .maxAge((long) 3600 * 24 * 365); // preflight 요청에 대한 응답을 브라우저에서 캐싱하는 시간;
     }
 
@@ -113,18 +113,14 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         CorsConfiguration config = new CorsConfiguration();
 
 
-        config.addAllowedOrigin("http://3.37.146.173:8080");
-        config.setAllowedOriginPatterns(Arrays.asList("*"));
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("https://sogonsogon-fe.vercel.app/");
-        config.addAllowedOriginPattern("*");
-        config.setAllowedMethods(Arrays.asList("POST", "GET", "DELETE", "PUT"));
-        config.setAllowedHeaders(Arrays.asList("*"));
-        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*"); // 모든 출처 허용
+        config.setAllowedMethods(Arrays.asList("*")); // 모든 메서드 허용 (GET, POST, PUT, DELETE 등)
+        config.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더 허용
+        config.setAllowCredentials(true); // 쿠키 요청 허용 (필요한 경우 사용)
         config.addExposedHeader("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration("/**", config); // 모든 URL에 대해 적용
         return source;
     }
 }
