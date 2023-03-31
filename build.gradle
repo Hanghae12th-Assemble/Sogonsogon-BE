@@ -56,6 +56,7 @@ dependencies {
     // feat : chatting
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.security:spring-security-messaging'
 
     //embedded - redis
     implementation 'it.ozimov:embedded-redis:0.7.3'
