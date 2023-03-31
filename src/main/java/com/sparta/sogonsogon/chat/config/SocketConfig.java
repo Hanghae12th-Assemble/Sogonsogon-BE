@@ -16,7 +16,7 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
 //        WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
         registry.addEndpoint("/webSocket")
-                .setAllowedOriginPatterns("*")
+                .setAllowedOriginPatterns("http://localhost:3000")
                 .withSockJS();
 //                .setHeartbeatTime(2000);
     }
