@@ -9,7 +9,7 @@ on:
 # 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: my-github-actions-s3-bucket-new
+  S3_BUCKET_NAME: my-bucket-sogon
   CODE_DEPLOY_APPLICATION_NAME: my-codedeploy-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: my-codedeploy-deployment-group
 #   RESOURCE_PATH: ./src/main/resources/application.properties
