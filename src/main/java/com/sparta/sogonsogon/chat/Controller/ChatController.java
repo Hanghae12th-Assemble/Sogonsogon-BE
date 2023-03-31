@@ -34,11 +34,11 @@ public class ChatController {
     @MessageMapping("/{radioId}")
     @SendTo("/sub/{radioId}")
     @ApiOperation(value = "chatting", notes = "라디오 채팅 기능")
-    public void createChat(@DestinationVariable Long radioId, @RequestBody String message, @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public void createChat(@DestinationVariable Long radioId, @RequestBody String message, @RequestBody String nickname) {
 
         ChattingDto chat = ChattingDto.builder()
                 .type(TALK)
-                .sender(userDetails.getUser().getNickname())
+                .sender(nickname)
                 .message(message)
                 .radioId(radioId)
                 .build();
