@@ -12,6 +12,7 @@ public enum ErrorMessage {
     WRONG_USERNAME("해당 사용자를 찾을 수 없습니다."),
     WRONG_PASSWORD("비밀번호가 틀렸습니다."),
     ACCESS_DENIED("권한이 없습니다."),
+    NOT_FOUND_MEMBER("해당 사용자를 찾을 수 없습니다. "),
 
     // follow
     WRONG_SELF_REQUEST("자기자신을 팔로우할 수 없습니다."),
