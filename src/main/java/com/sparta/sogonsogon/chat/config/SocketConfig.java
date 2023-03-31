@@ -14,11 +14,11 @@ public class SocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
+//        WebSocketMessageBrokerConfigurer.super.registerStompEndpoints(registry);
         registry.addEndpoint("/webSocket")
                 .setAllowedOriginPatterns("*")
-                .withSockJS()
-                .setHeartbeatTime(2000);
+                .withSockJS();
+//                .setHeartbeatTime(2000);
     }
 
     @Override
