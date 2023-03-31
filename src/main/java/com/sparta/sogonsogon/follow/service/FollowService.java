@@ -74,12 +74,12 @@ public class FollowService {
 
 
     @Transactional
-    public FollowResponseDto toggleFollow(String nickname, UserDetailsImpl userDetails) {
-        Member follow = memberRepository.findByNickname(nickname).orElseThrow(
-            () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
+    public FollowResponseDto toggleFollow(String membername, UserDetailsImpl userDetails) {
+        Member follow = memberRepository.findByMembername(membername).orElseThrow(
+                () -> new EntityNotFoundException(ErrorMessage.WRONG_USERNAME.getMessage())
         );
         Member follower = memberRepository.findById(userDetails.getUser().getId()).orElseThrow(
-            () -> new AuthenticationCredentialsNotFoundException(ErrorMessage.ACCESS_DENIED.getMessage())
+                () -> new AuthenticationCredentialsNotFoundException(ErrorMessage.ACCESS_DENIED.getMessage())
         );
 
         if (follow.getId().equals(follower.getId())) {
@@ -88,15 +88,19 @@ public class FollowService {
 
         Follow followStatus = followRepository.findByFollowingAndFollower(follower, follow).orElse(null);
 
+        Boolean isFollow = false; // 팔로우여부 확인
+
         if (followStatus == null) {
             Follow newFollow = new Follow(new FollowRequestDto(follow, follower));
             followRepository.save(newFollow);
             notificationService.send(follow, AlarmType.eventFollower, "회원 " + follower.getNickname() + " 님이 회원님을 팔로우하였습니다.",follower.getMembername(),follower.getNickname(),follower.getProfileImageUrl());
-            return FollowResponseDto.of(newFollow,follow.getNickname() + "님을 팔로우하였습니다. ");
+            isFollow = true;
+            return FollowResponseDto.of(newFollow,follow.getNickname() + "님을 팔로우하였습니다. ", isFollow);
         } else {
             followRepository.deleteById(followStatus.getId());
             notificationService.send(follow, AlarmType.eventFollower, "회원 "+ follower.getNickname() +" 님이 회원님을 팔로우 취소하였습니다.",follower.getMembername(),follower.getNickname(),follower.getProfileImageUrl());
-            return FollowResponseDto.of(followStatus,follow.getNickname() + "님을 팔로우 취소하였습니다.");
+            isFollow = false;
+            return FollowResponseDto.of(followStatus,follow.getNickname() + "님을 팔로우 취소하였습니다.",isFollow);
         }
     }
 }

@@ -9,10 +9,10 @@ on:
 # 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: devmatchbucket
+  S3_BUCKET_NAME: my-github-actions-s3-bucket-new
   CODE_DEPLOY_APPLICATION_NAME: my-codedeploy-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: my-codedeploy-deployment-group
-  RESOURCE_PATH: ./src/main/resources/application.properties
+#   RESOURCE_PATH: ./src/main/resources/application.properties
   spring.datasource.url: ${{ secrets.RDS_MYSQL_URL }}
   spring.datasource.username: ${{ secrets.RDS_MYSQL_USERNAME }}
   spring.datasource.password: ${{ secrets.RDS_MYSQL_PASSWORD }}
@@ -37,8 +37,31 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Run chmod to make gradlew executable
-        run: chmod +x ./gradlew
+#       - name: Run chmod to make gradlew executable
+#         run: chmod +x ./gradlew
+      
+    # (3) Gradle build (Test 제외)
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+
+
+      ## create application.properties
+      - name: make application.properties
+        run:
+          touch ./src/main/resources/application.properties
+        shell: bash
+
+      - name: deliver application.properties
+        run: echo "${{ secrets.APPLICATION_DEV }}" > ./src/main/resources/application.properties
+        shell: bash
+
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        with:
+          arguments: clean build -x test
 
 #       - name: Set yaml file
 #         uses: microsoft/variable-substitution@v1
@@ -58,11 +81,11 @@ jobs:
 #           cloud.aws.region.static: ${{ secrets.S3_REGION_STATIC }}
 #           cloud.aws.stack.auto-: ${{ secrets.S3_STACK_AUTO }}
 
-      # (3) Gradle build (Test 제외)
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
-        with:
-          arguments: clean build -x test
+#       # (3) Gradle build (Test 제외)
+#       - name: Build with Gradle
+#         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+#         with:
+#           arguments: clean build -x test
 
       # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
       - name: Configure AWS credentials

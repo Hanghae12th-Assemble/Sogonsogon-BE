@@ -12,6 +12,7 @@
 //        registry.addMapping("/**")
 //                .allowedOrigins("http://3.37.146.173:8080")
 //                .allowedOrigins("http://localhost:3000")
+//                .allowedOrigins("https://sogonsogon-fe.vercel.app")
 //                .allowedHeaders("*")
 //                .allowedMethods("*")
 //                .allowCredentials(true);

@@ -1,7 +1,9 @@
 package com.sparta.sogonsogon.radio.controller;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.sparta.sogonsogon.dto.StatusResponseDto;
 import com.sparta.sogonsogon.enums.CategoryType;
+import com.sparta.sogonsogon.enums.ErrorMessage;
 import com.sparta.sogonsogon.noti.dto.NotificationRequestDto;
 import com.sparta.sogonsogon.noti.service.NotificationService;
 import com.sparta.sogonsogon.radio.dto.RadioRequestDto;
@@ -52,6 +54,14 @@ public class RadioController {
                                                                @RequestParam(required = false, defaultValue = "createdAt") String sortBy) {
         return StatusResponseDto.success(HttpStatus.OK, radioService.findAllRadios(page -1, size, sortBy));
     }
+
+    @GetMapping("/find/{radioId}")
+    @Operation(summary = "선택된 라디오 조회", description ="선택된 라디오 조회" )
+    public StatusResponseDto<RadioResponseDto> getRadio(@PathVariable Long radioId){
+        return StatusResponseDto.success(HttpStatus.OK, radioService.findRadio(radioId));
+    }
+
+
 
     @DeleteMapping("/{radioId}")
     @Operation(summary = "선택된 라디오 삭제", description = "선택된 라디오 삭제")
