@@ -48,7 +48,7 @@ public class ChatController {
 
     @PostMapping("/{radioId}/send-message")
     @ApiOperation(value = "chatting", notes = "라디오 채팅 기능 (웹소켓 정보)")
-    public ResponseEntity<?> sendMessage(@PathVariable Long radioId, @RequestBody String message, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> sendMessage(@PathVariable Long radioId, @RequestBody String message, @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
 // 이 메서드는 실제로 메시지를 보내지 않으며, Swagger에서 웹소켓 API 정보를 표시하기 위한 목적으로만 사용됩니다.
 
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("이 API는 웹소켓 API 정보를 위한 것이며, 실제 메시지 전송은 웹소켓을 사용하세요.");
