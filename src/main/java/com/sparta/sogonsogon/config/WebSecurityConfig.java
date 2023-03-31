@@ -60,7 +60,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors().configurationSource(corsConfigurationSource());
+        http.cors();
         http.csrf().disable();
 
         //로그인 된 후 토큰없이 자동 인증되는 것을 방지
@@ -77,12 +77,12 @@ public class WebSecurityConfig implements WebMvcConfigurer {
             .antMatchers("/api/member/**").permitAll()
             // 라디오조회
             .antMatchers(HttpMethod.GET, "/api/radios/**").permitAll()
-                .antMatchers("/webSocket").permitAll()
+                .antMatchers("/webSocket/**").permitAll()
             .anyRequest().authenticated()
             // JWT 인증/인가를 사용하기 위한 설정
             .and()
             .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-               .oauth2Login();
+                .oauth2Login();
 //                .logout()//oauth2 관련 내용 추가 (89번째 줄까지)
 //                .logoutSuccessUrl("/")
 //                .and()
@@ -102,6 +102,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         registry
                 .addMapping("/**")
                 .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("http://3.37.146.173:8080")
+                .allowedOrigins("http://localhost:3001")
                 .allowedOriginPatterns("*") // 허용되는 출처 패턴을 사용하여 와일드카드(*) 지정
                 .allowedMethods("*")
                 .allowedHeaders("*")
