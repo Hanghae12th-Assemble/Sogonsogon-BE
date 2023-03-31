@@ -32,7 +32,7 @@ public class ChatController {
     private final SimpMessagingTemplate template;
 
     @MessageMapping("/{radioId}")
-    @SendTo("/chat/{radioId}")
+    @SendTo("/sub/{radioId}")
     @ApiOperation(value = "chatting", notes = "라디오 채팅 기능")
     public void createChat(@DestinationVariable Long radioId, @RequestBody String message, @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
