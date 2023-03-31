@@ -88,15 +88,19 @@ public class FollowService {
 
         Follow followStatus = followRepository.findByFollowingAndFollower(follower, follow).orElse(null);
 
+        Boolean isFollow = false; // 팔로우여부 확인
+
         if (followStatus == null) {
             Follow newFollow = new Follow(new FollowRequestDto(follow, follower));
             followRepository.save(newFollow);
             notificationService.send(follow, AlarmType.eventFollower, "회원 " + follower.getNickname() + " 님이 회원님을 팔로우하였습니다.",follower.getMembername(),follower.getNickname(),follower.getProfileImageUrl());
-            return FollowResponseDto.of(newFollow,follow.getNickname() + "님을 팔로우하였습니다. ");
+            isFollow = true;
+            return FollowResponseDto.of(newFollow,follow.getNickname() + "님을 팔로우하였습니다. ", isFollow);
         } else {
             followRepository.deleteById(followStatus.getId());
             notificationService.send(follow, AlarmType.eventFollower, "회원 "+ follower.getNickname() +" 님이 회원님을 팔로우 취소하였습니다.",follower.getMembername(),follower.getNickname(),follower.getProfileImageUrl());
-            return FollowResponseDto.of(followStatus,follow.getNickname() + "님을 팔로우 취소하였습니다.");
+            isFollow = false;
+            return FollowResponseDto.of(followStatus,follow.getNickname() + "님을 팔로우 취소하였습니다.",isFollow);
         }
     }
 }

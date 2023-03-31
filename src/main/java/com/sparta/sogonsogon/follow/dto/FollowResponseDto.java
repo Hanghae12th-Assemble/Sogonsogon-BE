@@ -14,11 +14,13 @@ public class FollowResponseDto {
     private String followingname;
 //    private boolean isFollowed;
     private String message;
+    private Boolean isFollow;
 
-    FollowResponseDto (Follow follow, String message) {
+    FollowResponseDto (Follow follow, String message, Boolean isFollow) {
         this.followername = follow.getFollower().getNickname();
         this.followingname = follow.getFollowing().getNickname();
         this.message = message;
+        this.isFollow = isFollow;
 
     }
 
@@ -27,8 +29,8 @@ public class FollowResponseDto {
         this.followingname = followingname;
     }
 
-    public static FollowResponseDto of (Follow follow, String message){
-        return new FollowResponseDto(follow,message);
+    public static FollowResponseDto of (Follow follow, String message, Boolean isFollow){
+        return new FollowResponseDto(follow,message,isFollow);
     }
 
 

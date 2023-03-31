@@ -28,7 +28,7 @@ public class NotificationService {
 
     private final MemberRepository memberRepository;
     //DEFAULT_TIMEOUT을 기본값으로 설정
-    private static final Long DEFAULT_TIMEOUT = 60 * 1000L;
+    private static final Long DEFAULT_TIMEOUT = 60 * 10000L;
     //DEFAULT_TIMEOUT 변수는 SSE 연결의 타임아웃 시간을 밀리초(ms) 단위로 설정하는 상수입니다. 기본값은 60초(1분)입니다. 따라서 클라이언트와 SSE 연결을 유지하기 위해 60초 이내에 요청을 보내지 않으면 연결이 종료됩니다.
     //
     //이 값을 변경하면 SSE 연결이 종료되는 시간을 조정할 수 있습니다.

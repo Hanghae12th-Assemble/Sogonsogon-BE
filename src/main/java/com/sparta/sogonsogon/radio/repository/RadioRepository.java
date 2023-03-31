@@ -1,7 +1,6 @@
 package com.sparta.sogonsogon.radio.repository;
 
 import com.sparta.sogonsogon.enums.CategoryType;
-import com.sparta.sogonsogon.member.entity.Member;
 import com.sparta.sogonsogon.radio.entity.Radio;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +18,6 @@ public interface RadioRepository extends JpaRepository<Radio, Long> {
 
     Page<Radio> findAllByCategoryType(CategoryType categoryType,
                                       Pageable pageable);
+
+    Optional<Radio> findById(Long radioId);
 }
