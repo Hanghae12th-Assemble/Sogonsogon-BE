@@ -71,17 +71,18 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 //                .antMatchers("/docs").permitAll()
 //                .antMatchers("/api/**").permitAll()
-                .antMatchers("/api/member/signup").permitAll()
-                .antMatchers("/api/member/login").permitAll()
-                // 멤버조회
-                .antMatchers("/api/member/**").permitAll()
-                // 라디오조회
-                .antMatchers(HttpMethod.GET, "/api/radios/**").permitAll()
-                .anyRequest().authenticated()
-                // JWT 인증/인가를 사용하기 위한 설정
-                .and()
-                .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login();
+            .antMatchers("/api/member/signup").permitAll()
+            .antMatchers("/api/member/login").permitAll()
+            // 멤버조회
+            .antMatchers("/api/member/**").permitAll()
+            // 라디오조회
+            .antMatchers(HttpMethod.GET, "/api/radios/**").permitAll()
+                .antMatchers("/webSocket").permitAll()
+            .anyRequest().authenticated()
+            // JWT 인증/인가를 사용하기 위한 설정
+            .and()
+            .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+               .oauth2Login();
 //                .logout()//oauth2 관련 내용 추가 (89번째 줄까지)
 //                .logoutSuccessUrl("/")
 //                .and()
