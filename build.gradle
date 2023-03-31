@@ -75,6 +75,7 @@ dependencies {
     implementation 'io.mzlnk.oauth2.exchange:oauth2-exchange-spring-boot-autoconfigure:0.1.1'
     implementation 'org.springframework.security:spring-security-oauth2-jose:6.0.2'
     implementation 'org.apache.oltu.jose:org.apache.oltu.jose.jws:1.0.1'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     //json parsing
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
