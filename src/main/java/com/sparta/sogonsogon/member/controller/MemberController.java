@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -46,8 +47,12 @@ public class MemberController {
     @PutMapping(value = "/update/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "회원 정보 수정", description = "프로필에서 보이는 회원 정보 수정")
     public StatusResponseDto<MemberResponseDto> updateMemberInfo(@PathVariable Long userId,
-                                                                 @Valid @ModelAttribute MemberRequestDto requestDto,
+                                                                @RequestParam(value = "nickname") String nickname,
+                                                                @RequestParam(value = "memberInfo") String memberInfo,
+                                                                @RequestParam(value = "profileImageUrl") MultipartFile profileImage,
                                                                 @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        String profileImageUrl = s3Uploader.uploadFiles(profileImage, "profileImages");
+        MemberRequestDto requestDto = new MemberRequestDto(nickname, memberInfo, profileImageUrl);
         return StatusResponseDto.success(HttpStatus.OK, memberService.update(userId, requestDto, userDetails));
     }
 

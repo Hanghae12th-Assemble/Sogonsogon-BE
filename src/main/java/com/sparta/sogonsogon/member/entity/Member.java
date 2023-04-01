@@ -78,10 +78,10 @@ public class Member extends TimeStamped{
         this.role = MemberRoleEnum.USER;
     }
 
-    public void update(MemberRequestDto requestDto, String profileImageUrl){
+    public void update(MemberRequestDto requestDto){
         this.nickname = requestDto.getNickname();
         this.memberInfo = requestDto.getMemberInfo();
-        this.profileImageUrl = profileImageUrl;
+        this.profileImageUrl = requestDto.getProfileImageUrl();
     }
 
     //네이버 회원 정보
