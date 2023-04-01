@@ -83,7 +83,7 @@ public class MemberService {
 
     // 회원 정보 수정
     @Transactional
-    public MemberResponseDto update(Long id, MemberRequestDto memberRequestDto, UserDetailsImpl userDetails) throws IOException {
+    public MemberResponseDto update(Long id, MemberRequestDto memberRequestDto, UserDetailsImpl userDetails)  {
 //        String profileImageUrl = s3Uploader.uploadFiles(memberRequestDto.getProfileImageUrl(), "profileImages");
 
         Member member = memberRepository.findById(id).orElseThrow(

@@ -78,7 +78,7 @@ public class KakaoMemberService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoApiKey); //Rest API 키
-        body.add("redirect_uri", "https://sogonsogon-fe.vercel.app/login/oauth2/code/kakao");// 수정 필요 우리 것으로 콜백 링크 만들어야 함
+        body.add("redirect_uri", "https://localhost:3000/login/oauth2/code/kakao");// 수정 필요 우리 것으로 콜백 링크 만들어야 함
         body.add("code", code);
 
         // HTTP 요청 보내기
